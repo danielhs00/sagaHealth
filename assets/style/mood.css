@@ -1,0 +1,265 @@
+/* =========================================================
+   ROOT VARIABLES — Warna kamu tidak diubah, cukup sesuaikan
+========================================================= */
+:root {
+  --primary: #0C71E0;      /* contoh — ganti sesuai warna asli */
+  --primary-dark: #095BB5;
+  --secondary: #1B1B1B;
+  --background: #FFFFFF;
+  --surface: #F7F7F7;
+  --border: #E5E5E5;
+  --text: #1A1A1A;
+  --text-light: #6B6B6B;
+  --radius: 14px;
+  --shadow: 0px 4px 20px rgba(0,0,0,0.08);
+  --transition: 0.25s ease;
+  --font: "Inter", "Poppins", sans-serif;
+}
+
+/* =========================================================
+   GLOBAL RESET
+========================================================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font);
+}
+
+body {
+  background: var(--background);
+  color: var(--text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* =========================================================
+   SMOOTH SCROLLING + MODERN EFFECTS
+========================================================= */
+html {
+  scroll-behavior: smooth;
+}
+
+/* subtle fade when page loads */
+body {
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+/* =========================================================
+   NAVBAR — simple, clean, modern
+========================================================= */
+.navbar {
+  width: 100%;
+  background: var(--background);
+  padding: 18px 32px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.navbar .logo {
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.navbar .menu {
+  display: flex;
+  gap: 28px;
+}
+
+.navbar .menu a {
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 500;
+  opacity: 0.8;
+  transition: var(--transition);
+}
+
+.navbar .menu a:hover {
+  opacity: 1;
+}
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+.container {
+  width: min(1180px, 92%);
+  margin: auto;
+  padding: 40px 0;
+}
+
+/* =========================================================
+   CARD — modern, rounded, clean
+========================================================= */
+.card {
+  background: var(--surface);
+  padding: 24px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 28px rgba(0,0,0,0.12);
+}
+
+/* =========================================================
+   BUTTONS — minimal big brand style
+========================================================= */
+.btn {
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+.btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+/* ghost button */
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover {
+  background: var(--surface);
+}
+
+/* =========================================================
+   FORMS — clean + bold input style
+========================================================= */
+input, select, textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(0,0,0,0.03);
+}
+
+/* =========================================================
+   GRID — product/page layout
+========================================================= */
+.grid {
+  display: grid;
+  gap: 24px;
+}
+
+.grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+}
+
+/* =========================================================
+   SECTION HEADERS
+========================================================= */
+.section-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 22px;
+  letter-spacing: -0.5px;
+}
+
+/* =========================================================
+   MODAL (Login/Alert/Popup)
+========================================================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(3px);
+  z-index: 999;
+}
+
+.modal {
+  width: min(420px, 92%);
+  background: var(--background);
+  padding: 28px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  animation: modalPop 0.25s ease;
+}
+
+@keyframes modalPop {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+.footer {
+  padding: 40px;
+  text-align: center;
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 16px;
+  }
+  .navbar .menu {
+    gap: 18px;
+  }
+  .section-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* =========================================================
+   SCROLLBAR (modern, kecil, clean)
+========================================================= */
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}

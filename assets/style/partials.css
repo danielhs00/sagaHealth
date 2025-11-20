@@ -1,0 +1,610 @@
+/* 6. HALAMAN TENTANG KAMI */
+
+.text-center {
+    text-align: center;
+}
+
+.section-subtitle {
+    font-size: 1.125rem;
+    color: #555;
+    margin-bottom: 2rem;
+}
+
+/* Hero Section */
+.about-hero {
+    background-color: var(--color-light-bg); /* Warna bg sama dengan hero index */
+    padding: 3rem 0;
+}
+
+.about-hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+}
+
+.about-subtitle {
+    font-size: 1.25rem;
+    color: var(--color-text);
+    max-width: 700px;
+    margin: 0 auto 2rem auto;
+}
+
+.about-hero-image {
+    width: 100%;
+    max-width: 900px;
+    border-radius: 0.75rem;
+    box-shadow: var(--card-shadow);
+    margin-top: 1rem;
+}
+
+/* Vision & Mission Section */
+.vision-mission-section {
+    padding: 3rem 0;
+    background-color: #fff;
+}
+
+.vision-mission-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.vm-card {
+    padding: 2rem;
+    border-radius: 0.75rem;
+    background-color: #F9F9F9;
+    border: 1px solid var(--card-default-border);
+}
+
+.vm-card h3 {
+    font-size: 1.5rem;
+    color: var(--color-secondary);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.vm-card p,
+.vm-card li {
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.6;
+}
+
+.vm-card ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin-top: 1rem;
+}
+
+/* Founder Section */
+.founder-section {
+    padding: 3rem 0;
+    background-color: #fff;
+}
+
+.founder-section h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+}
+
+.founder-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 kolom di desktop */
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.founder-card {
+    background-color: #fff;
+    border-radius: 0.75rem;
+    box-shadow: var(--card-shadow);
+    overflow: hidden; /* Agar gambar di dalam card rapi */
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.founder-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.founder-card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 1 / 1; /* Membuat gambar selalu kotak */
+    background-color: #eee; /* Fallback jika gambar error */
+}
+
+.founder-card-info {
+    padding: 1.5rem;
+}
+
+.founder-card-info h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.founder-card-info span {
+    font-size: 0.875rem;
+    color: var(--color-secondary);
+    font-weight: 500;
+}
+
+/* RESPONSIVITAS HALAMAN TENTANG KAMI */
+@media (max-width: 768px) {
+    .vision-mission-grid {
+        grid-template-columns: 1fr; /* Tumpuk Visi & Misi di tablet */
+    }
+
+    .founder-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 kolom di tablet */
+    }
+}
+
+@media (max-width: 640px) {
+    .about-hero h1 {
+        font-size: 2rem;
+    }
+    .about-subtitle {
+        font-size: 1rem;
+    }
+    .founder-grid {
+        grid-template-columns: 1fr; /* 1 kolom di mobile */
+    }
+}
+
+
+/* 7. HALAMAN KAMUS KESEHATAN */
+
+.kamus-hero {
+    background-color: var(--color-light-bg);
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+}
+
+.kamus-hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+}
+
+.kamus-section {
+    padding-bottom: 3rem;
+}
+
+/* Navigasi Tab */
+.tab-nav {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 2rem;
+}
+
+.tab-button {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    background-color: transparent;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tab-button:hover {
+    color: var(--color-primary);
+}
+
+.tab-button.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+.tab-content {
+    display: none; /* Sembunyi by default */
+}
+
+.tab-content.active {
+    display: block; /* Tampil jika aktif */
+}
+
+/* Filter A-Z */
+.az-filter {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.az-button {
+    background-color: #f0f4f7;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0.5rem;
+    min-width: 35px; /* Lebar minimum tombol */
+    text-align: center;
+    font-weight: 600;
+    color: var(--color-primary);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.az-button:hover {
+    background-color: #e0e8ef;
+}
+
+.az-button.active {
+    background-color: var(--color-secondary);
+    color: white;
+    border-color: var(--color-secondary);
+}
+
+/* Daftar Kamus */
+.kamus-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    column-count: 3; /* Tampilkan 3 kolom di desktop */
+    column-gap: 2rem;
+}
+
+.kamus-list li {
+    padding: 0.6rem 0.5rem;
+    border-bottom: 1px solid #f0f0f0;
+    /* Mencegah item terpotong antar kolom */
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.kamus-list li a {
+    text-decoration: none;
+    color: var(--color-text);
+    font-size: 0.95rem;
+    transition: color 0.2s;
+}
+
+.kamus-list li a:hover {
+    color: var(--color-primary);
+}
+
+/* Responsivitas Halaman Kamus */
+@media (max-width: 768px) {
+    .kamus-list {
+        column-count: 2; /* 2 kolom di tablet */
+    }
+    
+    .tab-button {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .kamus-list {
+        column-count: 1; /* 1 kolom di mobile */
+    }
+
+    .az-button {
+        min-width: 30px;
+        padding: 0.4rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* 8. HALAMAN PUSAT BANTUAN */
+
+/* Judul Section Terpusat (Reusable) */
+.section-title-center {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 2.5rem;
+}
+
+/* Hero Section */
+.bantuan-hero {
+    background-color: var(--color-light-bg);
+    padding: 3rem 0;
+    text-align: center;
+}
+
+.bantuan-search-bar {
+    position: relative;
+    max-width: 700px;
+    margin: 2rem auto 0 auto;
+}
+
+.bantuan-search-bar input {
+    width: 100%;
+    padding: 1.1rem 4rem 1.1rem 1.5rem; /* Beri ruang untuk tombol */
+    font-size: 1rem;
+    border: 1px solid var(--card-default-border);
+    border-radius: 50px; /* Rounded */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.bantuan-search-bar input:focus {
+    outline: none;
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 3px rgba(2, 140, 139, 0.2);
+}
+
+.bantuan-search-bar button {
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    bottom: 6px;
+    width: 48px; /* Ukuran tombol */
+    height: 48px;
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 50%; /* Bulat sempurna */
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.2s;
+}
+.bantuan-search-bar button:hover {
+    background-color: #003747;
+}
+
+/* Kategori Section */
+.bantuan-kategori {
+    padding: 3rem 0;
+}
+
+.kategori-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 kolom */
+    gap: 1.5rem;
+}
+
+.kategori-card {
+    text-decoration: none;
+    padding: 2rem;
+    border: 1px solid var(--card-default-border);
+    border-radius: 0.75rem;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.kategori-card:hover {
+    box-shadow: var(--card-shadow);
+    transform: translateY(-5px);
+    border-color: var(--color-secondary);
+}
+
+.kategori-icon {
+    font-size: 2.5rem;
+    color: var(--color-secondary);
+    margin-bottom: 1rem;
+}
+
+.kategori-card h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+/* FAQ Section */
+.bantuan-faq {
+    padding: 3rem 0;
+    background-color: var(--color-light-bg);
+}
+
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #fff;
+    border: 1px solid var(--card-default-border);
+    border-radius: 0.75rem;
+    overflow: hidden; /* Untuk border-radius */
+}
+
+.faq-item {
+    border-bottom: 1px solid var(--card-default-border);
+}
+.faq-item:last-child {
+    border-bottom: none;
+}
+
+.faq-question {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 1.25rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.faq-question:hover {
+    color: var(--color-primary);
+}
+
+.faq-question::after {
+    content: '+'; /* Ikon plus */
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--color-secondary);
+    transition: transform 0.2s;
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+.faq-answer p {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Style saat FAQ aktif (terbuka) */
+.faq-item.active .faq-question {
+    color: var(--color-primary);
+}
+.faq-item.active .faq-question::after {
+    content: '−'; /* Ikon minus */
+    transform: rotate(180deg);
+}
+.faq-item.active .faq-answer {
+    max-height: 300px; /* Atur tinggi maks agar jawaban muat */
+}
+
+
+/* Kontak Section */
+.bantuan-kontak {
+    padding: 3rem 0;
+}
+
+.kontak-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.kontak-card {
+    padding: 2.5rem;
+    border-radius: 0.75rem;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    text-align: center;
+}
+.kontak-card i {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+}
+.kontak-card h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+.kontak-card p {
+    color: #666;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+.btn-kontak {
+    text-decoration: none;
+    font-weight: 600;
+    color: var(--color-secondary);
+    font-size: 1.1rem;
+}
+.btn-kontak:hover {
+    text-decoration: underline;
+}
+
+/* Responsivitas Halaman Bantuan */
+@media (max-width: 768px) {
+    .section-title-center {
+        font-size: 1.8rem;
+    }
+    .kategori-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 kolom di tablet */
+    }
+    .kontak-grid {
+        grid-template-columns: 1fr; /* Tumpuk di tablet */
+    }
+}
+
+@media (max-width: 640px) {
+    .bantuan-hero h1 {
+        font-size: 2rem;
+    }
+    .kategori-grid {
+        grid-template-columns: repeat(2, 1fr); /* Tetap 2 kolom di mobile */
+    }
+    .faq-question {
+        font-size: 1rem;
+        padding: 1rem 1.25rem;
+    }
+}
+
+/* 9. HALAMAN PRIVASI & KONTEN STATIS */
+
+.privacy-hero {
+    background-color: var(--color-light-bg);
+    padding: 2.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.privacy-hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 0.25rem;
+}
+
+.privacy-last-updated {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.privacy-content {
+    padding: 3rem 0;
+}
+
+/* Container-text untuk membatasi lebar teks agar mudah dibaca */
+.container-text {
+    max-width: 800px; /* Lebar ideal untuk membaca teks */
+    margin: 0 auto;
+}
+
+.privacy-section {
+    margin-bottom: 2.5rem;
+}
+
+.privacy-content h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.privacy-content h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-secondary);
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.privacy-content p,
+.privacy-content li {
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.7; /* Jarak antar baris yang nyaman */
+    margin-bottom: 1rem;
+}
+
+.privacy-content ul, 
+.privacy-content ol {
+    padding-left: 1.5rem;
+}

@@ -1,0 +1,229 @@
+/* 5. FOOTER SECTION - DIPERBAIKI */
+.footer-section {
+    background-color: #e4f3f9;
+    padding: 4rem 0 2rem; /* Padding atas lebih besar agar lega */
+    border-top: 1px solid #E5E7EB;
+    color: #333;
+}
+
+/* Grid Utama */
+.footer-main-grid {
+    display: grid;
+    /* Memberikan ruang lebih (2fr) untuk kolom pertama yang isinya banyak */
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem; /* Jarak antar kolom diperlebar */
+    margin-bottom: 3rem;
+}
+
+.footer-col h5 {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #1F2937; /* Warna heading lebih gelap agar kontras */
+    margin-bottom: 1.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em; /* Sedikit jarak antar huruf */
+}
+
+/* Kolom 1 - Logo & Info */
+.footer-logo {
+    /* ERROR FIX: Sebelumnya max-width: 10px (terlalu kecil) */
+    width: 75px;
+    height: 100px; /* Tinggi tetap agar rapi */
+    margin-bottom: 1.5rem;
+    display: block; /* Pastikan behave sebagai block jika itu img */
+}
+/* Jika .footer-logo adalah teks (h2), gunakan style ini sebagai gantinya: */
+h2.footer-logo {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #E02474;
+    margin-bottom: 1.5rem;
+    height: auto;
+}
+
+.footer-service-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem; /* Jarak antar tag sedikit diperbesar */
+    margin-bottom: 2rem;
+}
+
+.footer-service-tags a {
+    background-color: #fff;
+    color: #555;
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.4rem 0.8rem;
+    border-radius: 2rem; /* Tag lebih bulat (pil) */
+    border: 1px solid #E5E7EB;
+    transition: all 0.2s ease;
+}
+.footer-service-tags a:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background-color: #F0F9FF;
+}
+
+/* Promo Card */
+.footer-promo-card {
+    background: linear-gradient(135deg, #00A3B2, #028C8B); /* Gradient agar lebih menarik */
+    border-radius: 1rem;
+    padding: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.footer-promo-card .promo-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.footer-promo-card .promo-text strong {
+    font-size: 1.1rem;
+    line-height: 1.2;
+}
+.footer-promo-card .promo-text span {
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+.footer-promo-card .promo-app-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 0.75rem;
+    background-color: white;
+    padding: 5px; /* Frame putih kecil untuk ikon */
+    object-fit: contain;
+}
+
+/* Kontak */
+.footer-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.footer-contact a {
+    text-decoration: none;
+    color: #555;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: color 0.2s;
+    font-weight: 500;
+}
+.footer-contact a i {
+    color: #E02474;
+    width: 20px; /* Lebar tetap agar teks sejajar rapi */
+    text-align: center;
+}
+.footer-contact a:hover {
+    color: var(--color-primary);
+}
+
+/* Link List (Kolom 2,3,4) */
+.footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.footer-col ul li {
+    margin-bottom: 0.85rem;
+}
+.footer-col ul li a {
+    text-decoration: none;
+    color: #666;
+    font-size: 0.9rem;
+    transition: color 0.2s, padding-left 0.2s;
+    display: block;
+}
+.footer-col ul li a:hover {
+    color: var(--color-primary);
+    padding-left: 5px; /* Efek geser sedikit saat hover */
+}
+
+/* Bagian Tengah - Logo Keamanan & Partner */
+.footer-middle-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding: 2rem 0;
+    border-top: 1px solid #E5E7EB;
+    border-bottom: 1px solid #E5E7EB;
+    margin-bottom: 2rem;
+}
+
+.footer-security, .footer-partner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.footer-logos {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+/* ERROR FIX: Ukuran logo diperbaiki dari 10px menjadi wajar */
+.footer-logos img {
+    height: 40px; 
+    width: auto;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    filter: grayscale(100%); /* Opsional: membuatnya terlihat seragam */
+}
+.footer-logos img:hover {
+    opacity: 1;
+    filter: grayscale(0%);
+}
+
+.footer-partner span {
+    font-size: 0.85rem;
+    color: #999;
+    font-weight: 500;
+}
+.footer-partner img {
+    height: 50px; /* Logo partner biasanya lebih besar sedikit */
+    width: auto;
+}
+
+/* Bagian Bawah */
+.footer-bottom-section {
+    text-align: left;
+    color: #9CA3AF;
+    font-size: 0.85rem;
+}
+
+/* RESPONSIVITAS */
+@media (max-width: 1024px) {
+    .footer-main-grid {
+        grid-template-columns: 1fr 1fr; /* Tablet: 2 kolom */
+        gap: 3rem 2rem;
+    }
+    /* Kolom pertama (info) mengambil lebar penuh di tablet agar rapi */
+    .footer-col:first-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 640px) {
+    .footer-section {
+        padding: 3rem 0 1.5rem;
+    }
+    .footer-main-grid {
+        grid-template-columns: 1fr; /* Mobile: 1 kolom */
+        gap: 2.5rem;
+    }
+    .footer-middle-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2.5rem;
+    }
+    .footer-logos {
+        flex-wrap: wrap;
+    }
+}
