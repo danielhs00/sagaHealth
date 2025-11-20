@@ -1,0 +1,406 @@
+/* style.css — Soft Glassmorphism Theme (Poppins)
+   Designed for Mood in 30 Days (SagaHealth)
+   - Pastel glass look
+   - Accessible contrast
+   - Dark mode
+   - Responsive
+   - Smooth micro-interactions
+*/
+
+/* =========================
+   1) Variables (Theme Tokens)
+   ========================= */
+:root{
+  /* --- Light mode palette --- */
+  --bg-100: #F7FFF9;        /* main page background */
+  --bg-200: #E8FBF0;        /* subtle gradient */
+  --card: rgba(255,255,255,0.72); /* glass card bg */
+  --glass-border: rgba(255,255,255,0.6);
+  --ink: #0F2B3A;           /* primary text (dark teal) */
+  --muted: #4B6B77;         /* secondary text */
+  --primary: #6ED1A6;       /* main accent (mint) */
+  --primary-600: #54B389;   /* hover accent */
+  --accent: #2D7EA1;        /* stronger accent / gradient end */
+  --danger: #E05D5D;
+
+  /* --- Shadows / depth --- */
+  --shadow-1: 0 6px 20px rgba(22,44,52,0.06);
+  --shadow-2: 0 10px 30px rgba(22,44,52,0.08);
+
+  /* --- Utility sizes --- */
+  --container: 1024px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --fw-regular: 500;
+  --fw-strong: 700;
+  --glass-blur: 8px;
+  --transition-fast: 160ms;
+  --transition-medium: 260ms;
+}
+
+/* Dark mode tokens */
+.dark {
+  --bg-100: #07141A;
+  --bg-200: linear-gradient(180deg,#07141A 0%, #071E27 100%);
+  --card: rgba(10,20,28,0.6);
+  --glass-border: rgba(255,255,255,0.04);
+  --ink: #E6F6F2;
+  --muted: #9CB6BF;
+  --primary: #2FB57A;
+  --primary-600: #28a069;
+  --accent: #1F6B84;
+  --danger: #FF7B7B;
+
+  --shadow-1: 0 8px 28px rgba(2,6,10,0.55);
+  --shadow-2: 0 16px 42px rgba(2,6,10,0.6);
+}
+
+/* ====== Base & Reset ====== */
+* { box-sizing: border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+html,body { height:100%; }
+html { font-size: 16px; }
+body{
+  margin:0;
+  min-height:100%;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg-200);
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+  line-height:1.45;
+  transition: background var(--transition-medium) ease, color var(--transition-medium) ease;
+}
+
+/* Soft background gradient overlay */
+body::before{
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(At 10% 10%, rgba(110,209,166,0.06), transparent 12%),
+              radial-gradient(At 90% 90%, rgba(45,126,161,0.04), transparent 12%);
+  z-index: 0;
+}
+
+/* =========================
+   Layout Utilities
+   ========================= */
+.container{
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 18px;
+  position: relative;
+  z-index: 1;
+}
+
+.row{ display:flex; gap:12px; align-items:center; }
+.center{ align-items:center; }
+.between{ justify-content:space-between; }
+.stack{ display:flex; flex-direction:column; gap:12px; }
+.small{ font-size:0.875rem; }
+.muted{ color: var(--muted); }
+
+/* =========================
+   Topbar / Header
+   ========================= */
+.topbar{
+  position: sticky;
+  top:0;
+  z-index: 40;
+  backdrop-filter: blur(var(--glass-blur));
+  background: linear-gradient(180deg, rgba(255,255,255,0.40), rgba(255,255,255,0.18));
+  border-bottom: 1px solid var(--glass-border);
+  padding: 12px 0;
+  box-shadow: var(--shadow-1);
+}
+
+/* Logo */
+.logo{
+  width:46px; height:46px; border-radius:12px;
+  display:grid; place-items:center;
+  background: linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 6px 18px rgba(18,43,56,0.06);
+  font-size:20px;
+}
+
+/* Title group */
+.title { font-weight: var(--fw-strong); font-size: 1.05rem; letter-spacing: 0.2px; }
+.subtitle { font-size: 0.85rem; color: var(--muted); }
+
+/* Buttons small */
+.btn{
+  height:40px; padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255,255,255,0.5);
+  color: var(--ink);
+  font-weight: var(--fw-regular);
+  cursor:pointer;
+  display:inline-flex; align-items:center; gap:10px;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+.btn:active{ transform: translateY(1px); }
+.btn:hover{ transform: translateY(-2px); box-shadow: var(--shadow-1); }
+
+/* Primary style */
+.btn.primary{
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  color: #fff; border: none;
+  box-shadow: 0 10px 30px rgba(45,126,161,0.12);
+}
+.btn.primary:hover{
+  background: linear-gradient(90deg, var(--primary-600), var(--accent));
+}
+
+/* Notif badge / small text */
+#notifStatus { font-size:0.9rem; color:var(--muted); }
+
+/* =========================
+   Tabs (glass strip)
+   ========================= */
+.tabs{
+  margin: 18px 0;
+  display:grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap:10px;
+  background: transparent;
+  position: relative;
+  z-index: 1;
+}
+
+.tab{
+  background: var(--card);
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  padding: 10px 12px;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  cursor:pointer; transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast); 
+  color: var(--ink);
+  font-weight: 600;
+  text-align:center;
+}
+.tab .emoji{ font-size:18px; line-height:1; transform: translateY(1px); }
+.tab .label{ font-size:0.85rem; color:var(--muted); font-weight:600; }
+
+.tab:hover{ transform: translateY(-4px); box-shadow: var(--shadow-1); background: rgba(255,255,255,0.82); }
+.tab.active{
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  box-shadow: var(--shadow-2);
+  border: none;
+}
+.tab.active .label{ color: rgba(255,255,255,0.95); }
+
+/* =========================
+   Views & Cards
+   ========================= */
+.view{ display:none; animation: fadeIn 260ms ease both; }
+.view.active{ display:block; }
+
+@keyframes fadeIn { from{ opacity:0; transform: translateY(8px) } to{ opacity:1; transform: translateY(0) } }
+
+.card{
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+  transition: transform var(--transition-medium), box-shadow var(--transition-medium), background var(--transition-medium);
+}
+
+/* Card header with gradient accent */
+.card-head{
+  padding: 16px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.02));
+}
+.card-head h3{ margin:0; font-size:1.05rem; font-weight:var(--fw-strong); color:var(--ink); }
+.card-body{ padding:16px; color:var(--muted); }
+
+/* Rounded content wrapper */
+.section-pad{ padding: 18px; }
+
+/* =========================
+   Mood buttons grid
+   ========================= */
+.mood-row{
+  display:grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap:10px;
+}
+.mood-btn{
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  padding: 10px;
+  height:56px;
+  background: rgba(255,255,255,0.6);
+  display:flex; gap:10px; align-items:center; justify-content:center;
+  cursor:pointer; transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  font-weight:600; color:var(--ink);
+}
+.mood-btn:hover{ transform: translateY(-6px); box-shadow: var(--shadow-1); }
+.mood-btn .emoji{ font-size:20px; transform: translateY(1px); }
+.mood-btn .label{ font-size:0.95rem; display:none; } /* small screens hide labels */
+
+.mood-btn.active{
+  background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+  color: #fff;
+  border: none;
+  box-shadow: 0 12px 30px rgba(45,126,161,0.18);
+}
+
+/* If you want mood buttons colored individually, use data attributes in JS to add classes */
+
+/* =========================
+   Forms / Inputs
+   ========================= */
+.input, .textarea, .date {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  background: rgba(255,255,255,0.6);
+  color: var(--ink);
+  font-size: 0.95rem;
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+  outline: none;
+}
+.input:focus, .textarea:focus, .date:focus{
+  box-shadow: 0 6px 20px rgba(47,181,122,0.12);
+  border-color: rgba(47,181,122,0.55);
+  background: rgba(255,255,255,0.8);
+}
+.textarea{ min-height:120px; resize:vertical; }
+
+/* =========================
+   KPI / Progress
+   ========================= */
+.kpi{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.progress{
+  height:10px; border-radius:999px; overflow:hidden;
+  background: rgba(2,40,34,0.04); border: 1px solid var(--glass-border);
+}
+.progress > div{
+  height:100%;
+  width:60%; /* change with JS */
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transition: width 600ms cubic-bezier(.2,.9,.2,1);
+}
+
+/* =========================
+   Tables & Lists
+   ========================= */
+table{ width:100%; border-collapse: collapse; font-size:0.95rem; color:var(--muted); }
+th, td { padding: 10px 12px; text-align:left; }
+thead th { color: var(--muted); font-weight:600; font-size:0.9rem; }
+tbody tr { border-top: 1px solid var(--glass-border); }
+.empty-state{ text-align:center; color:var(--muted); padding:28px 12px; }
+
+/* =========================
+   Login Wall (Centered modal)
+   ========================= */
+#login-wall{
+  position: fixed; inset:0; display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(180deg, rgba(2,6,10,0.45), rgba(2,6,10,0.55));
+  z-index:9999; padding:20px;
+  transition: opacity 220ms ease, visibility 220ms ease;
+}
+#login-wall.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+
+.login-box{
+  width: 100%; max-width:420px; border-radius:16px; overflow:hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  backdrop-filter: blur(10px) saturate(120%);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 26px;
+  box-shadow: var(--shadow-2);
+  color: var(--ink);
+  text-align:center;
+}
+.login-box h2{ margin: 6px 0 8px; font-size:1.25rem; font-weight:700; color:var(--ink); }
+.login-box p{ margin:0 0 18px; color:var(--muted); font-size:0.95rem; }
+
+.login-btn-link{
+  display:inline-flex; gap:10px; align-items:center; justify-content:center;
+  padding:12px 20px; border-radius:12px; font-weight:700;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  color:#fff; border:none; cursor:pointer; text-decoration:none;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: 0 12px 30px rgba(45,126,161,0.16);
+}
+.login-btn-link:hover{ transform: translateY(-3px); }
+
+/* Close button */
+.login-close{
+  position:absolute; top:18px; right:18px;
+  width:36px; height:36px; border-radius:10px; display:grid; place-items:center;
+  cursor:pointer; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border);
+}
+
+/* =========================
+   Footer
+   ========================= */
+.footer{
+  text-align:center; padding:32px 12px; color:var(--muted); font-size:0.9rem;
+  margin-top:28px;
+}
+
+/* =========================
+   Microcomponents / Badges
+   ========================= */
+.badge{
+  display:inline-flex; gap:8px; align-items:center; padding:6px 10px;
+  border-radius:999px; font-weight:600; font-size:0.85rem;
+  background: rgba(255,255,255,0.6); border:1px solid var(--glass-border);
+}
+
+/* Alerts */
+.alert{
+  padding:12px 14px; border-radius:10px; display:flex; gap:10px; align-items:flex-start;
+  background: rgba(255,255,255,0.6); border:1px solid var(--glass-border);
+  color:var(--ink);
+}
+
+/* =========================
+   Utilities (grid, responsive)
+   ========================= */
+.grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
+.grid-3{ display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; }
+@media (max-width:900px){
+  .grid-3{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width:640px){
+  .grid-2{ grid-template-columns: 1fr; }
+  .tabs{ grid-template-columns: repeat(5, 1fr); gap:8px; }
+  .tab .label{ display:none; } /* simplify tabs on mobile */
+  .mood-row{ grid-template-columns: repeat(5, 1fr); gap:8px; }
+  .mood-btn .label{ display:none; } /* show only emoji on smallest screens */
+  .container{ padding:12px; }
+  .logo{ width:40px; height:40px; border-radius:10px; font-size:18px; }
+}
+
+/* =========================
+   Dark mode small fixes
+   ========================= */
+.dark .btn{ background: rgba(255,255,255,0.03); color:var(--ink); border:1px solid var(--glass-border); }
+.dark .card-head{ background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); }
+
+/* =========================
+   Accessibility helpers
+   ========================= */
+.sr-only{
+  position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px);
+  white-space:nowrap; border:0; padding:0; margin:-1px;
+}
+
+/* =========================
+   Small polish (transitions & focus)
+   ========================= */
+button:focus, a:focus, .input:focus, .textarea:focus{
+  outline: none;
+  box-shadow: 0 8px 28px rgba(47,181,122,0.12);
+  border-color: rgba(47,181,122,0.55);
+}
+
+/* End of stylesheet */

@@ -1,0 +1,437 @@
+/* Reset & Basic Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f0f2f5;
+  color: #333;
+  /* overflow: hidden;  <-- Dihapus dari sini, biarkan JS yang mengaturnya via class 'locked' */
+}
+
+/* Class utilitas untuk mengunci scroll saat login wall aktif */
+body.locked {
+  overflow: hidden !important;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* =========================================
+   LOGIN WALL STYLES (DISERAGAMKAN)
+   Menggunakan gaya yang sama dengan mood.css
+   ========================================= */
+#login-wall {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;  /* Gunakan viewport width */
+  height: 100vh; /* Gunakan viewport height */
+  background-color: rgba(0, 0, 0, 0.85); /* Sedikit lebih gelap */
+  backdrop-filter: blur(8px);
+  z-index: 99999; /* Z-index sangat tinggi */
+  display: flex !important; /* Paksa display flex */
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+/* Kelas khusus untuk menyembunyikan wall saat sudah login */
+#login-wall.hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important; /* Pastikan tidak bisa diklik saat hidden */
+}
+
+.login-box {
+  background: linear-gradient(145deg, #1e293b, #0f172a);
+  padding: 2.5rem;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; /* Animasi lebih halus */
+}
+
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.login-icon {
+  font-size: 4rem;
+  color: #E02474; /* Aksen pink */
+  margin-bottom: 1.5rem;
+  display: inline-block;
+}
+
+.login-box h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.login-box p {
+  font-size: 1.1rem;
+  color: #cbd5e1; /* Teks abu-abu terang */
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.login-button-link {
+  display: inline-block;
+  text-decoration: none;
+  background-color: #014C63; /* Warna Primary */
+  color: white !important;
+  padding: 1rem 2.5rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.login-button-link:hover {
+  background-color: #028C8B; /* Warna Secondary saat hover */
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+/* =========================================
+   END LOGIN WALL STYLES
+   ========================================= */
+
+
+/* CHATBOT STYLES */
+.app-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 280px;
+  background-color: #1e293b; /* Disesuaikan sedikit agar senada */
+  color: white;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  border-right: 1px solid #334155;
+}
+.sidebar-header {
+  padding: 0.5rem 0.25rem;
+  margin-bottom: 1rem;
+}
+.sidebar-header h1 {
+  font-size: 1.5rem;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.new-chat-btn {
+  width: 100%;
+  padding: 0.875rem;
+  background-color: #014C63; /* Primary color */
+  color: white;
+  border-radius: 8px;
+  text-align: left;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.new-chat-btn:hover {
+  background-color: #026d8e;
+}
+.search-bar {
+  display: flex;
+  align-items: center;
+  background-color: #334155;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+.search-bar input {
+  background: none;
+  border: none;
+  color: white;
+  margin-left: 10px;
+  width: 100%;
+  outline: none;
+  font-size: 0.9rem;
+}
+.search-bar input::placeholder {
+  color: #94a3b8;
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 0.5rem 0.25rem;
+  margin-bottom: 0.5rem;
+}
+.conversations {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+.conversation-item {
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  color: #cbd5e1;
+  margin-bottom: 2px;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.conversation-item i {
+  color: #64748b;
+}
+.conversation-item:hover {
+  background-color: #334155;
+}
+.conversation-item.active {
+  background-color: #334155;
+  color: #fff;
+  font-weight: 500;
+}
+.conversation-item.active i {
+  color: #E02474; /* Aksen aktif */
+}
+
+.sidebar-footer {
+  border-top: 1px solid #334155;
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+.settings, .user-profile {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #cbd5e1;
+  transition: background-color 0.2s;
+}
+.settings:hover, .user-profile:hover {
+  background-color: #334155;
+}
+.settings span, .user-profile span {
+  margin-left: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.settings i {
+  margin-left: auto;
+  color: #94a3b8;
+}
+.user-profile img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Main Content */
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8fafc;
+}
+.chat-header {
+  display: flex;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #fff;
+}
+.chat-header i {
+  font-size: 1.75rem;
+  color: #014C63;
+}
+.chat-info {
+  margin-left: 1rem;
+}
+.chat-info h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+.chat-info p {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+/* Chat Container */
+.chat-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+  position: relative;
+}
+.messages-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.message {
+  display: flex;
+  align-items: flex-start;
+  max-width: 85%;
+  animation: fadeIn 0.3s ease-out;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.message-bubble {
+  padding: 1rem 1.5rem;
+  border-radius: 18px;
+  line-height: 1.6;
+  font-size: 1rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Bot Message */
+.bot-message {
+  align-self: flex-start;
+}
+.bot-message .message-bubble {
+  background-color: #fff;
+  color: #334155;
+  border-top-left-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+/* User Message */
+.user-message {
+  align-self: flex-end;
+  flex-direction: row-reverse; /* Balik arah untuk user */
+}
+.user-message .avatar {
+  margin-right: 0;
+  margin-left: 16px;
+  display: none; /* Opsional: sembunyikan avatar user agar lebih bersih */
+}
+.user-message .message-bubble {
+  background-color: #014C63;
+  color: white;
+  border-top-right-radius: 4px;
+}
+
+/* Input Container */
+.input-container {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #e2e8f0;
+  background-color: #fff;
+}
+.input-wrapper {
+  display: flex;
+  align-items: flex-end;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 0.75rem 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-wrapper:focus-within {
+  border-color: #014C63;
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(1, 76, 99, 0.1);
+}
+.input-wrapper textarea {
+  flex-grow: 1;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 0;
+  resize: none;
+  max-height: 150px;
+  outline: none;
+  color: #334155;
+  line-height: 1.5;
+}
+.input-wrapper button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #014C63;
+  color: white;
+  font-size: 1.1rem;
+  margin-left: 12px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.input-wrapper button:hover {
+  background-color: #028C8B;
+  transform: scale(1.05);
+}
+.input-wrapper button:active {
+  transform: scale(0.95);
+}
+
+/* Responsif */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    height: 100%;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .messages-container {
+    padding: 1rem;
+  }
+  .message {
+    max-width: 90%;
+  }
+}
