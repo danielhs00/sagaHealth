@@ -5,104 +5,182 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - SagaHealth</title>
     <link rel="icon" href="../assets/img/tittle.png" type="image/png">
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- CSS Dashboard Baru -->
-    <link rel="stylesheet" href="../user/style/dashboard.css">
 
-    
-    <!-- GUARD SCRIPT (PENJAGA HALAMAN) -->
+    <!-- CSS utama (auth.css) -->
+    <link rel="stylesheet" href="../assets/style/auth.css">
+    <link rel="stylesheet" href="../assets/style/styles.css">
+
     <script>
-        // Cek status login dari sessionStorage ATAU localStorage
+        // GUARD LOGIN
         const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true' || 
                            localStorage.getItem('isLoggedIn') === 'true';
-        
-        // Ambil userId
+
         const userId = sessionStorage.getItem('userId') || localStorage.getItem('userId');
 
         if (!isLoggedIn || !userId) {
-            // Jika tidak login, bersihkan semua data & tendang ke halaman login
             sessionStorage.clear();
             localStorage.clear();
-            // Arahkan ke folder auth (sesuai struktur Anda)
             window.location.replace('../auth/login.php');
         }
     </script>
 </head>
+
 <body class="page-dashboard">
 
     <?php include '../user/partials/header.php'; ?>
-    <!-- Konten Utama Dashboard -->
+
     <main class="main-dashboard">
         <div class="container-wrapper">
+                <section class="wave-section">
+    <div class="container-wrapper">
+        
+        <div class="banner-layout-single" id="poster-container">
             
-            <!-- Pesan Selamat Datang -->
+            <div class="poster-carousel card" id="main-poster-carousel">
+                
+                <div class="carousel-track">
+                    
+                    <div class="carousel-item">
+                        <img src="../assets/img/poster1.png" 
+                             alt="Poster 1 Kemenkes" 
+                             class="banner-image">
+                    </div>
+                    
+                    <div class="carousel-item">
+                        <img src="../assets/img/poster2.png" 
+                             alt="Poster 2 Layanan Baru" 
+                             class="banner-image">
+                    </div>
+                    
+                    <div class="carousel-item">
+                        <img src="../assets/img/poster3.png" 
+                             alt="Poster 3 Promosi" 
+                             class="banner-image">
+                    </div>
+                     <div class="carousel-item">
+                        <img src="../assets/img/poster4.png" 
+                             alt="Poster 3 Promosi" 
+                             class="banner-image">
+                    </div>
+                </div>
+                
+                <button class="carousel-button prev-button" aria-label="Previous Slide">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel-button next-button" aria-label="Next Slide">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
+                <div class="carousel-indicators"></div>
+            </div>
+            
+            <div class="single-poster-mobile" id="single-poster-mobile">
+                <img src="../assets/img/poster1.png" alt="Poster Mobile" class="banner-image">
+            </div>
+        </div>
+    </div>
+</section>
+
+            <!-- Welcome -->
             <section class="welcome-header">
                 <h1 id="welcome-title">Halo, Memuat...</h1>
-                <p>Selamat datang di dashboard kesehatan Anda. Pilih layanan di bawah ini untuk memulai.</p>
+                <p>Selamat datang di dashboard kesehatan Anda.</p>
             </section>
 
-            <!-- Grid Fitur Utama -->
+            <!-- GRID FITUR -->
             <section class="feature-grid">
-                
-                <!-- Kartu Chatbot -->
-                <a href="chatbot.php" class="feature-card accent-pink">
-                    <div class="card-icon"><i class="fas fa-robot"></i></div>
-                    <h3>SagaBot AI</h3>
-                    <p>Tanyakan apapun seputar kesehatan kepada asisten AI pribadi Anda.</p>
-                </a>
-                
-                <!-- Kartu Mood Tracker -->
-                <a href="indexmood.php" class="feature-card accent-blue">
-                    <div class="card-icon"><i class="fas fa-smile-beam"></i></div>
-                    <h3>Mood Tracker</h3>
-                    <p>Catat dan pantau suasana hati Anda dengan program 30 hari.</p>
+
+                <!-- ================= BASIC FEATURES ================= -->
+
+                <!-- SCREENING FISIK -->
+                <a href="skrining_kesehatan.php" class="feature-card accent-teal feature-basic">
+                    <div class="card-icon"><i class="fas fa-file-medical-alt"></i></div>
+                    <h3>Screening Fisik</h3>
+                    <p>Evaluasi menyeluruh kondisi fisik Anda.</p>
                 </a>
 
-                <!-- Kartu Skrining (dari PDF) -->
-                <a href="skrining_kesehatan.php" class="feature-card accent-teal">
-                    <div class="card-icon"><i class="fas fa-file-medical-alt"></i></div>
-                    <h3>Skrining Kesehatan</h3>
-                    <p>Isi formulir skrining mandiri untuk mengetahui risiko kesehatan Anda.</p>
+                <!-- ANJURAN KESEHATAN -->
+                <a href="anjuran.php" class="feature-card accent-green feature-basic">
+                    <div class="card-icon"><i class="fas fa-heartbeat"></i></div>
+                    <h3>Anjuran Kesehatan</h3>
+                    <p>Rekomendasi personal untuk kesehatan Anda.</p>
                 </a>
-                
-                <!-- Kartu Profil -->
-                <a href="profile.php" class="feature-card accent-gray">
-                    <div class="card-icon"><i class="fas fa-id-card"></i></div>
-                    <h3>Profil Saya</h3>
-                    <p>Lihat dan kelola data pribadi serta riwayat login Anda.</p>
+
+                <!-- RIWAYAT KESEHATAN -->
+                <a href="riwayat.php" class="feature-card accent-gray feature-basic">
+                    <div class="card-icon"><i class="fas fa-notes-medical"></i></div>
+                    <h3>Riwayat Kesehatan</h3>
+                    <p>Pantau dan simpan riwayat kesehatan.</p>
+                </a>
+
+                <!-- ================= PREMIUM FEATURES ================= -->
+
+                <!-- SCREENING MOOD -->
+                <a href="indexmood.php" class="feature-card accent-blue feature-premium">
+                    <div class="card-icon"><i class="fas fa-smile-beam"></i></div>
+                    <h3>Screening Mood</h3>
+                    <p>Analisis suasana hati Anda setiap hari.</p>
+                </a>
+
+                <!-- TANTANGAN 30 HARI -->
+                <a href="tantangan.php" class="feature-card accent-orange feature-premium">
+                    <div class="card-icon"><i class="fas fa-trophy"></i></div>
+                    <h3>Tantangan 30 Hari</h3>
+                    <p>Bangun kebiasaan sehat dengan target harian.</p>
+                </a>
+
+                <!-- PROGRESS TRACKING -->
+                <a href="progress.php" class="feature-card accent-purple feature-premium">
+                    <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Progress Tracking</h3>
+                    <p>Lihat perkembangan kesehatan Anda secara visual.</p>
+                </a>
+
+                <!-- PRIORITAS SUPPORT -->
+                <a href="support.php" class="feature-card accent-red feature-premium">
+                    <div class="card-icon"><i class="fas fa-headset"></i></div>
+                    <h3>Prioritas Support</h3>
+                    <p>Bantuan cepat untuk pengguna premium.</p>
+                </a>
+
+                <!-- KONTEN EKSKLUSIF -->
+                <a href="konten.php" class="feature-card accent-black feature-premium">
+                    <div class="card-icon"><i class="fas fa-lock-open"></i></div>
+                    <h3>Konten Eksklusif</h3>
+                    <p>Akses materi kesehatan yang premium.</p>
                 </a>
 
             </section>
+
         </div>
     </main>
 
-    <script>
-        // Fungsi Logout
-        function logoutUser() {
-            if (confirm('Apakah Anda yakin ingin keluar?')) {
-                sessionStorage.clear();
-                localStorage.clear();
-                window.location.replace('../auth/login.php');
-            }
-        }
+    <?php include '../partials/footer.php'; ?>
 
-        // Mengisi Nama Pengguna
+    <script>
+        // SET NAMA USER
         document.addEventListener('DOMContentLoaded', () => {
-            // Ambil nama dari storage
-            const userName = sessionStorage.getItem('userName') || localStorage.getItem('userName');
-            
-            if (userName) {
-                // Set nama di Header
-                document.getElementById('user-name-display').textContent = userName;
-                // Set nama di Judul Selamat Datang
-                document.getElementById('welcome-title').textContent = `Halo, ${userName}!`;
+            const userName = localStorage.getItem('userName') || sessionStorage.getItem('userName');
+            document.getElementById('welcome-title').textContent = "Halo, " + userName + "!";
+        });
+
+        // SHOW / HIDE FITUR BERDASARKAN PLAN
+        document.addEventListener('DOMContentLoaded', () => {
+            const userPlan = localStorage.getItem('userPlan') || "premium";
+
+            const basicFeatures = document.querySelectorAll('.feature-basic');
+            const premiumFeatures = document.querySelectorAll('.feature-premium');
+
+            if (userPlan === "basic") {
+                premiumFeatures.forEach(e => e.style.display = "none");
             } else {
-                // Fallback jika nama tidak ada (seharusnya tidak terjadi karena guard script)
-                document.getElementById('user-name-display').textContent = 'Pengguna';
-                document.getElementById('welcome-title').textContent = 'Selamat Datang!';
+                premiumFeatures.forEach(e => e.style.display = "flex");
             }
         });
     </script>
+
 </body>
 </html>

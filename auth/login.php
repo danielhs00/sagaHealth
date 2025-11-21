@@ -290,7 +290,7 @@
                         
                         // Redirect after 1.5 seconds
                         setTimeout(() => { 
-                            window.location.href = '../user/dashboard.php'; 
+                            window.location.href = '../user/plan.php'; 
                         }, 1500);
                     } else {
                         showMessage(data.message || 'Login gagal. Silakan coba lagi.', 'error');
@@ -312,7 +312,7 @@
             if (isLoggedIn) {
                 showMessage('Anda sudah login. Mengalihkan...', 'info');
                 setTimeout(() => { 
-                    window.location.href = '../user/dashboard.php'; 
+                    window.location.href = '../user/plan.php'; 
                 }, 1000);
             }
         });

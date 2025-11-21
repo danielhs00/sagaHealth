@@ -27,23 +27,7 @@
         }
     </script>
 
-    <!-- Header Sederhana (mirip plan.php) -->
-    <header class="plan-header-nav" style="background-color: var(--bg-white);">
-        <div class="container-wrapper nav-content">
-            <a href="index.php"> <!-- Ganti ke halaman dashboard utama Anda -->
-                <img src="assets/img/logo.png" alt="SagaHealth" class="logo" onerror="this.src='https://placehold.co/120x40/014C63/ffffff?text=SagaHealth'">
-            </a>
-            <div class="user-info" id="user-display">
-                <a href="profile.php" class="user-info-link" title="Profil Saya">
-                    <i class="fas fa-user-circle"></i>
-                    <span id="user-name-display">Memuat...</span>
-                </a>
-                <button class="btn-logout" onclick="logoutUser()" title="Keluar">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
-            </div>
-        </div>
-    </header>
+    <?php include '../user/partials/header.php'; ?>
 
     <!-- Konten Utama Halaman Profil -->
     <main class="profile-container">
@@ -80,6 +64,10 @@
                     </div>
                 </div>
             </div>
+            <a href="javascript:history.back()" class="btn-back">
+    <i class="fas fa-arrow-left"></i> Kembali
+</a>
+
 
             <!-- Pesan Error (jika ada) -->
             <div id="profile-message" class="auth-message" style="display: none;"></div>

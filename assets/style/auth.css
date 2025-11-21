@@ -1475,56 +1475,94 @@ input:checked + .slider:before {
         padding: 1.5rem;
     }
 }
+/* ===========================
+   PROFILE PAGE – 3D CARD
+=========================== */
+.profile-container {
+    padding: 50px 0;
+}
 
-/* halaman profile user*/
- .profile-container {
-            padding: 30px 20px;
-            background-color: var(--bg-page);
-            min-height: calc(100vh - 60px);
-        }
-        .profile-title {
-            text-align: center;
-            margin-bottom: 30px;
-            color: var(--text-primary);
-        }
-        .profile-card {
-            background-color: var(--bg-white);
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            padding: 20px;
-            max-width: 600px;
-            margin: 0 auto 20px auto;
-            display: flex;
-            gap: 20px;
-        }
-        .profile-avatar {
-            font-size: 80px;
-            color: var(--accent-color);
-        }
-        .profile-info-details h2 {
-            margin-top: 0;
-            color: var(--text-primary);
-        }
-        .info-list p {
-            margin: 8px 0;
-            color: var(--text-secondary);
-        }
-        .status-badge {
-            padding: 4px 8px;
-            border-radius: 5px;
-            background-color: var(--accent-color);
-            color: white;
-            font-weight: bold;
-        }
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        #user-name-display {
-            margin-left: 8px;
-            color: var(--text-primary);
-        }
+/* Judul */
+.profile-title {
+    text-align: center;
+    color: var(--primary);
+    font-size: 2rem;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+/* Kartu Profil 3D */
+.profile-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-lg);
+    padding: 35px;
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    box-shadow: 0 15px 35px rgba(1, 76, 99, 0.15);
+    border: 1px solid var(--border-color);
+    transform-style: preserve-3d;
+    transition: transform .3s ease, box-shadow .3s ease;
+    cursor: pointer;
+}
+
+/* Efek hover 3D */
+.profile-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(1, 76, 99, .25);
+}
+
+/* Avatar besar glossy */
+.profile-avatar {
+    font-size: 90px;
+    color: var(--primary);
+    text-shadow: 0 8px 18px rgba(1, 76, 99, .35);
+    transform: translateZ(30px);
+}
+
+/* Text detail */
+.profile-info-details h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: var(--text-dark);
+    font-weight: bold;
+}
+
+.profile-info-details p {
+    margin: 5px 0 12px;
+    color: var(--text-medium);
+}
+
+/* List informasi */
+.info-list p {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.info-list i {
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+
+/* Badge status */
+.status-badge {
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 4px 10px;
+    border-radius: var(--radius-md);
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .profile-card {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
 
 .discount-badge {
     display: inline-block;
@@ -1611,11 +1649,92 @@ input:checked + .slider:before {
 }
 
 .included-btn:hover {
-    background: #5936c9;
+    background: var(--primary-hover);
     transform: translateY(-3px);
 }
 
+/* Tombol Kembali */
+.btn-back {
+    margin-top: 35px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--primary);
+    color: white;
+    padding: 10px 18px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 20px;
+}
 
+.btn-back:hover {
+    background: var(--primary-hover);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.btn-back i {
+    font-size: 1rem;
+}
+
+/* GRID FITUR */
+.feature-grid {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 22px;
+}
+
+/* KARTU FITUR */
+.feature-card {
+    padding: 22px;
+    border-radius: var(--radius-lg);
+    background: var(--bg-white);
+    text-decoration: none;
+    color: var(--text-dark);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.feature-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
+}
+
+/* ICON */
+.card-icon {
+    width: 60px;
+    height: 60px;
+    background: var(--primary-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    font-size: 26px;
+}
+
+/* WARNA-WARNA FEATUR */
+.accent-teal { background: #E1F8F7; }
+.accent-green { background: #DEF7EC; }
+.accent-gray { background: #F3F4F6; }
+.accent-blue { background: #E1EFFE; }
+.accent-orange { background: #FFF4E5; }
+.accent-purple { background: #F3E8FF; }
+.accent-red { background: #FDE8E8; }
+.accent-black { background: #E5E7EB; }
+
+/* Agar warna text tetap gelap */
+.feature-card h3,
+.feature-card p {
+    color: var(--text-dark);
+}
 
 
 @media (max-width: 768px) {
