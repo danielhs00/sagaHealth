@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>SagaHealth</title>
-    <link rel="icon" href="../assets/img/tittle.png" type="image/png">
-    <link rel="stylesheet" href="../assets/style/auth.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="../assets/img/tittle.png" type="image/png" />
+    <link rel="stylesheet" href="../assets/style/auth.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
     <div class="auth-container-split">
         <!-- Sisi Kiri: Gambar/Info -->
         <div class="auth-info-side login-side">
             <div class="auth-info-content">
-                <img src="../assets/img/logo.png" alt="SagaHealth Logo" class="auth-logo" onerror="this.src='https://placehold.co/150x50/014C63/ffffff?text=SagaHealth'">
+                <img src="../assets/img/logo.png" alt="SagaHealth Logo" class="auth-logo"
+                     onerror="this.src='https://placehold.co/150x50/014C63/ffffff?text=SagaHealth'">
                 <h2>Selamat Datang Kembali!</h2>
                 <p>Masuk untuk melanjutkan perjalanan kesehatan Anda bersama SagaHealth.</p>
-                
+
                 <!-- Fitur tambahan di info side -->
                 <div class="auth-features">
                     <div class="feature-item">
@@ -45,8 +46,8 @@
 
                 <!-- Alert Message -->
                 <div id="auth-message" class="auth-message" style="display: none;">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span id="message-text"></span>
+                    <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                    <span id="message-text" role="status"></span>
                 </div>
 
                 <form id="login-form" novalidate>
@@ -54,16 +55,16 @@
                     <div class="auth-input-group">
                         <label for="login-email">Email</label>
                         <div class="input-with-icon">
-                            <i class="fas fa-envelope"></i>
-                            <input 
-                                type="email" 
-                                id="login-email" 
+                            <i class="fas fa-envelope" aria-hidden="true"></i>
+                            <input
+                                type="email"
+                                id="login-email"
                                 name="email"
-                                placeholder="contoh@email.com" 
+                                placeholder="contoh@email.com"
                                 autocomplete="email"
                                 required>
                         </div>
-                        <span class="input-error" id="email-error"></span>
+                        <span class="input-error" id="login-email-error" aria-live="polite"></span>
                     </div>
 
                     <!-- Password Input -->
@@ -73,17 +74,18 @@
                             <a href="forgot-password.php" class="forgot-password">Lupa Kata Sandi?</a>
                         </div>
                         <div class="input-with-icon">
-                            <i class="fas fa-lock"></i>
-                            <input 
-                                type="password" 
-                                id="login-password" 
+                            <i class="fas fa-lock" aria-hidden="true"></i>
+                            <input
+                                type="password"
+                                id="login-password"
                                 name="password"
-                                placeholder="••••••••" 
+                                placeholder="••••••••"
                                 autocomplete="current-password"
                                 required>
-                            <i class="fas fa-eye toggle-password" onclick="togglePassword('login-password', this)" title="Tampilkan password"></i>
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('login-password', this)"
+                               title="Tampilkan password" role="button" aria-label="toggle password visibility"></i>
                         </div>
-                        <span class="input-error" id="password-error"></span>
+                        <span class="input-error" id="login-password-error" aria-live="polite"></span>
                     </div>
 
                     <!-- Remember Me -->
@@ -93,7 +95,7 @@
                     </div>
 
                     <!-- Submit Button -->
-                    <button type="submit" class="auth-button" id="login-btn">
+                    <button type="submit" class="auth-button" id="login-btn" aria-live="polite">
                         <span class="btn-text">Masuk Sekarang</span>
                         <i class="fas fa-arrow-right"></i>
                     </button>
@@ -107,226 +109,228 @@
         </div>
     </div>
 
-    <script>
-        // Toggle Password Visibility
-        function togglePassword(inputId, icon) {
-            const input = document.getElementById(inputId);
-            if (input.type === "password") {
-                input.type = "text";
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-                icon.title = "Sembunyikan password";
+<script>
+    // Toggle Password Visibility
+    function togglePassword(inputId, icon) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+            icon.title = "Sembunyikan password";
+        } else {
+            input.type = "password";
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+            icon.title = "Tampilkan password";
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginForm = document.getElementById('login-form');
+        const authMessage = document.getElementById('auth-message');
+        const messageText = document.getElementById('message-text');
+        const loginBtn = document.getElementById('login-btn');
+        const emailInput = document.getElementById('login-email');
+        const passwordInput = document.getElementById('login-password');
+        const rememberCheckbox = document.getElementById('remember-me');
+
+        // Utility: show message
+        function showMessage(message, type = 'error') {
+            const icon = authMessage.querySelector('i');
+            messageText.textContent = message;
+            authMessage.className = 'auth-message ' + type;
+
+            // Update icon based on type
+            if (type === 'success') {
+                icon.className = 'fas fa-check-circle';
+            } else if (type === 'error') {
+                icon.className = 'fas fa-exclamation-circle';
             } else {
-                input.type = "password";
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-                icon.title = "Tampilkan password";
+                icon.className = 'fas fa-info-circle';
             }
+
+            authMessage.style.display = 'flex';
+            authMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const loginForm = document.getElementById('login-form');
-            const authMessage = document.getElementById('auth-message');
-            const messageText = document.getElementById('message-text');
-            const loginBtn = document.getElementById('login-btn');
-            const emailInput = document.getElementById('login-email');
-            const passwordInput = document.getElementById('login-password');
+        // Utility: hide message
+        function hideMessage() {
+            authMessage.style.display = 'none';
+        }
 
-            // Show message function
-            function showMessage(message, type = 'error') {
-                const icon = authMessage.querySelector('i');
-                messageText.textContent = message;
-                authMessage.className = 'auth-message ' + type;
-                
-                // Update icon based on type
-                if (type === 'success') {
-                    icon.className = 'fas fa-check-circle';
-                } else if (type === 'error') {
-                    icon.className = 'fas fa-exclamation-circle';
-                } else {
-                    icon.className = 'fas fa-info-circle';
-                }
-                
-                authMessage.style.display = 'flex';
-                
-                // Scroll to message
-                authMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        // Show field error
+        function showFieldError(fieldEl, message) {
+            if (!fieldEl) return;
+            const errorElement = document.getElementById(fieldEl.id + '-error');
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+            fieldEl.classList.add('input-error-state');
+        }
+
+        // Clear field error
+        function clearFieldError(fieldEl) {
+            if (!fieldEl) return;
+            const errorElement = document.getElementById(fieldEl.id + '-error');
+            if (errorElement) {
+                errorElement.textContent = '';
+                errorElement.style.display = 'none';
+            }
+            fieldEl.classList.remove('input-error-state');
+        }
+
+        // Clear all errors
+        function clearAllErrors() {
+            clearFieldError(emailInput);
+            clearFieldError(passwordInput);
+            hideMessage();
+        }
+
+        // Email validator
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Validate form
+        function validateForm() {
+            clearAllErrors();
+            let valid = true;
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!email) {
+                showFieldError(emailInput, 'Email harus diisi');
+                valid = false;
+            } else if (!isValidEmail(email)) {
+                showFieldError(emailInput, 'Format email tidak valid');
+                valid = false;
             }
 
-            // Hide message function
-            function hideMessage() {
-                authMessage.style.display = 'none';
+            if (!password) {
+                showFieldError(passwordInput, 'Kata sandi harus diisi');
+                valid = false;
+            } else if (password.length < 6) {
+                showFieldError(passwordInput, 'Kata sandi minimal 6 karakter');
+                valid = false;
             }
 
-            // Show field error
-            function showFieldError(fieldId, message) {
-                const errorElement = document.getElementById(fieldId + '-error');
-                const inputElement = document.getElementById(fieldId);
-                if (errorElement && inputElement) {
-                    errorElement.textContent = message;
-                    errorElement.style.display = 'block';
-                    inputElement.classList.add('input-error-state');
-                }
-            }
+            return valid;
+        }
 
-            // Clear field error
-            function clearFieldError(fieldId) {
-                const errorElement = document.getElementById(fieldId + '-error');
-                const inputElement = document.getElementById(fieldId);
-                if (errorElement && inputElement) {
-                    errorElement.textContent = '';
-                    errorElement.style.display = 'none';
-                    inputElement.classList.remove('input-error-state');
-                }
-            }
+        // Real-time clearing
+        emailInput.addEventListener('input', () => {
+            if (emailInput.value.trim()) clearFieldError(emailInput);
+        });
+        passwordInput.addEventListener('input', () => {
+            if (passwordInput.value) clearFieldError(passwordInput);
+        });
 
-            // Clear all errors
-            function clearAllErrors() {
-                clearFieldError('login-email');
-                clearFieldError('login-password');
-                hideMessage();
-            }
+        // Compute redirect fallback (server can override by returning data.redirectUrl)
+        function computeDefaultRedirect() {
+            // prefer dashboard by default
+            return '../user/dashboard.php';
+        }
 
-            // Validate email format
-            function isValidEmail(email) {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return emailRegex.test(email);
-            }
+        // Submit handler
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!validateForm()) return;
 
-            // Client-side validation
-            function validateForm() {
-                clearAllErrors();
-                let isValid = true;
+            // Disable UI while processing
+            const originalBtnHtml = loginBtn.innerHTML;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span class="btn-text">Memproses...</span>';
+            loginBtn.disabled = true;
 
-                const email = emailInput.value.trim();
-                const password = passwordInput.value;
+            const payload = {
+                action: 'login',
+                email: emailInput.value.trim(),
+                password: passwordInput.value,
+                remember: !!rememberCheckbox.checked
+            };
 
-                // Validate email
-                if (!email) {
-                    showFieldError('login-email', 'Email harus diisi');
-                    isValid = false;
-                } else if (!isValidEmail(email)) {
-                    showFieldError('login-email', 'Format email tidak valid');
-                    isValid = false;
-                }
+            try {
+                const res = await fetch('../includes/auth_functions.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    credentials: 'include'
+                });
 
-                // Validate password
-                if (!password) {
-                    showFieldError('login-password', 'Kata sandi harus diisi');
-                    isValid = false;
-                } else if (password.length < 6) {
-                    showFieldError('login-password', 'Kata sandi minimal 6 karakter');
-                    isValid = false;
+                // If server returned non-2xx, try to parse message, else show generic
+                if (!res.ok) {
+                    let errMsg = 'Terjadi kesalahan server. Silakan coba lagi.';
+                    try {
+                        const errData = await res.json();
+                        if (errData && errData.message) errMsg = errData.message;
+                    } catch (_) { /* ignore parse error */ }
+                    throw new Error(errMsg);
                 }
 
-                return isValid;
-            }
+                const data = await res.json();
 
-            // Real-time validation on input
-            emailInput.addEventListener('input', () => {
-                if (emailInput.value.trim()) {
-                    clearFieldError('login-email');
-                }
-            });
+                if (data && data.status === 'success' && data.user) {
+                    // Save session info (short-lived)
+                    sessionStorage.setItem('isLoggedIn', 'true');
+                    sessionStorage.setItem('userId', String(data.user.id));
+                    sessionStorage.setItem('userName', data.user.name || '');
+                    sessionStorage.setItem('userEmail', data.user.email || '');
 
-            passwordInput.addEventListener('input', () => {
-                if (passwordInput.value) {
-                    clearFieldError('login-password');
-                }
-            });
-
-            // Form submission
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-
-                // Validate form
-                if (!validateForm()) {
-                    return;
-                }
-
-                // Disable button and show loading
-                const originalText = loginBtn.innerHTML;
-                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span class="btn-text">Memproses...</span>';
-                loginBtn.disabled = true;
-                clearAllErrors();
-
-                const email = emailInput.value.trim();
-                const password = passwordInput.value;
-                const remember = document.getElementById('remember-me').checked;
-
-                try {
-                    const res = await fetch('../includes/auth_functions.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            action: 'login', 
-                            email, 
-                            password,
-                            remember 
-                        })
-                    });
-
-                    const data = await res.json();
-
-                    // Check if response is ok
-                    if (!res.ok) {
-                        throw new Error('Server error: ' + res.status);
-                    }
-
-                    // const data = await res.json();
-
-                    if (data.status === 'success') {
-                        // Store session data
-                        sessionStorage.setItem('isLoggedIn', 'true');
-                        sessionStorage.setItem('userId', data.user.id);
-                        sessionStorage.setItem('userName', data.user.name);
-                        sessionStorage.setItem('userEmail', data.user.email);
-
-                        // const rememberMeChecked = document.getElementById('remember').checked; 
-                        
-                        // If remember me is checked, store in localStorage
-                        if (remember) {
-                            localStorage.setItem('rememberUser', 'true');
-                            localStorage.setItem('userId', data.user.id);
-                            localStorage.setItem('userId', data.user.name);
-                            localStorage.setItem('userId', data.user.email);
-                            localStorage.setItem('rememberUser', 'true');
-                        } else {
-                            localStorage.removeItem('isLoggedIn');
-                            localStorage.removeItem('userId');
-                            localStorage.removeItem('rememberUser');
-                        }
-
-                        showMessage('Login berhasil! Mengalihkan...', 'success');
-                        
-                        // Redirect after 1.5 seconds
-                        setTimeout(() => { 
-                            window.location.href = '../user/plan.php'; 
-                        }, 1500);
+                    // Remember me: store minimal non-sensitive info
+                    if (payload.remember) {
+                        localStorage.setItem('rememberUser', 'true');
+                        localStorage.setItem('userId', String(data.user.id));
+                        localStorage.setItem('userName', data.user.name || '');
+                        localStorage.setItem('userEmail', data.user.email || '');
                     } else {
-                        showMessage(data.message || 'Login gagal. Silakan coba lagi.', 'error');
-                        loginBtn.innerHTML = originalText;
-                        loginBtn.disabled = false;
+                        // clear any previous remember flags
+                        localStorage.removeItem('rememberUser');
+                        localStorage.removeItem('userId');
+                        localStorage.removeItem('userName');
+                        localStorage.removeItem('userEmail');
                     }
-                } catch (err) {
-                    console.error('Login error:', err);
-                    showMessage('Terjadi kesalahan koneksi. Silakan coba lagi.', 'error');
-                    loginBtn.innerHTML = originalText;
+
+                    showMessage('Login berhasil! Mengalihkan...', 'success');
+
+                    // Use server-provided redirect if available, otherwise fallback
+                    const redirectUrl = (data.redirectUrl && typeof data.redirectUrl === 'string')
+                        ? data.redirectUrl
+                        : computeDefaultRedirect();
+
+                    setTimeout(() => {
+                        window.location.href = redirectUrl;
+                    }, 1200);
+                } else {
+                    // Login failed: show server message if provided
+                    const msg = (data && data.message) ? data.message : 'Login gagal. Silakan coba lagi.';
+                    showMessage(msg, 'error');
+                    loginBtn.innerHTML = originalBtnHtml;
                     loginBtn.disabled = false;
                 }
-            });
-
-            // Check if user is already logged in
-            const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true' || 
-                              localStorage.getItem('rememberUser') === 'true';
-            
-            if (isLoggedIn) {
-                showMessage('Anda sudah login. Mengalihkan...', 'info');
-                setTimeout(() => { 
-                    window.location.href = '../user/plan.php'; 
-                }, 1000);
+            } catch (err) {
+                console.error('Login error:', err);
+                const friendly = err && err.message ? err.message : 'Terjadi kesalahan koneksi. Silakan coba lagi.';
+                showMessage(friendly, 'error');
+                loginBtn.innerHTML = originalBtnHtml;
+                loginBtn.disabled = false;
             }
         });
-    </script>
+
+        // Auto-redirect if already logged in (session or remember)
+        const alreadyLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true' ||
+                                localStorage.getItem('rememberUser') === 'true';
+        if (alreadyLoggedIn) {
+            showMessage('Anda sudah login. Mengalihkan...', 'info');
+            // If localStorage has userId and a plan page exists, optionally redirect there.
+            const fallbackRedirect = computeDefaultRedirect();
+            setTimeout(() => {
+                window.location.href = fallbackRedirect;
+            }, 900);
+        }
+    });
+</script>
 </body>
 </html>

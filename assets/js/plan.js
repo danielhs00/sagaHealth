@@ -1,6 +1,8 @@
-// plan.js - Plan Page JavaScript
+// plan.js — Merged, optimized version
 
-// State management
+/* --------------------------------------------------------
+   GLOBAL STATE
+--------------------------------------------------------- */
 let currentPlan = {
     name: '',
     price: '',
@@ -8,78 +10,95 @@ let currentPlan = {
     billing: 'monthly'
 };
 
-// DOM Content Loaded
+const PAYMENT_URLS = {
+    // static fallback payment links (client-side redirect)
+    basic: 'https://pay.doku.com/p-link/p/95TgIPK2v4',
+    premium: 'https://pay.doku.com/p-link/p/gwDpiBLhsH'
+};
+
+/* --------------------------------------------------------
+   INITIALIZATION
+--------------------------------------------------------- */
 document.addEventListener('DOMContentLoaded', () => {
     initializePage();
     setupEventListeners();
 });
 
-// Initialize page
+/* --------------------------------------------------------
+   PAGE INITIALIZER
+--------------------------------------------------------- */
 function initializePage() {
-    // Check authentication
     checkAuthentication();
-    
-    // Display user info
     displayUserInfo();
-    
-    // Hide page loader
-    setTimeout(() => {
-        const loader = document.getElementById('page-loader');
-        if (loader) {
-            loader.classList.add('hidden');
-        }
-    }, 500);
+    hidePageLoader();
 }
 
-// Check if user is authenticated
+/* --------------------------------------------------------
+   AUTH CHECK
+--------------------------------------------------------- */
 function checkAuthentication() {
     const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
     const rememberUser = localStorage.getItem('rememberUser') === 'true';
-    
+
     if (!isLoggedIn && !rememberUser) {
-        window.location.replace('../auth/login.php');
+        // compute best guess for login path depending on current location
+        const loginUrl = computeLoginUrl();
+        window.location.replace(loginUrl);
     }
 }
 
-// Display user information
+function computeLoginUrl() {
+    // If current file is in /auth/ folder, redirect to login.php (same folder).
+    // If not, prefer ../auth/login.php — this tries to be robust across pages.
+    try {
+        const path = window.location.pathname || '';
+        if (path.includes('/auth/')) return 'login.php';
+    } catch (e) { /* ignore */ }
+    return '../auth/login.php';
+}
+
+/* --------------------------------------------------------
+   USER DISPLAY
+--------------------------------------------------------- */
 function displayUserInfo() {
-    const userName = sessionStorage.getItem('userName') || localStorage.getItem('userName') || 'User';
+    const userName =
+        sessionStorage.getItem('userName') ||
+        localStorage.getItem('userName') ||
+        'User';
+
+    // optional: read email if available (not required for display)
     const userEmail = sessionStorage.getItem('userEmail') || localStorage.getItem('userEmail') || '';
-    
-    // Update welcome message
+
     const welcomeMessage = document.getElementById('welcome-message');
-    if (welcomeMessage) {
-        welcomeMessage.textContent = `Halo, ${userName}!`;
-    }
-    
-    // Update user display in header
     const userDisplay = document.getElementById('user-name-display');
-    if (userDisplay) {
-        userDisplay.textContent = userName;
-    }
+
+    if (welcomeMessage) welcomeMessage.textContent = `Halo, ${userName}!`;
+    if (userDisplay) userDisplay.textContent = userName;
 }
 
-// Setup event listeners
+/* --------------------------------------------------------
+   PAGE LOADER
+--------------------------------------------------------- */
+function hidePageLoader() {
+    setTimeout(() => {
+        const loader = document.getElementById('page-loader');
+        if (loader) loader.classList.add('hidden');
+    }, 500);
+}
+
+/* --------------------------------------------------------
+   EVENT LISTENERS
+--------------------------------------------------------- */
 function setupEventListeners() {
-    // Billing period toggle
     const billingToggle = document.getElementById('billing-period');
-    if (billingToggle) {
-        billingToggle.addEventListener('change', handleBillingToggle);
-    }
-    
-    // Comparison table toggle
+    if (billingToggle) billingToggle.addEventListener('change', handleBillingToggle);
+
     const comparisonBtn = document.getElementById('show-comparison');
-    if (comparisonBtn) {
-        comparisonBtn.addEventListener('click', toggleComparison);
-    }
-    
-    // Logout button
+    if (comparisonBtn) comparisonBtn.addEventListener('click', toggleComparison);
+
     const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', handleLogout);
-    }
-    
-    // Payment terms checkbox
+    if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+
     const termsCheck = document.getElementById('payment-terms-check');
     const confirmBtn = document.getElementById('confirm-payment-btn');
     if (termsCheck && confirmBtn) {
@@ -87,98 +106,147 @@ function setupEventListeners() {
             confirmBtn.disabled = !termsCheck.checked;
         });
     }
-    
-    // Close modal on outside click
+
+    // Close modal on clicking outside (if modal exists)
     const modal = document.getElementById('payment-modal');
     if (modal) {
         modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closePaymentModal();
-            }
+            if (e.target === modal) closePaymentModal();
         });
     }
+
+    // Re-check auth when page is shown from cache
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) checkAuthentication();
+    });
+
+    // Check auth when user returns to tab
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) checkAuthentication();
+    });
 }
 
-// Handle billing period toggle (monthly/yearly)
+/* --------------------------------------------------------
+   BILLING PERIOD SWITCH
+--------------------------------------------------------- */
 function handleBillingToggle(e) {
-    const isYearly = e.target.checked;
+    const isYearly = !!e.target.checked;
     currentPlan.billing = isYearly ? 'yearly' : 'monthly';
-    
-    // Update all plan prices
-    const planCards = document.querySelectorAll('.plan-card');
-    planCards.forEach(card => {
-        const amountEl = card.querySelector('.amount');
-        if (amountEl) {
-            const monthlyPrice = amountEl.dataset.monthly;
-            const yearlyPrice = amountEl.dataset.yearly;
-            
-            if (isYearly) {
-                amountEl.textContent = yearlyPrice;
-                card.querySelector('.period').textContent = '/tahun';
-            } else {
-                amountEl.textContent = monthlyPrice;
-                card.querySelector('.period').textContent = '/bulan';
-            }
+
+    document.querySelectorAll('.plan-card').forEach((card) => {
+        const amount = card.querySelector('.amount');
+        const period = card.querySelector('.period');
+
+        if (!amount) return;
+
+        const monthly = amount.dataset && amount.dataset.monthly ? amount.dataset.monthly : amount.textContent;
+        const yearly = amount.dataset && amount.dataset.yearly ? amount.dataset.yearly : amount.textContent;
+
+        amount.textContent = isYearly ? yearly : monthly;
+
+        if (period) {
+            period.textContent = isYearly ? '/tahun' : '/bulan';
         }
     });
 }
 
-// Toggle comparison table
+/* --------------------------------------------------------
+   COMPARISON TABLE
+--------------------------------------------------------- */
 function toggleComparison() {
     const table = document.getElementById('comparison-table');
     const btn = document.getElementById('show-comparison');
-    
-    if (table && btn) {
-        const isVisible = table.style.display !== 'none';
-        
-        if (isVisible) {
-            table.style.display = 'none';
-            btn.innerHTML = '<span>Lihat Perbandingan Detail</span><i class="fas fa-chevron-down"></i>';
-            btn.classList.remove('active');
-        } else {
-            table.style.display = 'block';
-            btn.innerHTML = '<span>Sembunyikan Perbandingan</span><i class="fas fa-chevron-up"></i>';
-            btn.classList.add('active');
-            
-            // Smooth scroll to table
-            setTimeout(() => {
-                table.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }, 100);
-        }
+
+    if (!table || !btn) return;
+
+    const isVisible = table.style.display !== 'none';
+
+    if (isVisible) {
+        table.style.display = 'none';
+        btn.innerHTML = `<span>Lihat Perbandingan Detail</span><i class="fas fa-chevron-down"></i>`;
+        btn.classList.remove('active');
+    } else {
+        table.style.display = 'block';
+        btn.innerHTML = `<span>Sembunyikan Perbandingan</span><i class="fas fa-chevron-up"></i>`;
+        btn.classList.add('active');
+
+        setTimeout(() => {
+            table.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 120);
     }
 }
 
-// Payment URLs
-const PAYMENT_URLS = {
-    basic: 'https://pay.doku.com/p-link/p/95TgIPK2v4',
-    premium: 'https://pay.doku.com/p-link/p/gwDpiBLhsH'
-};
-
-// Select plan and redirect to payment
-function selectPlan(planName, price, planType) {
-    // Save plan info to sessionStorage
+/* --------------------------------------------------------
+   PAYMENT: selectPlan (single, robust implementation)
+   - Tries server-generated payment link first (secure)
+   - Falls back to client-built static payment URL if server not available
+--------------------------------------------------------- */
+async function selectPlan(planName, price, planType) {
     const billing = document.getElementById('billing-period')?.checked ? 'yearly' : 'monthly';
+    currentPlan.name = planName;
+    currentPlan.type = planType;
+    currentPlan.billing = billing;
 
+    // Validate user session (good to have)
     const userId = sessionStorage.getItem('userId') || localStorage.getItem('userId');
     if (!userId) {
         alert('Sesi login tidak ditemukan. Silakan login kembali.');
-        window.location.href = '../auth/login.php';
+        window.location.href = computeLoginUrl();
         return;
     }
 
-    // Get actual price based on billing period
-    const planCard = document.querySelector(`[data-plan="${planType}"]`);
-    const amountEl = planCard?.querySelector('.amount');
-    const actualPrice = amountEl?.textContent || price;
-    
-    // Save to sessionStorage for tracking
-    sessionStorage.setItem('selectedPlan', planName);
-    sessionStorage.setItem('selectedPlanType', planType);
-    sessionStorage.setItem('selectedPrice', actualPrice);
-    sessionStorage.setItem('selectedBilling', billing);
-    
-    // Get payment URL
-        const basePaymentUrl = PAYMENT_URLS[planType];
+    // Get actual price from DOM or fallback to passed price
+    const actualPrice = getActualPriceForPlan(planType, price);
+
+    // Save selection locally for tracking
+    try {
+        sessionStorage.setItem('selectedPlan', planName);
+        sessionStorage.setItem('selectedPlanType', planType);
+        sessionStorage.setItem('selectedPrice', actualPrice);
+        sessionStorage.setItem('selectedBilling', billing);
+    } catch (e) {
+        // storage may fail in private mode — ignore but continue
+        console.warn('sessionStorage set failed', e);
+    }
+
+    // Prefer server-generated payment link if backend exists
+    const serverPaymentEndpoint = '/SagaHealth/payment/create_payment.php';
+    try {
+        const resp = await fetch(serverPaymentEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                amount: actualPrice,
+                title: planName,
+                plan: planType,
+                billing
+            }),
+            credentials: 'include' // include cookies if needed for auth
+        });
+
+        // If backend responded with non-JSON or error status, fall back
+        if (!resp.ok) throw new Error('Server payment endpoint returned non-OK status');
+
+        const result = await resp.json();
+
+        if (result && result.payment_url) {
+            const paymentUrl = result.payment_url;
+            showLoadingNotification(planName, paymentUrl);
+            setTimeout(() => {
+                window.location.href = paymentUrl;
+            }, 1500);
+            return;
+        } else {
+            // fallback to client-built flow below
+            console.warn('Server did not return payment_url, falling back to client redirect', result);
+        }
+    } catch (err) {
+        // server endpoint not available or failed; fallback to client-built URL
+        console.warn('Server payment link creation failed, falling back to client redirection.', err);
+    }
+
+    // FALLBACK: client-built redirect using PAYMENT_URLS
+    const basePaymentUrl = PAYMENT_URLS[planType];
     if (!basePaymentUrl) {
         alert('Payment URL tidak ditemukan untuk plan ini.');
         return;
@@ -189,13 +257,14 @@ function selectPlan(planName, price, planType) {
         plan: planType,
         billing,
         user_id: userId,
-        payref: 'DEV-' + Date.now()
+        payref: 'DEV-' + Date.now(),
+        amount: actualPrice
     });
 
     const redirectUrl = `${basePaymentUrl}?${params.toString()}`;
 
     showLoadingNotification(planName, redirectUrl);
-    console.log('Redirecting to payment:', {
+    console.log('Redirecting to payment (fallback):', {
         plan: planName,
         type: planType,
         price: actualPrice,
@@ -208,178 +277,169 @@ function selectPlan(planName, price, planType) {
     }, 1500);
 }
 
-// Show loading notification before redirect
+/* --------------------------------------------------------
+   Helper: read actual price from DOM safely
+--------------------------------------------------------- */
+function getActualPriceForPlan(planType, fallbackPrice = '') {
+    try {
+        const planCard = document.querySelector(`[data-plan="${planType}"]`);
+        const amountEl = planCard?.querySelector('.amount');
+        if (amountEl) return amountEl.textContent.trim();
+    } catch (e) {
+        // ignore and return fallback
+    }
+    return fallbackPrice;
+}
+
+/* --------------------------------------------------------
+   REDIRECT / LOADING NOTIFICATION (single, safe injector)
+--------------------------------------------------------- */
 function showLoadingNotification(planName, url) {
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = 'redirect-notification';
-    notification.innerHTML = `
-        <div class="notification-content">
-            <div class="spinner-large"></div>
+    // Avoid duplicate notifications
+    if (document.querySelector('.redirect-notification')) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'redirect-notification';
+
+    wrapper.innerHTML = `
+        <div class="notification-content" role="dialog" aria-modal="true" aria-label="Redirect ke pembayaran">
+            <div class="spinner-large" aria-hidden="true"></div>
             <h3>Mengarahkan ke Halaman Pembayaran</h3>
-            <p>Anda akan diarahkan ke halaman pembayaran untuk paket <strong>${planName}</strong></p>
-            <p class="notification-url">${url}</p>
-            <div class="notification-progress">
-                <div class="progress-bar"></div>
-            </div>
+            <p>Anda akan diarahkan ke halaman pembayaran untuk paket <strong>${escapeHtml(planName)}</strong></p>
+            <p class="notification-url">${escapeHtml(url)}</p>
+            <div class="notification-progress"><div class="progress-bar"></div></div>
         </div>
     `;
-    
-    document.body.appendChild(notification);
-    
-    // Animate progress bar
-    const progressBar = notification.querySelector('.progress-bar');
-    setTimeout(() => {
-        progressBar.style.width = '100%';
-    }, 100);
-    
-    // Add styles if not exist
-    if (!document.getElementById('redirect-notification-styles')) {
-        const style = document.createElement('style');
-        style.id = 'redirect-notification-styles';
-        style.textContent = `
-            .redirect-notification {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.9);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 10000;
-                animation: fadeIn 0.3s ease;
-            }
-            
-            .notification-content {
-                background: white;
-                padding: 3rem;
-                border-radius: 16px;
-                text-align: center;
-                max-width: 500px;
-                width: 90%;
-                animation: slideUp 0.3s ease;
-            }
-            
-            .notification-content h3 {
-                color: var(--primary);
-                font-size: 1.5rem;
-                margin: 1.5rem 0 1rem;
-            }
-            
-            .notification-content p {
-                color: var(--text-medium);
-                margin-bottom: 1rem;
-            }
-            
-            .notification-url {
-                font-size: 0.85rem;
-                color: var(--text-light);
-                word-break: break-all;
-                padding: 0.5rem;
-                background: var(--bg-page);
-                border-radius: 8px;
-            }
-            
-            .notification-progress {
-                width: 100%;
-                height: 4px;
-                background: var(--border-color);
-                border-radius: 2px;
-                overflow: hidden;
-                margin-top: 1.5rem;
-            }
-            
-            .progress-bar {
-                height: 100%;
-                width: 0%;
-                background: linear-gradient(90deg, var(--primary), var(--secondary));
-                transition: width 1.5s ease;
-            }
-        `;
-        document.head.appendChild(style);
-    }
+
+    document.body.appendChild(wrapper);
+
+    // animate progress bar
+    requestAnimationFrame(() => {
+        const bar = wrapper.querySelector('.progress-bar');
+        if (bar) bar.style.width = '100%';
+    });
+
+    injectRedirectStyles();
 }
 
-// Close payment modal (deprecated - keeping for compatibility)
-function closePaymentModal() {
-    // Modal tidak digunakan lagi, tapi fungsi tetap ada untuk compatibility
-    console.log('Payment modal functionality has been replaced with direct redirect');
+/* --------------------------------------------------------
+   Styles injection (id-guarded)
+--------------------------------------------------------- */
+function injectRedirectStyles() {
+    if (document.getElementById('redirect-notification-styles')) return;
+
+    const style = document.createElement('style');
+    style.id = 'redirect-notification-styles';
+    style.textContent = `
+        .redirect-notification {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 99999;
+            animation: fadeIn .3s ease;
+        }
+        .notification-content {
+            background: #fff;
+            padding: 2.5rem;
+            border-radius: 14px;
+            width: 90%; max-width: 520px;
+            text-align: center;
+            animation: slideUp .35s ease;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+        }
+        .spinner-large { 
+            width: 48px; height: 48px; margin: 0 auto; border-radius: 50%;
+            border: 5px solid rgba(0,0,0,0.08); border-top-color: var(--primary, #4f46e5);
+            animation: spin 1s linear infinite;
+        }
+        .notification-content h3 { margin: 1rem 0 0.5rem; }
+        .notification-url {
+            font-size: 0.85rem; color: #6b7280; word-break: break-all;
+            padding: 0.5rem; background: #f3f4f6; border-radius: 8px; margin-bottom: 0.5rem;
+        }
+        .notification-progress { 
+            margin-top: 1.2rem; height: 4px; background: #e5e7eb; border-radius: 2px; overflow: hidden; 
+        }
+        .progress-bar { width: 0; height: 100%; background: linear-gradient(90deg, var(--primary, #4f46e5), var(--secondary, #06b6d4)); transition: width 1.5s ease; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+        @keyframes slideUp { from { transform: translateY(8px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+    `;
+    document.head.appendChild(style);
 }
 
-// Process payment (deprecated - keeping for compatibility)
-async function processPayment() {
-    // Fungsi ini tidak digunakan lagi karena redirect langsung ke payment page
-    console.log('Direct payment redirect is now used instead of modal');
-}
-
-// Show payment success (deprecated - keeping for compatibility)
-function showPaymentSuccess() {
-    // Tidak digunakan lagi
-    console.log('Payment success is handled by external payment page');
-}
-
-// Handle logout
+/* --------------------------------------------------------
+   LOGOUT HANDLING
+--------------------------------------------------------- */
 async function handleLogout() {
-    if (!confirm('Apakah Anda yakin ingin keluar?')) {
-        return;
-    }
-    
+    if (!confirm('Apakah Anda yakin ingin keluar?')) return;
+
     try {
-        // Call logout API
-        const response = await fetch('includes/auth_functions.php', {
+        const res = await fetch('includes/auth_functions.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'logout' })
+            body: JSON.stringify({ action: 'logout' }),
+            credentials: 'include'
         });
-        
-        const data = await response.json();
-        
-        if (data.status === 'success') {
-            // Clear session storage
+
+        const data = await res.json();
+
+        if (data && data.status === 'success') {
             sessionStorage.clear();
-            
-            // Clear local storage (if remember me was used)
             localStorage.removeItem('rememberUser');
             localStorage.removeItem('userId');
             localStorage.removeItem('userName');
-            
-            // Redirect to login
-            window.location.href = 'login.php';
-        } else {
-            alert('Logout gagal. Silakan coba lagi.');
+            window.location.href = computeLoginUrl();
+            return;
         }
+
+        alert('Logout gagal. Silakan coba lagi.');
     } catch (error) {
         console.error('Logout error:', error);
-        
-        // Force logout on client side
-        sessionStorage.clear();
-        localStorage.removeItem('rememberUser');
-        localStorage.removeItem('userId');
-        localStorage.removeItem('userName');
-        
-        window.location.href = 'login.php';
+        // Force clear client-side and redirect
+        try {
+            sessionStorage.clear();
+            localStorage.removeItem('rememberUser');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userName');
+        } catch (e) { /* ignore */ }
+        window.location.href = computeLoginUrl();
     }
 }
 
-// Prevent back navigation after logout
-window.addEventListener('pageshow', (event) => {
-    if (event.persisted) {
-        // Page was loaded from cache (back/forward button)
-        checkAuthentication();
-    }
-});
+/* --------------------------------------------------------
+   DEPRECATED / COMPATIBILITY FUNCTIONS
+--------------------------------------------------------- */
+function closePaymentModal() {
+    // Deprecated: kept for backward compatibility
+    console.log('closePaymentModal called (deprecated).');
+}
 
-// Handle visibility change (tab switching)
-document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
-        // Check if still authenticated when user returns to tab
-        checkAuthentication();
-    }
-});
+async function processPayment() {
+    // Deprecated: kept for backward compatibility
+    console.log('processPayment called (deprecated).');
+}
 
-// Export functions for global access
+function showPaymentSuccess() {
+    // Deprecated: kept for backward compatibility
+    console.log('showPaymentSuccess called (deprecated).');
+}
+
+/* --------------------------------------------------------
+   UTIL: small helpers
+--------------------------------------------------------- */
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+/* --------------------------------------------------------
+   EXPORT GLOBAL ACCESS (for inline onclick handlers)
+--------------------------------------------------------- */
 window.selectPlan = selectPlan;
 window.closePaymentModal = closePaymentModal;
 window.processPayment = processPayment;
