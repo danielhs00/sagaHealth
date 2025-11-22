@@ -18,25 +18,7 @@
         </div>
     </div>
 
-    <!-- Header Navigation -->
-    <header class="plan-header-nav">
-        <div class="container-wrapper nav-content">
-            <div class="nav-left">
-                <img src="../assets/img/logo.png" alt="SagaHealth" class="logo" onerror="this.src='https://placehold.co/120x40/014C63/ffffff?text=SagaHealth'">
-            </div>
-            <div class="nav-right">
-                <div class="user-info" id="user-display">
-                <a href="../user/profile.php" class="btn-profile" title="Profil Saya">
-                  <i class="fas fa-user-circle"></i>
-                    <span id="../user/profile.php"></span>
-                </div>
-                <button class="btn-logout" id="logout-btn" title="Keluar">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Keluar</span>
-                </button>
-            </div>
-        </div>
-    </header>
+    <?php include '../user/partials/header.php'; ?>
 
     <main>
         <!-- Hero Section -->
@@ -79,206 +61,121 @@
             </div>
         </section>
 
-        <!-- Plans Section -->
-        <section class="plan-section">
-            <div class="container-wrapper">
-                
-                <!-- Toggle Annual/Monthly -->
-                <div class="billing-toggle">
-                    <span class="toggle-label">Bulanan</span>
-                    <label class="switch">
-                        <input type="checkbox" id="billing-period">
-                        <span class="slider"></span>
-                    </label>
-                    <span class="toggle-label">Tahunan <span class="save-badge">Hemat 20%</span></span>
-                </div>
+                <div class="plan-grid">
 
-                <div class="plan-grid-two">
-                    
-                    <!-- Plan Basic -->
-                    <div class="plan-card" data-plan="basic">
-                        <div class="plan-card-header">
-                            <div class="plan-icon">
-                                <i class="fas fa-heartbeat"></i>
-                            </div>
-                            <h3>Basic</h3>
-                            <p class="plan-description">Untuk memulai perjalanan kesehatan Anda</p>
-                            <div class="plan-price">
-                                <span class="currency">Rp</span>
-                                <span class="amount" data-monthly="50.000" data-yearly="480.000">50.000</span>
-                                <span class="period">/bulan</span>
-                            </div>
-                            <p class="price-note">Atau <span class="yearly-price">Rp 480.000/tahun</span></p>
-                        </div>
-                        <ul class="plan-features">
-                            <li>
-                                <i class="fas fa-check-circle"></i> 
-                                <div>
-                                    <strong>Screening Fisik</strong>
-                                    <span class="feature-desc">Evaluasi kondisi kesehatan fisik Anda secara menyeluruh</span>
-                                </div>
-                            </li>
-                            <li>
-                                <i class="fas fa-check-circle"></i> 
-                                <div>
-                                    <strong>Anjuran Kesehatan</strong>
-                                    <span class="feature-desc">Rekomendasi personal untuk meningkatkan kesehatan Anda</span>
-                                </div>
-                            </li>
-                            <li>
-                                <i class="fas fa-check-circle"></i> 
-                                <div>
-                                    <strong>Chatbot 24/7</strong>
-                                    <span class="feature-desc">Asisten kesehatan virtual siap membantu kapan saja</span>
-                                </div>
-                            </li>
-                            <li>
-                                <i class="fas fa-check-circle"></i> 
-                                <div>
-                                    <strong>Riwayat Kesehatan</strong>
-                                    <span class="feature-desc">Simpan dan akses data kesehatan Anda</span>
-                                </div>
-                            </li>
-                            <li class="disabled">
-                                <i class="fas fa-times-circle"></i> 
-                                <div>
-                                    <strong>Screening Mood</strong>
-                                    <span class="feature-desc">Tersedia di paket Premium</span>
-                                </div>
-                            </li>
-                            <li class="disabled">
-                                <i class="fas fa-times-circle"></i> 
-                                <div>
-                                    <strong>Tantangan 30 Hari</strong>
-                                    <span class="feature-desc">Tersedia di paket Premium</span>
-                                </div>
-                            </li>
-                        </ul>
-                        <button class="btn-plan" onclick="selectPlan('Basic', '50.000', 'basic')">
-                            <span>Pilih Basic</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
+    <!-- BASIC (mirip Hostinger Basic) -->
+    <div class="plan-card">
+        <div class="plan-card-header">
+            <span class="discount-badge">85% OFF</span>
+            <h3>Basic</h3>
+            <p class="plan-description">Untuk memulai perjalanan kesehatan anda</p>
+            <div class="plan-price">
+                <span class="currency">Rp</span>
+                <span class="amount">50.000</span>
+                <span class="period">/bulan</span>
+            </div>
+            <p class="price-note">Get 48 months for US$93.60</p>
+        </div>
 
-                    <!-- Plan Premium (Popular) -->
-                    <div class="plan-card premium" data-plan="premium">
-                        <div class="popular-badge">
-                            <i class="fas fa-fire"></i>
-                            <span>Paling Diminati</span>
-                        </div>
-                        <div class="plan-card-header">
-                            <div class="plan-icon premium-icon">
-                                <i class="fas fa-crown"></i>
-                            </div>
-                            <h3>Premium</h3>
-                            <p class="plan-description">Solusi lengkap untuk kesehatan fisik & mental</p>
-                            <div class="plan-price">
-                                <span class="currency">Rp</span>
-                                <span class="amount" data-monthly="100.000" data-yearly="960.000">100.000</span>
-                                <span class="period">/bulan</span>
-                            </div>
-                            <p class="price-note">Atau <span class="yearly-price">Rp 960.000/tahun</span></p>
-                        </div>
-                        <ul class="plan-features">
-                            <li>
-                                <i class="fas fa-check-circle"></i> 
-                                <div>
-                                    <strong>Semua Fitur Basic</strong>
-                                    <span class="feature-desc">Screening Fisik, Anjuran, Chatbot & Riwayat</span>
-                                </div>
-                            </li>
-                            <li class="featured">
-                                <i class="fas fa-check-circle"></i> 
-                                <div>
-                                    <strong>Screening Mood</strong>
-                                    <span class="feature-desc">Analisis kesehatan mental & emotional tracking</span>
-                                </div>
-                            </li>
-                            <li class="featured">
-                                <i class="fas fa-check-circle"></i> 
-                                <div>
-                                    <strong>Tantangan 30 Hari</strong>
-                                    <span class="feature-desc">=gram terstruktur untuk membangun kebiasaan sehat</span>
-                                </div>
-                            </li>
-                            <li>
-                                <i class="fas fa-check-circle"></i> 
-                                <div>
-                                    <strong>Progress Tracking</strong>
-                                    <span class="feature-desc">Pantau perkembangan kesehatan Anda secara detail</span>
-                                </div>
-                            </li>
-                            <li>
-                                <i class="fas fa-check-circle"></i> 
-                                <div>
-                                    <strong>Prioritas Support</strong>
-                                    <span class="feature-desc">Respon lebih cepat dari tim support kami</span>
-                                </div>
-                            </li>
-                            <li>
-                                <i class="fas fa-check-circle"></i> 
-                                <div>
-                                    <strong>Konten Eksklusif</strong>
-                                    <span class="feature-desc">Akses artikel & video kesehatan premium</span>
-                                </div>
-                            </li>
-                        </ul>
-                        <button class="btn-plan premium" onclick="selectPlan('Premium', '100.000', 'premium')">
-                            <span>Pilih Premium</span>
-                            <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
+        <ul class="plan-features">
+            <li><i class="fa fa-check"></i> Screning Fisik</li>
+            <li><i class="fa fa-check"></i> Anjuran Kesahatan</li>
+            <li><i class="fa fa-check"></i> Riwayat Kesehatan </li>
+        </ul>
 
-                </div>
+       <button class="btn-plan" onclick="selectPlan('Basic Plan', '20000', 'basic')">
+    Pilih Basic
+</button>
 
-                <!-- Feature Highlights -->
-                <div class="feature-highlights">
-                    <h2>Apa yang Anda Dapatkan</h2>
-                    <div class="highlights-grid">
-                        <div class="highlight-card">
-                            <div class="highlight-icon">
-                                <i class="fas fa-clipboard-check"></i>
-                            </div>
-                            <h3>Screening Fisik</h3>
-                            <p>Evaluasi komprehensif meliputi BMI, tekanan darah, riwayat penyakit, dan indikator kesehatan lainnya untuk memberikan gambaran lengkap kondisi fisik Anda.</p>
-                        </div>
-                        <div class="highlight-card">
-                            <div class="highlight-icon">
-                                <i class="fas fa-brain"></i>
-                            </div>
-                            <h3>Screening Mood</h3>
-                            <p>Analisis kesehatan mental melalui kuesioner tervalidasi, tracking mood harian, dan insight tentang pola emosional Anda. <span class="badge-premium">Premium</span></p>
-                        </div>
-                        <div class="highlight-card">
-                            <div class="highlight-icon">
-                                <i class="fas fa-lightbulb"></i>
-                            </div>
-                            <h3>Anjuran Kesehatan</h3>
-                            <p>Rekomendasi personal berdasarkan hasil screening, termasuk tips nutrisi, olahraga, dan gaya hidup sehat yang disesuaikan dengan kondisi Anda.</p>
-                        </div>
-                        <div class="highlight-card">
-                            <div class="highlight-icon">
-                                <i class="fas fa-robot"></i>
-                            </div>
-                            <h3>Chatbot AI</h3>
-                            <p>Asisten kesehatan virtual yang siap menjawab pertanyaan, memberikan informasi medis dasar, dan mengingatkan Anda tentang kebiasaan sehat 24/7.</p>
-                        </div>
-                        <div class="highlight-card">
-                            <div class="highlight-icon">
-                                <i class="fas fa-trophy"></i>
-                            </div>
-                            <h3>Tantangan 30 Hari</h3>
-                            <p>Program terstruktur dengan target harian untuk membangun kebiasaan sehat, dilengkapi progress tracking dan motivasi untuk mencapai tujuan kesehatan Anda. <span class="badge-premium">Premium</span></p>
-                        </div>
-                        <div class="highlight-card">
-                            <div class="highlight-icon">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <h3>Progress Tracking</h3>
-                            <p>Dashboard interaktif untuk memantau perkembangan kesehatan, visualisasi data, dan laporan berkala tentang pencapaian target kesehatan Anda.</p>
-                        </div>
-                    </div>
-                </div>
+    </div>
+
+    <!-- PREMIUM — Most Popular -->
+    <div class="plan-card">
+        <div class="plan-card-header">
+            <span class="discount-badge">85% OFF</span>
+            <h3>Premium</h3>
+            <p class="plan-description">Untuk memulai perjalanan kesehatan anda</p>
+            <div class="plan-price">
+                <span class="currency">Rp</span>
+                <span class="amount">100.000</span>
+                <span class="period">/bulan</span>
+            </div>
+            <p class="price-note">Get 48 months for US$93.60</p>
+        </div>
+
+        <ul class="plan-features">
+            <li><i class="fa fa-check"></i> Semua Fitur Basic</li>
+            <li><i class="fa fa-check"></i> Screening Mood</li>
+            <li><i class="fa fa-check"></i> Tantangan 30 Hari</li>
+            <li><i class="fa fa-check"></i> Progress Tracking</li>
+            <li><i class="fa fa-check"></i> Prioritas Support</li>
+            <li><i class="fa fa-check"></i> Konten Eksklusif</li>
+
+        </ul>
+
+        <button class="btn-plan premium" onclick="selectPlan('Premium Plan', '50000', 'premium')">
+    Pilih Premium
+</button>
+
+    </div>
+</div>
+<!-- Included in All Plans -->
+<section class="included-section">
+    <h2 class="included-title">Termasuk dalam setiap paket</h2>
+
+    <div class="included-grid">
+
+        <!-- Item 1 -->
+        <div class="included-item">
+            <div class="included-icon">
+                <i class="fas fa-comment-dots"></i>
+            </div>
+            <h3>Pembuat Situs Web</h3>
+            <p>Bangun situs web Anda dalam 3 langkah mudah dengan perangkat AI. Anda akan langsung aktif dalam hitungan menit.</p>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="included-item">
+            <div class="included-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h3>Keamanan Total</h3>
+            <p>Tenang, situs web dan pengunjung Anda dilindungi oleh perangkat lunak keamanan terkini.</p>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="included-item">
+            <div class="included-icon">
+                <i class="fas fa-tachometer-alt"></i>
+            </div>
+            <h3>Waktu Aktif 99,9%, Terjamin</h3>
+            <p>Jaminan uptime sebesar 99,9% memastikan situs Anda selalu tersedia.</p>
+        </div>
+
+        <!-- Item 4 -->
+        <div class="included-item">
+            <div class="included-icon">
+                <i class="fas fa-table"></i>
+            </div>
+            <h3>Dasbor Sederhana</h3>
+            <p>Mudah digunakan untuk pemula maupun profesional. Pantau performa situs Anda secara instan.</p>
+        </div>
+
+        <!-- Item 5 -->
+        <div class="included-item">
+            <div class="included-icon">
+                <i class="fas fa-headset"></i>
+            </div>
+            <h3>Dukungan Pelanggan 24/7</h3>
+            <p>Dapatkan bantuan ahli kapan pun Anda membutuhkannya. Respons cepat dan layanan ramah.</p>
+        </div>
+
+    </div>
+
+    <div class="included-btn-wrapper">
+        <a href="#" class="included-btn">Memulai</a>
+    </div>
+</section>
 
                 <!-- Comparison Table -->
                 <div class="comparison-section">

@@ -124,6 +124,17 @@
             }
         }
 
+        function computeDefaultRedirect() {
+            const userPlan = sessionStorage.getItem('userPlan') || localStorage.getItem('userPlan');
+            // Jika premium → redirect ke dashboard premium
+             if (userPlan === 'premium') {
+                return '../dashboard/plan.php';
+            }
+
+    // Jika tidak → dashboard biasa
+    return '../user/plan.php';
+}
+
         document.addEventListener('DOMContentLoaded', () => {
             const loginForm = document.getElementById('login-form');
             const authMessage = document.getElementById('auth-message');
@@ -300,14 +311,14 @@
                     // Login failed: show server message if provided
                     const msg = (data && data.message) ? data.message : 'Login gagal. Silakan coba lagi.';
                     showMessage(msg, 'error');
-                    loginBtn.innerHTML = originalBtnHtml;
+                    loginBtn.innerHTML = originalText;
                     loginBtn.disabled = false;
                 }
             } catch (err) {
                 console.error('Login error:', err);
                 const friendly = err && err.message ? err.message : 'Terjadi kesalahan koneksi. Silakan coba lagi.';
                 showMessage(friendly, 'error');
-                loginBtn.innerHTML = originalBtnHtml;
+                loginBtn.innerHTML = originalText;
                 loginBtn.disabled = false;
             }
         });
