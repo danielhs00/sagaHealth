@@ -1,6 +1,7 @@
   <?php include '../user/partials/header.php'; ?>
   <div class="html">
     <link rel="stylesheet" href="../assets/style/form_skrining.css">
+    <link rel="stylesheet" type="text/css" href="../assets/style/auth.css">
   </div>
   <div class="container">
     <h1>🩺 Form Skrining Kesehatan SAGAHEALTH</h1>
