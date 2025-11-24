@@ -29,7 +29,7 @@ function saveMessageToHistory($text, $role) {
 
 // Memanggil API Gemini untuk mendapatkan respon chatbot
 function chatWithGemini($message) {
-    $apiKey = 'YOUR_API_KEY';  // Ganti dengan API key yang valid
+    $apiKey = 'AIzaSyBvVLriN6P5JaWwe4B4bvXwoWfjl20CheA';  // Ganti dengan API key yang valid
     $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' . $apiKey;
 
     $postData = json_encode([
