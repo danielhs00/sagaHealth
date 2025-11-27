@@ -1742,8 +1742,6 @@ input:checked + .slider:before {
         max-width: 100%; /* mobile tetap full biar tidak kepotong */
     }
 }
-<<<<<<< HEAD
-=======
 /* --- Tambahan untuk halaman Lupa Kata Sandi dan Alert --- */
 .auth-subtitle {
     margin-bottom: 1.5rem;
@@ -1798,4 +1796,3 @@ input:checked + .slider:before {
     margin-bottom: 1rem;
     /* PENTING: Pastikan tidak ada display: none; */
 }
->>>>>>> 4b250f7 (benerin home,benerin dan integrasiin halaman login, nyiapin integrasi api payment jadi ke dana)
