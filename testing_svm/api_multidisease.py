@@ -1,14 +1,22 @@
 import joblib
 import numpy as np
 from flask import Flask, request, jsonify
+import requests
 import os 
 import sys 
 import time 
-# Modul Google telah dihapus total.
 
-# --- KONFIGURASI STATIS ---
-# Menghapus API Key dan Gemini Client
+# --- KONFIGURASI API LLM (PHi-3/Ollama) ---
+# PERHATIAN: Ganti URL ini jika Anda menggunakan endpoint selain Ollama standar 
+# (Misalnya Azure/HuggingFace Endpoint. Jika menggunakan Azure, Anda mungkin perlu API Key).
+PHI3_API_URL = "http://localhost:11434/api/generate" 
+PHI3_MODEL_NAME = "sagabot-phi3" # Menggunakan model kustom yang baru Anda buat (sagabot-phi3)
+API_HEADERS = {'Content-Type': 'application/json'}
+# Jika API Key dibutuhkan oleh endpoint Anda, masukkan di headers atau payload
+# PHI3_API_KEY = "YOUR_PHI3_SECRET_KEY" 
 
+
+# --- KONFIGURASI SVM STATIS ---
 # Muat Model Bundle dan Scaler 
 try:
     # Asumsi file model berada di direktori yang sama
@@ -23,7 +31,6 @@ except FileNotFoundError:
 
 # FUNGSI INTERPRETASI RISIKO
 def interpretasi_risiko(probabilitas):
-    # Ambang batas lebih sensitif (Sama seperti sebelumnya)
     if probabilitas >= 0.55:
         return "TINGGI", "merah"
     elif probabilitas >= 0.15:
@@ -43,7 +50,7 @@ DISEASE_MAP_REVERSE = {
 }
 
 # ==========================================
-# ROUTE 1: PREDIKSI RISIKO SVM (TETAP SAMA)
+# ROUTE 1: PREDIKSI RISIKO SVM
 # ==========================================
 @app.route('/predict_multirisk', methods=['POST'])
 def predict_multirisk():
@@ -66,7 +73,7 @@ def predict_multirisk():
     results = {}
     for disease_key in DISEASES:
         model = MODELS[disease_key]
-        prob_risiko_tinggi = model.predict_proba(input_data)[0, 1] # Menggunakan input_data karena scaling dilakukan di Python
+        prob_risiko_tinggi = model.predict_proba(input_scaled)[0, 1] 
         kategori, warna = interpretasi_risiko(prob_risiko_tinggi)
         
         results[disease_key] = {
@@ -79,109 +86,101 @@ def predict_multirisk():
 
 
 # ==========================================
-# GENERATOR TEKS KUSTOM (PENGGANTI AI)
+# FUNGSI PROMPT GENERATOR UNTUK LLM
 # ==========================================
-def generate_custom_recommendation(user_input, risk_results):
-    
-    imt_val = user_input.get('imt', 0)
-    sistolik = user_input.get('tekanan_sistolik', 120)
-    diastolik = user_input.get('tekanan_diastolik', 80)
-    begadang = user_input.get('kebiasaan_begadang', 0)
-    riwayat_pribadi = user_input.get('riwayat_penyakit_pribadi', 0)
-    
-    high_risk_list = []
-    tinggi_count = 0
-    sedang_count = 0
-    
+def format_prompt(user_input, risk_results):
+    # Mengumpulkan semua data yang akan dimasukkan ke LLM
+    input_str = "\n[DATA INPUT MENTAH USER]\n"
+    input_str += f"- IMT (BMI): {user_input.get('imt'):.2f}\n"
+    input_str += f"- Tekanan Sistolik/Diastolik: {user_input.get('tekanan_sistolik')}/{user_input.get('tekanan_diastolik')}\n"
+    input_str += f"- Riwayat Penyakit Pribadi: {user_input.get('riwayat_penyakit_pribadi')} kasus\n"
+    input_str += f"- Kebiasaan Begadang: {'Ya' if user_input.get('kebiasaan_begadang') == 1 else 'Tidak'}\n"
+
+    risk_str = "\n[HASIL ANALISIS RISIKO SVM]\n"
     for key, result in risk_results.items():
         disease_name = DISEASE_MAP_REVERSE.get(key, key)
-        if result['kategori'] == 'TINGGI':
-            tinggi_count += 1
-            high_risk_list.append((disease_name, result['probabilitas'], result['warna']))
-        elif result['kategori'] == 'SEDANG':
-            sedang_count += 1
-            high_risk_list.append((disease_name, result['probabilitas'], result['warna']))
-
-    # --- BAGIAN 1: RINGKASAN STATUS & PERHATIAN UTAMA ---
-    if tinggi_count > 0:
-        summary = "🚨 Status: Risiko Klinis TINGGI. Anda memiliki {} risiko tinggi terdeteksi. Tindakan medis segera diperlukan.".format(tinggi_count)
-    elif sedang_count > 0:
-        summary = "⚠️ Status: Risiko Menengah/SEDANG. Anda memiliki {} risiko yang perlu diwaspadai. Perubahan gaya hidup mendesak.".format(sedang_count)
-    else:
-        summary = "✅ Status: RENDAH. Kesehatan Anda terpelihara dengan baik. Pertahankan!"
-
-    # --- BAGIAN 2: REKOMENDASI PRIORITAS (HOLISTIK) ---
-    prioritas = ""
-    if tinggi_count > 0:
-        prioritas = (
-            "📌 KONSULTASI DOKTER SPESIALIS: Segera kunjungi dokter untuk validasi. \n"
-            "📌 KONTROL VITAL: Fokus pada penurunan tekanan darah dan IMT Anda. \n"
-            "📌 HINDARI RESIKO JANTUNG: Batasi garam, gula, dan lemak jenuh secara agresif."
-        )
-    elif sedang_count > 0:
-        prioritas = (
-            "📌 MONITORING BERKALA: Pantau tekanan darah (Saat ini: {}/{}) dan IMT (Saat ini: {:.2f}) mingguan. \n".format(sistolik, diastolik, imt_val) +
-            "📌 PERBAIKI TIDUR: Kurangi begadang ({}) untuk menyeimbangkan hormon. \n".format("Pemicu utama" if begadang == 1 else "Risiko kecil") +
-            "📌 FOKUS DIET SEIMBANG: Batasi garam dan gula untuk mencegah eskalasi risiko DM dan Hipertensi."
-        )
-    else:
-        prioritas = (
-            "📌 JAGA KONSISTENSI: Pertahankan pola makan sehat dan aktivitas fisik teratur. \n"
-            "📌 SCREENING TAHUNAN: Jadwalkan Medical Check-up lengkap sekali setahun. \n"
-            "📌 AKTIVITAS FISIK: Coba variasi olahraga baru."
-        )
-
-    # --- BAGIAN 3: LANGKAH SPESIFIK PER PENYAKIT ---
-    spesifik = ""
-    if len(high_risk_list) > 0:
-        spesifik = "--- Langkah Spesifik per Risiko ---\n"
-        for name, prob, warna in high_risk_list:
-            saran = ""
-            if name == 'Hipertensi':
-                saran = "Ukur TD 2x sehari. Mulai diet rendah garam (<1 sdt/hari)."
-            elif name == 'Diabetes Melitus (DM)':
-                saran = "Kurangi asupan karbohidrat sederhana dan gula. Lakukan Gula Darah Puasa (GDP)."
-            elif name == 'Penyakit Jantung':
-                saran = "Jaga berat badan dan kontrol stress. Cek profil lipid (kolesterol)."
-            elif name == 'Stroke':
-                saran = "Waspadai gejala FAST. Jaga tekanan darah agar tetap normal."
-            elif name == 'Asma/PPOK':
-                saran = "Hindari pemicu seperti asap rokok atau debu. Konsultasi untuk inhaler jika keluhan berulang."
-            elif name == 'Kanker':
-                saran = "Tingkatkan serat. Rutin skrining mandiri."
-            
-            spesifik += "➤ {}: {} (Probabilitas: {:.1f}%)\n".format(name, saran, prob)
-    else:
-        spesifik = "Tidak ada risiko di kategori Sedang atau Tinggi. Fokus pada pencegahan umum."
-
-
-    return "{}\n\n{}\n\n{}".format(summary, prioritas, spesifik)
+        risk_str += f"- {disease_name}: Kategori {result['kategori']} (Probabilitas: {result['probabilitas']}%) \n"
+        
+    prompt = (
+        "PERINGATAN SISTEM: WAJIB gunakan Bahasa Indonesia baku yang formal dan mudah dipahami. Dilarang menggunakan Bahasa Melayu, slang, atau istilah yang tidak baku.\n\n"
+        "Anda adalah SagaBot, seorang asisten kesehatan AI dari SagaHealth. "
+        "Tugas Anda adalah menganalisis data input dan hasil risiko penyakit yang diberikan. "
+        "Berikan rekomendasi kesehatan yang sangat personal, holistik (menyeluruh), dan aman untuk semua kondisi. "
+        "Output harus berupa teks profesional, mudah dipahami, dalam bahasa Indonesia baku, dan dibagi menjadi 3 bagian:\n\n"
+        "1. Ringkasan Status & Perhatian Utama: Tunjukkan risiko tertinggi yang paling perlu diwaspadai, berdasarkan analisis IMT dan Tekanan Darah.\n"
+        "2. Rekomendasi Prioritas (Aman & Holistik): Berikan 3-5 poin saran gaya hidup terintegrasi yang aman untuk semua kondisi berisiko. Gunakan kata kerja aktif (misalnya, Lakukan, Kurangi, Hindari).\n"
+        "3. Langkah Spesifik per Penyakit: Berikan 1 saran spesifik untuk setiap penyakit yang berkategori TINGGI atau SEDANG. Jika semua RENDAH, sampaikan pesan pencegahan.\n\n"
+        "Harap tampilkan output tanpa markdown, dan hindari menyimpulkan TINGGI atau SEDANG secara kolektif (sajikan per poin risiko.\n\n"
+        f"{input_str}\n{risk_str}\n\n"
+        "OUTPUT ANDA:\n"
+    )
+    return prompt
 
 
 # ==========================================
-# ROUTE 2: GENERATE REKOMENDASI CUSTOM
+# ROUTE 2: GENERATE REKOMENDASI DARI PHI-3 (DENGAN RETRY)
 # ==========================================
 @app.route('/generate_recommendation', methods=['POST'])
 def generate_recommendation():
     data = request.get_json(force=True)
-    
     user_input = data['user_input']
     risk_results = data['risk_results']
     
-    try:
-        # Panggil generator teks kustom
-        summary_text = generate_custom_recommendation(user_input, risk_results)
+    prompt = format_prompt(user_input, risk_results)
+    MAX_RETRIES = 3
+    
+    for attempt in range(MAX_RETRIES):
+        try:
+            # Payload untuk API Phi-3 (Ollama / Standar JSON)
+            payload = {
+                "model": PHI3_MODEL_NAME,
+                "prompt": prompt,
+                "stream": False,
+                "options": {
+                    "temperature": 0.5
+                }
+            }
+            
+            # Panggilan API menggunakan requests
+            response = requests.post(PHI3_API_URL, json=payload, headers=API_HEADERS, timeout=60)
+            response.raise_for_status() # Raise HTTPError for bad responses (4xx or 5xx)
+            
+            # Asumsi Ollama/Endpoint: Hasil dikembalikan sebagai JSON
+            result_json = response.json()
+            
+            # Struktur respons Ollama yang berhasil
+            if 'response' in result_json:
+                summary_text = result_json['response']
+            elif 'content' in result_json: # Struktur API LLM lain (misal Azure)
+                summary_text = result_json['content']
+            else:
+                summary_text = f"Error: Struktur respons LLM tidak dikenali. Cek logs API. (Keys: {list(result_json.keys())})"
+                
+            return jsonify({"status": "success", "recommendation": summary_text})
+            
+        except requests.exceptions.RequestException as e:
+            error_msg = f"Koneksi/Permintaan ke Phi-3 Gagal: {e}"
+            
+            if attempt < MAX_RETRIES - 1:
+                print(f"⚠️ Percobaan {attempt + 1} gagal ({error_msg}). Mencoba lagi dalam 5 detik...")
+                time.sleep(5)
+                continue
+            else:
+                print(f"❌ Semua percobaan gagal. Melewati LLM.")
+                # Fallback rekomendasi jika LLM tidak dapat dijangkau
+                summary_text = (
+                    "⚠️ Layanan LLM (Phi-3) tidak tersedia. Sebagai rekomendasi darurat, "
+                    "silakan ikuti saran umum berdasarkan risiko tertinggi yang terdeteksi:\n\n"
+                    "1. Konsultasi Klinis: Segera kunjungi dokter untuk memvalidasi semua risiko TINGGI yang terdeteksi oleh model SVM.\n"
+                    "2. Gaya Hidup: Prioritaskan diet seimbang, kurangi garam/gula, dan hindari begadang."
+                )
+                return jsonify({"status": "success", "recommendation": summary_text})
         
-        # Kembalikan hasil
-        return jsonify({"status": "success", "recommendation": summary_text})
-        
-    except Exception as e:
-        # Tangani error jika terjadi masalah dalam logika kustom
-        print(f"❌ Error saat Generate Rekomendasi Kustom: {e}")
-        summary_text = f"Error saat membuat rekomendasi kustom: {e}"
-        return jsonify({"status": "success", "recommendation": summary_text})
+        except Exception as e:
+            print(f"❌ Error Tak Terduga saat Pemrosesan: {e}")
+            return jsonify({"status": "success", "recommendation": f"Error Pemrosesan Data: {e}"})
 
 
 if __name__ == '__main__':
-    print("🚀 Microservice SagaHealth (API) sedang berjalan di Port 5001...")
+    print(f"🚀 Microservice SagaHealth (API) sedang berjalan di Port 5001. Menghubungi LLM di {PHI3_API_URL}...")
     app.run(host='0.0.0.0', port=5001, debug=False, use_reloader=False)

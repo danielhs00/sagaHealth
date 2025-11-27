@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SagaHealth</title>
+    <title>Masuk | SagaHealth</title>
     <link rel="icon" href="../assets/img/tittle.png" type="image/png">
     <link rel="stylesheet" href="../assets/style/auth.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="../assets/js/app.js"></script> 
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <div class="auth-container-split">
-        <!-- Sisi Kiri: Gambar/Info -->
         <div class="auth-info-side login-side">
             <div class="auth-info-content">
                 <img src="../assets/img/logo.png" alt="SagaHealth Logo" class="auth-logo" onerror="this.src='https://placehold.co/150x50/014C63/ffffff?text=SagaHealth'">
                 <h2>Selamat Datang Kembali!</h2>
                 <p>Masuk untuk melanjutkan perjalanan kesehatan Anda bersama SagaHealth.</p>
                 
-                <!-- Fitur tambahan di info side -->
                 <div class="auth-features">
                     <div class="feature-item">
                         <i class="fas fa-shield-alt"></i>
@@ -35,7 +36,6 @@
             </div>
         </div>
 
-        <!-- Sisi Kanan: Form Login -->
         <div class="auth-form-side">
             <div class="auth-form-card">
                 <div class="auth-header">
@@ -43,14 +43,12 @@
                     <p>Belum punya akun? <a href="register.php">Daftar di sini</a></p>
                 </div>
 
-                <!-- Alert Message -->
                 <div id="auth-message" class="auth-message" style="display: none;">
                     <i class="fas fa-exclamation-circle"></i>
                     <span id="message-text"></span>
                 </div>
 
                 <form id="login-form" novalidate>
-                    <!-- Email Input -->
                     <div class="auth-input-group">
                         <label for="login-email">Email</label>
                         <div class="input-with-icon">
@@ -66,11 +64,10 @@
                         <span class="input-error" id="email-error"></span>
                     </div>
 
-                    <!-- Password Input -->
                     <div class="auth-input-group">
                         <div class="label-row">
                             <label for="login-password">Kata Sandi</label>
-                            <a href="forgot-password.php" class="forgot-password">Lupa Kata Sandi?</a>
+                            <a href="lupa_sandi.php" class="forgot-password">Lupa Kata Sandi?</a>
                         </div>
                         <div class="input-with-icon">
                             <i class="fas fa-lock"></i>
@@ -81,49 +78,30 @@
                                 placeholder="••••••••" 
                                 autocomplete="current-password"
                                 required>
-                            <i class="fas fa-eye toggle-password" onclick="togglePassword('login-password', this)" title="Tampilkan password"></i>
+                            <button type="button" class="password-toggle-btn">
+                                <i class="fas fa-eye"></i> </button>
                         </div>
                         <span class="input-error" id="password-error"></span>
                     </div>
 
-                    <!-- Remember Me -->
                     <div class="auth-checkbox">
                         <input type="checkbox" id="remember-me" name="remember">
                         <label for="remember-me">Ingat saya</label>
                     </div>
 
-                    <!-- Submit Button -->
                     <button type="submit" class="auth-button" id="login-btn">
                         <span class="btn-text">Masuk Sekarang</span>
                         <i class="fas fa-arrow-right"></i>
                     </button>
 
-                    <!-- Back to Home -->
                     <div class="auth-footer">
                         <p>Kembali <a href="../dashboard/index.php">ke Beranda</a></p>
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
 
-    <script>
-        // Toggle Password Visibility
-        function togglePassword(inputId, icon) {
-            const input = document.getElementById(inputId);
-            if (input.type === "password") {
-                input.type = "text";
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-                icon.title = "Sembunyikan password";
-            } else {
-                input.type = "password";
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-                icon.title = "Tampilkan password";
-            }
-        }
+                <div class="divider-or" style="text-align:center; margin: 1.5rem 0; color:#aaa;">ATAU</div>
 
+<<<<<<< HEAD
         function computeDefaultRedirect() {
             const userPlan = sessionStorage.getItem('userPlan') || localStorage.getItem('userPlan');
             // Jika premium → redirect ke dashboard premium
@@ -142,28 +120,29 @@
             const loginBtn = document.getElementById('login-btn');
             const emailInput = document.getElementById('login-email');
             const passwordInput = document.getElementById('login-password');
+=======
+                <div id="g_id_onload"
+                    data-client_id="542615675120-ghv1c22amb2v5mnq9uesqsp122jq2nrc.apps.googleusercontent.com" 
+                    data-context="signin"
+                    data-ux_mode="popup"
+                    data-callback="handleGoogleSignIn" data-auto_prompt="false">
+                </div>
+>>>>>>> 4b250f7 (benerin home,benerin dan integrasiin halaman login, nyiapin integrasi api payment jadi ke dana)
 
-            // Show message function
-            function showMessage(message, type = 'error') {
-                const icon = authMessage.querySelector('i');
-                messageText.textContent = message;
-                authMessage.className = 'auth-message ' + type;
-                
-                // Update icon based on type
-                if (type === 'success') {
-                    icon.className = 'fas fa-check-circle';
-                } else if (type === 'error') {
-                    icon.className = 'fas fa-exclamation-circle';
-                } else {
-                    icon.className = 'fas fa-info-circle';
-                }
-                
-                authMessage.style.display = 'flex';
-                
-                // Scroll to message
-                authMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
+                <div class="g_id_signin"
+                    data-type="standard"
+                    data-shape="rectangular"
+                    data-theme="outline"
+                    data-text="signin_with"
+                    data-size="large"
+                    data-logo_alignment="left"
+                    style="width: 100%;"> 
+                </div>
+            </div> </div> </div> <script>
+        // HANYA simpan fungsi-fungsi yang TIDAK ada di app.js di sini. 
+        // Contoh: fungsi-fungsi DOMContentLoaded dan helpers login biasa Anda.
 
+<<<<<<< HEAD
             // Hide message function
             function hideMessage() {
                 authMessage.style.display = 'none';
@@ -336,5 +315,15 @@
         }
     });
 </script>
+=======
+        // ... semua fungsi Anda yang lain (togglePassword, computeDefaultRedirect, dll) ...
+        
+        // Catatan: Jika Anda memindahkan logic login ini ke app.js, 
+        // pastikan file app.js di <head> adalah satu-satunya sumber JavaScript.
+        
+        // Untuk saat ini, saya akan menyarankan Anda untuk memindahkan semua logika login ini ke app.js 
+        // agar hanya ada satu sumber kebenaran.
+    </script>
+>>>>>>> 4b250f7 (benerin home,benerin dan integrasiin halaman login, nyiapin integrasi api payment jadi ke dana)
 </body>
 </html>

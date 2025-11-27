@@ -116,6 +116,65 @@
     <br>
 </section>
 
+<?php
+// =========================================================
+// SECTION ARTIKEL TERBARU DARI RSS FEED
+// =========================================================
+$feed_url = "https://septiawanhadi.blogspot.com/feeds/posts/default";
+$max_articles = 6;
+$article_count = 0;
+
+// Mengambil dan mem-parse feed menggunakan SimpleXML (native PHP)
+// Simulasikan logika parsing yang sama dengan yang Anda inginkan dari Python
+$feed = @simplexml_load_file($feed_url);
+
+if ($feed && $feed->entry) {
+    echo '<section class="article-section">';
+    echo '<div class="container-wrapper">';
+    echo '<h2>Artikel Terbaru SagaHealth</h2>';
+    echo '<div class="article-grid">';
+
+    foreach ($feed->entry as $entry) {
+        if ($article_count >= $max_articles) {
+            break;
+        }
+
+        // 1. Mengambil Judul dan Link
+        $title = (string)$entry->title;
+        $link = '';
+        foreach ($entry->link as $link_tag) {
+            // Link utama selalu memiliki rel="alternate"
+            if ($link_tag->attributes()->rel == 'alternate') {
+                $link = (string)$link_tag->attributes()->href;
+                break;
+            }
+        }
+        
+        // 2. Mengambil Summary dan Membersihkan HTML (simulasi BeautifulSoup)
+        $summary = (string)$entry->summary;
+        // Hapus tag HTML dan potong teksnya
+        $preview = strip_tags($summary);
+        $preview = substr($preview, 0, 250) . '...'; // Ambil 150 karakter pertama
+
+        // Menampilkan kartu artikel
+        echo '<a href="' . htmlspecialchars($link) . '" class="article-card">';
+        echo '<h3>' . htmlspecialchars($title) . '</h3>';
+        echo '<p>' . htmlspecialchars($preview) . '</p>';
+        echo '<span>Baca Selengkapnya <i class="fas fa-arrow-right"></i></span>';
+        echo '</a>';
+
+        $article_count++;
+    }
+
+    echo '</div>'; // .article-grid
+    echo '</div>'; // .container-wrapper
+    echo '</section>'; // .article-section
+} else {
+    // Pesan jika feed gagal dimuat
+    echo '<section class="article-section"><div class="container-wrapper"><p>Maaf, gagal memuat artikel terbaru dari Blogger.</p></div></section>';
+}
+?>
+
     
 <section class="promo-section">
     <div class="container-wrapper">

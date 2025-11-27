@@ -1742,3 +1742,60 @@ input:checked + .slider:before {
         max-width: 100%; /* mobile tetap full biar tidak kepotong */
     }
 }
+<<<<<<< HEAD
+=======
+/* --- Tambahan untuk halaman Lupa Kata Sandi dan Alert --- */
+.auth-subtitle {
+    margin-bottom: 1.5rem;
+    color: #6c757d;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+/* Base style untuk alert */
+.alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Style untuk pesan sukses */
+.alert-success {
+    color: #0f5132;
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+}
+
+/* Style untuk pesan error/gagal */
+.alert-error {
+    color: #842029;
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+}
+
+/* Style untuk pesan info */
+.alert-info {
+    color: #055160;
+    background-color: #cff4fc;
+    border-color: #b6effb;
+}
+/* --- Tambahan untuk Login Google --- */
+.divider-or {
+    margin: 1.5rem 0;
+    text-align: center;
+    position: relative;
+    font-size: 0.8rem;
+    color: #999;
+}
+
+/* Memastikan div Google Sign-In memiliki lebar yang tepat dan tidak tersembunyi */
+.g_id_signin {
+    width: 100% !important; 
+    display: flex; 
+    justify-content: center; /* Tombol berada di tengah */
+    margin-bottom: 1rem;
+    /* PENTING: Pastikan tidak ada display: none; */
+}
+>>>>>>> 4b250f7 (benerin home,benerin dan integrasiin halaman login, nyiapin integrasi api payment jadi ke dana)

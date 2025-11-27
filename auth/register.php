@@ -80,6 +80,10 @@
                         <label for="reg-password">Kata Sandi</label>
                         <div class="input-with-icon">
                             <i class="fas fa-lock" aria-hidden="true"></i>
+<<<<<<< HEAD
+=======
+                            <br>
+>>>>>>> 4b250f7 (benerin home,benerin dan integrasiin halaman login, nyiapin integrasi api payment jadi ke dana)
                             <input 
                                 type="password" 
                                 id="reg-password" 
@@ -88,7 +92,11 @@
                                 autocomplete="new-password"
                                 required 
                                 minlength="8">
+<<<<<<< HEAD
                             <i class="fas fa-eye toggle-password" onclick="togglePassword('reg-password', this)" title="Tampilkan password" role="button" aria-label="toggle password visibility"></i>
+=======
+                                <button type="button" class="password-toggle-btn">
+>>>>>>> 4b250f7 (benerin home,benerin dan integrasiin halaman login, nyiapin integrasi api payment jadi ke dana)
                         </div>
                         <span class="input-error" id="reg-password-error" aria-live="polite"></span>
 
@@ -106,6 +114,10 @@
                         <label for="reg-password-confirm">Konfirmasi Kata Sandi</label>
                         <div class="input-with-icon">
                             <i class="fas fa-lock" aria-hidden="true"></i>
+<<<<<<< HEAD
+=======
+                            <br>
+>>>>>>> 4b250f7 (benerin home,benerin dan integrasiin halaman login, nyiapin integrasi api payment jadi ke dana)
                             <input 
                                 type="password" 
                                 id="reg-password-confirm" 
@@ -113,8 +125,13 @@
                                 placeholder="Ketik ulang kata sandi" 
                                 autocomplete="new-password"
                                 required>
+<<<<<<< HEAD
                             <i class="fas fa-eye toggle-password" onclick="togglePassword('reg-password-confirm', this)" title="Tampilkan password" role="button" aria-label="toggle password visibility"></i>
                         </div>
+=======
+                                <button type="button" class="password-toggle-btn">
+                            </div>
+>>>>>>> 4b250f7 (benerin home,benerin dan integrasiin halaman login, nyiapin integrasi api payment jadi ke dana)
                         <span class="input-error" id="reg-password-confirm-error" aria-live="polite"></span>
                     </div>
 

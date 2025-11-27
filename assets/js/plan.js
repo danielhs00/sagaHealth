@@ -12,8 +12,13 @@ let currentPlan = {
 
 const PAYMENT_URLS = {
     // static fallback payment links (client-side redirect)
+<<<<<<< HEAD
     basic: 'https://pay.doku.com/p-link/p/95TgIPK2v4',
     premium: 'https://pay.doku.com/p-link/p/gwDpiBLhsH'
+=======
+    basic: '',
+    premium: ''
+>>>>>>> 4b250f7 (benerin home,benerin dan integrasiin halaman login, nyiapin integrasi api payment jadi ke dana)
 };
 
 /* --------------------------------------------------------
@@ -406,7 +411,61 @@ async function handleLogout() {
         window.location.href = computeLoginUrl();
     }
 }
+// assets/js/plan.js - Handler untuk inisiasi pembayaran DANA
+document.addEventListener('DOMContentLoaded', function() {
+    // Target semua tombol dengan class 'select-plan-btn'
+    document.querySelectorAll('.select-plan-btn').forEach(button => {
+        button.addEventListener('click', async function(e) {
+            e.preventDefault();
 
+<<<<<<< HEAD
+=======
+            // Ambil data dari data attribute tombol
+            const planName = this.dataset.planName || 'Plan Default';
+            const price = this.dataset.price || '0';
+            const planType = this.dataset.planType || 'monthly';
+            const paymentMethod = this.dataset.paymentMethod || 'dana'; // Harusnya 'dana'
+
+            if (paymentMethod !== 'dana') return;
+            
+            this.disabled = true;
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+
+            try {
+                const response = await fetch('../payment/create_payment.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        plan_name: planName,
+                        price: price,
+                        plan_type: planType
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success' && data.redirect_url) {
+                    // Berhasil, arahkan pengguna ke halaman pembayaran DANA
+                    window.location.href = data.redirect_url;
+                } else {
+                    alert('Pembayaran gagal diinisiasi: ' + (data.message || 'Error tidak diketahui.'));
+                    console.error('Payment Initiation Error:', data);
+                }
+
+            } catch (error) {
+                alert('Terjadi kesalahan koneksi saat memulai pembayaran.');
+                console.error('Fetch Error:', error);
+            } finally {
+                this.disabled = false;
+                this.innerHTML = originalText;
+            }
+        });
+    });
+});
+>>>>>>> 4b250f7 (benerin home,benerin dan integrasiin halaman login, nyiapin integrasi api payment jadi ke dana)
 /* --------------------------------------------------------
    DEPRECATED / COMPATIBILITY FUNCTIONS
 --------------------------------------------------------- */

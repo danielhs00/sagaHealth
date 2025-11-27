@@ -1,3 +1,48 @@
+// =========================================================
+// 1. FUNGSI GLOBAL handleGoogleSignIn UNTUK GIS (FIXED REDIRECT & SESSION STORAGE)
+// =========================================================
+function handleGoogleSignIn(response) {
+    if (response.credential) {
+        const idToken = response.credential;
+
+        // Kirim ID Token ke endpoint PHP (auth_functions.php) untuk verifikasi server-side
+        fetch('../includes/auth_functions.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: 'google_login', 
+                id_token: idToken
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                
+                // *** PERBAIKAN PENTING: UPDATE CLIENT-SIDE SESSION ***
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('userId', data.user.id);
+                sessionStorage.setItem('userName', data.user.name);
+                sessionStorage.setItem('userEmail', data.user.email);
+                
+                // Tambahkan flag agar redirect langsung bekerja tanpa alert
+                window.location.href = '../user/plan.php'; 
+                
+            } else {
+                // Tampilkan alert hanya jika ada error
+                console.error('Login Google Error:', data.message);
+                alert('Gagal masuk dengan Google: ' + data.message); 
+            }
+        })
+        .catch(error => {
+            console.error('Error Koneksi:', error);
+            alert('Terjadi kesalahan koneksi saat login Google.');
+        });
+    }
+}
+
+
 // app.js — Mood in 30 Days (vanilla JS) + Emoji fix + Supabase sync
 
 // ===== Local state (browser) =====
@@ -98,7 +143,7 @@ const notifStatus = document.getElementById("notifStatus");
 const themeToggle = document.getElementById("themeToggle");
 const btnLogin = document.getElementById("btnLogin");
 
-// ===== Theme init =====
+// ===== Theme init (Global scope) =====
 document.documentElement.classList.toggle("dark", state.dark);
 themeToggle.textContent = state.dark ? "☾ Gelap" : "☀︎ Terang";
 themeToggle.addEventListener("click", async () => {
@@ -108,7 +153,7 @@ themeToggle.addEventListener("click", async () => {
   await cloudSaveSettings(); // sync bila sudah login
 });
 
-// ===== Tabs =====
+// ===== Tabs (Global scope) =====
 document.querySelectorAll(".tabs .tab").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".tabs .tab").forEach(b => b.classList.remove("active"));
@@ -223,7 +268,7 @@ async function cloudLoad() {
   save(state); render();
 }
 
-// ===== Rendering =====
+// ===== Rendering (Global scope) =====
 function renderToday() {
   const idx = dayIndexFrom(state.startedAt, todayISO());
   const todayDay = state.program[idx];
@@ -243,7 +288,6 @@ function renderToday() {
       </div>
 
       <div class="card-body">
-        <!-- Bar progres di bagian atas kartu -->
         <div class="kpi">
           <span class="muted small">Progres 30 Hari</span>
           <span class="muted small">Mulai ${new Date(state.startedAt).toLocaleDateString()}</span>
@@ -253,9 +297,7 @@ function renderToday() {
 
         <div class="divider"></div>
 
-        <!-- Konten 2 kolom di dalam satu kartu -->
         <div class="grid-2">
-          <!-- Kiri: tantangan + mood + catatan -->
           <div>
             <div class="muted small">Tantangan harian</div>
             <ul class="list" id="taskList" style="margin-top:6px;"></ul>
@@ -271,7 +313,6 @@ function renderToday() {
             </div>
           </div>
 
-          <!-- Kanan: tips -->
           <div>
             <div class="info">
               <div class="muted small">
@@ -569,5 +610,179 @@ function render() {
 }
 
 // initial render
-
 render();
+
+
+// =========================================================
+// 2. LOGIC DOMContentLoaded (DIGABUNGKAN)
+// =========================================================
+document.addEventListener('DOMContentLoaded', function() {
+    // === 2.1 MOBILE MENU TOGGLE (HAMBURGER) ===
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const mainNavMenu = document.getElementById('main-nav-menu');
+
+    if (mobileMenuToggle && mainNavMenu) {
+        mobileMenuToggle.addEventListener('click', function() {
+            // Toggle class 'active' untuk menampilkan/menyembunyikan menu
+            mainNavMenu.classList.toggle('active');
+
+            // Mengubah ikon dari hamburger (fa-bars) menjadi close (fa-times)
+            const icon = mobileMenuToggle.querySelector('i');
+            if (mainNavMenu.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+    }
+    // assets/js/plan.js
+document.addEventListener('DOMContentLoaded', function() {
+    // Asumsikan tombol di plan.php memiliki class 'select-plan-btn'
+    document.querySelectorAll('.select-plan-btn').forEach(button => {
+        button.addEventListener('click', async function(e) {
+            e.preventDefault();
+
+            // Ambil data dari data attribute tombol
+            const planName = this.dataset.planName || 'Plan Default';
+            const price = this.dataset.price || '0';
+            const planType = this.dataset.planType || 'monthly';
+            
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+
+            try {
+                const response = await fetch('../payment/create_payment.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        plan_name: planName,
+                        price: price,
+                        plan_type: planType
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success' && data.redirect_url) {
+                    // Berhasil, arahkan pengguna ke halaman pembayaran DANA
+                    window.location.href = data.redirect_url;
+                } else {
+                    alert('Pembayaran gagal diinisiasi: ' + (data.message || 'Error tidak diketahui.'));
+                    console.error('Payment Initiation Error:', data);
+                }
+
+            } catch (error) {
+                alert('Terjadi kesalahan koneksi saat memulai pembayaran.');
+                console.error('Fetch Error:', error);
+            } finally {
+                this.disabled = false;
+                this.innerHTML = 'Pilih Paket'; // Kembalikan teks asli (sesuaikan)
+            }
+        });
+    });
+});
+
+    // === 2.2 IMAGE CAROUSEL (Poster) ===
+    const carouselTrack = document.querySelector('.carousel-track');
+    if (carouselTrack) {
+        const carouselItems = document.querySelectorAll('.carousel-item');
+        const prevButton = document.querySelector('.prev-button');
+        const nextButton = document.querySelector('.next-button');
+        const indicatorsContainer = document.querySelector('.carousel-indicators');
+
+        let currentIndex = 0;
+        // Asumsi semua item memiliki lebar yang sama (dihitung setelah DOM load)
+        const itemWidth = carouselItems.length > 0 ? carouselItems[0].offsetWidth : 0;
+        
+        // Fungsi untuk menggeser carousel
+        const moveToSlide = (targetIndex) => {
+            if (carouselItems.length > 0) {
+                // Mengatur properti transform untuk menggeser track
+                carouselTrack.style.transform = `translateX(-${targetIndex * itemWidth}px)`;
+                updateIndicators(targetIndex);
+            }
+        };
+
+        // Fungsi untuk mengupdate indikator dot
+        const updateIndicators = (targetIndex) => {
+            document.querySelectorAll('.indicator-dot').forEach(dot => dot.classList.remove('active'));
+            if (indicatorsContainer && indicatorsContainer.children[targetIndex]) {
+                indicatorsContainer.children[targetIndex].classList.add('active');
+            }
+        };
+
+        // Membuat indikator dot secara dinamis dan menambahkan event listener
+        if (indicatorsContainer) {
+            carouselItems.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.classList.add('indicator-dot');
+                if (index === 0) {
+                    dot.classList.add('active');
+                }
+                dot.addEventListener('click', () => {
+                    currentIndex = index;
+                    moveToSlide(currentIndex);
+                });
+                indicatorsContainer.appendChild(dot);
+            });
+        }
+
+        // Fungsionalitas Tombol Next
+        if (nextButton) {
+            nextButton.addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % carouselItems.length;
+                moveToSlide(currentIndex);
+            });
+        }
+
+        // Fungsionalitas Tombol Previous
+        if (prevButton) {
+            prevButton.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + carouselItems.length) % carouselItems.length;
+                moveToSlide(currentIndex);
+            });
+        }
+
+        // Optional: Auto-play carousel
+        if (carouselItems.length > 1) {
+             setInterval(() => {
+                currentIndex = (currentIndex + 1) % carouselItems.length;
+                moveToSlide(currentIndex);
+            }, 5000); // Ganti slide setiap 5 detik
+        }
+    }
+
+    // === 2.3 TOGGLE VISIBILITAS PASSWORD ===
+    // Target semua tombol dengan class .password-toggle-btn
+    const passwordToggleButtons = document.querySelectorAll('.password-toggle-btn');
+
+    passwordToggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Asumsi: Input password adalah sibling (saudara) terdekat sebelum tombol
+            // Dalam struktur Anda: <button> adalah sibling dari <input> yang di wrap oleh <div class="input-with-icon">
+            // Kita perlu menargetkan input di dalam wrapper
+            const wrapper = button.parentElement;
+            const passwordInput = wrapper.querySelector('input[type="password"], input[type="text"]');
+            const icon = button.querySelector('i');
+
+            if (passwordInput && icon) {
+                // Toggle tipe input antara 'password' dan 'text'
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+
+                // Toggle ikon mata
+                if (type === 'text') {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash'); // Mata tertutup
+                } else {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye'); // Mata terbuka
+                }
+            }
+        });
+    });
+});
