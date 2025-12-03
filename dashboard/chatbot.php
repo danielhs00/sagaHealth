@@ -7,16 +7,95 @@
   <link rel="icon" href="../assets/img/tittle.png" type="image/png">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style/chatbot.css">
+  <style>
+    /* CSS Tambahan untuk Animasi dan Tombol Hapus (tanpa ganggu CSS asli) */
+    .conversation-item {
+      position: relative;
+      transition: opacity 0.5s ease; /* Animasi fade-out */
+    }
+    .delete-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #ff4d4d;
+      font-size: 14px;
+      opacity: 0.7;
+    }
+    .delete-btn:hover {
+      opacity: 1;
+    }
+
+    
+
+    <style>
+ .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 100;
+      height: 60px;
+      background: #1e293b;;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+  .mobile-menu-btn:hover {
+    background: #ececf1;
+    transform: scale(1.05);
+  }
+  @media (max-width: 768px) {
+    .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
+  }
+
+  /* Warna ikon hapus: default abu-abu → merah saat hover/klik */
+  .delete-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #ff6b6b !important;     /* merah muda */
+    font-size: 15px;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+  }
+  .delete-btn:hover {
+    opacity: 1;
+    color: #ff4d4d !important;     /* merah terang saat hover */
+    transform: translateY(-50%) scale(1.2);
+  }
+
+  /* Animasi fade-out tetap */
+  .conversation-item {
+    position: relative;
+    padding-right: 40px;   /* beri ruang untuk tombol hapus */
+    transition: opacity 0.5s ease;
+  }
+</style>
+  </style>
 </head>
 <body>
 
-  <button class="mobile-menu-btn" id="mobileMenuBtn">Menu</button>
-  <div class="overlay" id="overlay"></div>
+  <div class="top-bar">
+    <a href="index.php" class="logo">
+      <img src="../assets/img/logo.png" align ="left" alt="Logo" style="height:70px; vertical-align:middle; margin-right:60px;">
+      Home
+    </a>
+    <button class="home-btn" onclick="window.location.href='index.php'">
+      <i></i>
+    </button>
+  </div>
+<div class="overlay" id="overlay"></div>
 
   <div class="app-container">
 
     <!-- Sidebar (Last 7 Days sudah dihapus + biru tua) -->
-    <div class="sidebar" style="background: #343541; color: #ececf1;">
+    <div class="sidebar" style="background: #1e293b; color: #1e293b;">
       <div>
         <div class="sidebar-header">
           <h1>SAGABOT</h1>
@@ -40,24 +119,20 @@
 
       </div>
 
-      <div class="sidebar-footer">
-        <div class="settings">
-          <span>Settings</span>
-          <i class="fas fa-cog"></i>
-        </div>
-        <div class="user-profile">
-          <img src="https://i.pravatar.cc/50" alt="user">
-          <span>Andrew Neilson</span>
-        </div>
+     <div style="border-top:1px solid #565869; padding:15px; margin-top:auto;">
+      <div class="user-profile" onclick="window.location.href='profile.php'" style="display:flex; align-items:center; gap:12px; cursor:pointer; padding:10px; border-radius:8px; transition:0.2s;">
+        <img src="https://i.pravatar.cc/50" alt="user" style="width:40px; height:40px; border-radius:50%;">
+        <span>Andrew Neilson</span>
       </div>
     </div>
+  </div>
 
     <!-- Area chat -->
     <div class="main-content">
       <div class="chat-header">
         <i class="fas fa-robot"></i>
         <div class="chat-info">
-          <h2>SagaBot</h2>
+          <h2>Welcome to SagaBot Chat</h2>
           <p>Chat with your AI companion</p>
         </div>
       </div>
@@ -142,7 +217,7 @@
       })
       .catch(err => {
         hideTypingIndicator();
-        createMessage("Ups, ada masalah koneksi ke Gemini. Coba lagi ya!", "bot");
+        createMessage("Ups, ada masalah koneksi. Coba lagi ya!", "bot");
         console.error(err);
       });
     }
@@ -156,7 +231,7 @@
     });
   </script>
 
-  <!-- FITUR TAMBAHAN (typing, riwayat, new chat, dll) – SAMA SEPERTI SEBELUMNYA -->
+  <!-- FITUR TAMBAHAN (dengan modifikasi hapus manual + animasi) -->
   <script>
     const typingId = "typing-indicator-unique";
     
@@ -183,7 +258,7 @@
       if (el) el.remove();
     }
 
-    // === RIWAYAT CHAT (max 3) + NEW CHAT ===
+    // === RIWAYAT CHAT (unlimited, hapus manual per item dengan animasi) ===
     const conversationList = document.getElementById("conversationList");
     const newChatBtn = document.getElementById("newChatBtn");
     const clearAllBtn = document.getElementById("clearAllBtn");
@@ -202,7 +277,7 @@
       let history = JSON.parse(localStorage.getItem("sagabot_history") || "[]");
       history = history.filter(c => c.title !== title);
       history.unshift({ title, messages, timestamp: Date.now() });
-      if (history.length > 3) history.pop();
+      // Hapus baris batas max (sekarang unlimited)
 
       localStorage.setItem("sagabot_history", JSON.stringify(history));
       loadHistoryList();
@@ -215,6 +290,17 @@
         const item = document.createElement("div");
         item.className = "conversation-item";
         item.innerHTML = `<i class="fas fa-comment-dots"></i> ${chat.title}`;
+        
+        // Tambah tombol hapus manual
+        const deleteBtn = document.createElement("i");
+        deleteBtn.className = "fas fa-trash delete-btn";
+        deleteBtn.onclick = (e) => {
+          e.stopPropagation(); // Agar tidak trigger load chat
+          deleteChat(i, item); // Panggil fungsi hapus dengan animasi
+        };
+        item.appendChild(deleteBtn);
+
+        // Klik item untuk load chat (selain tombol hapus)
         item.onclick = () => {
           messagesContainer.innerHTML = `<div class="message bot-message">
             <img src="img/MASKOT.png" alt="Bot Avatar" class="avatar" onerror="this.src='https://placehold.co/40x40/FFD700/000000?text=S'">
@@ -224,6 +310,22 @@
         };
         conversationList.appendChild(item);
       });
+    }
+
+    // Fungsi baru: Hapus chat manual dengan animasi fade-out
+    function deleteChat(index, item) {
+      if (confirm("Hapus chat ini?")) {
+        // Mulai animasi fade-out
+        item.style.opacity = '0';
+        
+        // Tunggu animasi selesai (0.5s), lalu hapus
+        setTimeout(() => {
+          let history = JSON.parse(localStorage.getItem("sagabot_history") || "[]");
+          history.splice(index, 1); // Hapus item spesifik
+          localStorage.setItem("sagabot_history", JSON.stringify(history));
+          loadHistoryList(); // Refresh list
+        }, 500);
+      }
     }
 
     newChatBtn.onclick = () => {
