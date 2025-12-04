@@ -147,14 +147,14 @@ if ($feed && $feed->entry) {
             if ($link_tag->attributes()->rel == 'alternate') {
                 $link = (string)$link_tag->attributes()->href;
                 break;
-            }
+            }   
         }
         
         // 2. Mengambil Summary dan Membersihkan HTML (simulasi BeautifulSoup)
         $summary = (string)$entry->summary;
         // Hapus tag HTML dan potong teksnya
         $preview = strip_tags($summary);
-        $preview = substr($preview, 0, 250) . '...'; // Ambil 150 karakter pertama
+        $preview = substr($preview, 0, 250) . 'Klik Disini'; // Ambil 150 karakter pertama
 
         // Menampilkan kartu artikel
         echo '<a href="' . htmlspecialchars($link) . '" class="article-card">';

@@ -6,17 +6,13 @@
    <title>SagaHealth</title>
     <link rel="icon" href="../assets/img/tittle.png" type="image/png">
     <link rel="stylesheet" href="../assets/style/auth.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <!-- Loading Screen -->
-    <div id="page-loader" class="page-loader">
-        <div class="loader-content">
-            <div class="spinner-large"></div>
-            <p>Memuat halaman...</p>
-        </div>
-    </div>
+  <div id="page-loader" 
+     style="width:100%;height:100vh;display:flex;align-items:center;justify-content:center;">
+    <h3>Memuat halaman...</h3>
+</div>
 
     <?php include '../user/partials/header.php'; ?>
 
@@ -82,8 +78,7 @@
             <li><i class="fa fa-check"></i> Anjuran Kesahatan</li>
             <li><i class="fa fa-check"></i> Riwayat Kesehatan </li>
         </ul>
-
-       <button class="btn-plan" onclick="selectPlan('Basic Plan', '20000', 'basic')">
+<button class="btn-plan" onclick="selectPlan('basic')">
     Pilih Basic
 </button>
 
@@ -113,7 +108,7 @@
 
         </ul>
 
-        <button class="btn-plan premium" onclick="selectPlan('Premium Plan', '50000', 'premium')">
+<button class="btn-plan premium" onclick="selectPlan('premium')">
     Pilih Premium
 </button>
 
@@ -263,6 +258,17 @@
         </div>
     </footer>
 
-    <script src="../assets/js/plan.js"></script>
+    
+    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-nW3D8-QuLJC-1SVc"></script>
+<script src="../assets/js/plan.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const loader = document.getElementById("page-loader");
+    if (loader) {
+        loader.style.display = "none";
+    }
+});
+</script>
+
 </body>
 </html>
