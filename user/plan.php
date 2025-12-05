@@ -78,10 +78,11 @@
             <li><i class="fa fa-check"></i> Anjuran Kesahatan</li>
             <li><i class="fa fa-check"></i> Riwayat Kesehatan </li>
         </ul>
-<button class="btn-plan" onclick="selectPlan('basic')">
+<button
+    class="btn-plan"
+    onclick="selectPlan('Basic', 50000, 'basic')">
     Pilih Basic
 </button>
-
     </div>
 
     <!-- PREMIUM — Most Popular -->
@@ -108,7 +109,9 @@
 
         </ul>
 
-<button class="btn-plan premium" onclick="selectPlan('premium')">
+<button
+    class="btn-plan premium"
+    onclick="selectPlan('Premium', 100000, 'premium')">
     Pilih Premium
 </button>
 
@@ -259,8 +262,16 @@
     </footer>
 
     
-    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-nW3D8-QuLJC-1SVc"></script>
+    <!-- Snap JS Midtrans (sandbox) -->
+<script
+  type="text/javascript"
+  src="https://app.sandbox.midtrans.com/snap/snap.js"
+  data-client-key="SB-Mid-client-nW3D8-QuLJC-1SVc">
+</script>
+
+<!-- JS kamu -->
 <script src="../assets/js/plan.js"></script>
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const loader = document.getElementById("page-loader");
@@ -271,3 +282,4 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 </body>
 </html>
+
