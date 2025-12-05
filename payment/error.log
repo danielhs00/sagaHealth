@@ -1,0 +1,55 @@
+[05-Dec-2025 02:50:27 Europe/Berlin] PHP Warning:  require_once(../midtrans/Midtrans.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:50:27 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../midtrans/Midtrans.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\sagaHealth\payment\create_payment.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:50:30 Europe/Berlin] PHP Warning:  require_once(../midtrans/Midtrans.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:50:30 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../midtrans/Midtrans.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\sagaHealth\payment\create_payment.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:50:32 Europe/Berlin] PHP Warning:  require_once(../midtrans/Midtrans.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:50:32 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../midtrans/Midtrans.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\sagaHealth\payment\create_payment.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:52:11 Europe/Berlin] PHP Warning:  require_once(../midtrans/Midtrans.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:52:11 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../midtrans/Midtrans.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\sagaHealth\payment\create_payment.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:52:32 Europe/Berlin] PHP Warning:  require_once(../midtrans/Midtrans.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:52:32 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../midtrans/Midtrans.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\sagaHealth\payment\create_payment.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:53:26 Europe/Berlin] PHP Warning:  require_once(../midtrans/Midtrans.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:53:26 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../midtrans/Midtrans.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\sagaHealth\payment\create_payment.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:56:43 Europe/Berlin] PHP Warning:  require_once(../midtrans/Midtrans.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:56:43 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../midtrans/Midtrans.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\sagaHealth\payment\create_payment.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:56:46 Europe/Berlin] PHP Warning:  require_once(../midtrans/Midtrans.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:56:46 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../midtrans/Midtrans.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\sagaHealth\payment\create_payment.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:57:51 Europe/Berlin] PHP Warning:  require_once(../midtrans/Midtrans.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:57:51 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../midtrans/Midtrans.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\sagaHealth\payment\create_payment.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:57:54 Europe/Berlin] PHP Warning:  require_once(../midtrans/Midtrans.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:57:54 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../midtrans/Midtrans.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\sagaHealth\payment\create_payment.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:59:52 Europe/Berlin] PHP Warning:  require_once(../midtrans/Midtrans.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
+[05-Dec-2025 02:59:52 Europe/Berlin] PHP Fatal error:  Uncaught Error: Failed opening required '../midtrans/Midtrans.php' (include_path='C:\xampp\php\PEAR') in C:\xampp\htdocs\sagaHealth\payment\create_payment.php:10
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\sagaHealth\payment\create_payment.php on line 10
