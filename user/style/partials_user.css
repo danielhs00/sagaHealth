@@ -1,0 +1,35 @@
+.user-header {
+    background-color: var(--color-primary);
+    color: white;
+    padding: 10px 0;
+}
+.user-header .logo {
+    height: 40px;
+}
+.user-header .user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.user-header .user-info-link {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+.user-header .user-info-link i {
+    font-size: 20px;
+}
+.user-header .btn-logout {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+}
+.user-header .btn-logout:hover {
+    color: #ffdddd;
+}
