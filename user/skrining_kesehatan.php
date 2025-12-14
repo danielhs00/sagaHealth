@@ -12,7 +12,7 @@
 
 <div class="container">
   <h1>🩺 Form Skrining Kesehatan SAGAHEALTH</h1>
-  <p style="margin-bottom: 20px; color: #666;">Isi data berikut untuk mendapatkan analisis risiko 6 penyakit dan rekomendasi AI personal.</p>
+  <p class="form-description">Isi data berikut untuk mendapatkan analisis risiko 6 penyakit dan rekomendasi AI personal.</p>
 
   <form id="skrining-form" method="POST" action="../testing_svm/process_skrining.php">
 
@@ -26,8 +26,9 @@
 
     <div class="section">
       <h2>Pengukuran Fisik</h2>
-      <div style="display: flex; gap: 20px;">
-          <div style="flex:1;">
+      <div class="flex-row">
+        <div class="flex-1">
+
               <label>Berat Badan (Kg):</label>
               <input type="number" name="bb" id="bb" required step="0.1" min="1" placeholder="Contoh: 65.5">
           </div>
@@ -76,7 +77,7 @@
 
       <div class="question">
         <p>5. Keluhan dalam 30 hari terakhir (Pilih yang sesuai):</p>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div class="grid-2">
             <label><input type="checkbox" name="keluhan_list[]" value="1"> Sakit kepala berat</label>
             <label><input type="checkbox" name="keluhan_list[]" value="1"> Tengkuk kaku</label>
             <label><input type="checkbox" name="keluhan_list[]" value="1"> Pandangan kabur</label>
@@ -87,8 +88,8 @@
 
     <div class="section">
       <h2>Riwayat Medis Pribadi</h2>
-      <table class="table-custom" style="width:100%; text-align: left;">
-        <tr><th>Kondisi</th><th style="text-align:center;">Ya</th><th style="text-align:center;">Tidak</th></tr>
+      <table class="table-custom">
+        <tr><th>Kondisi</th><<th class="text-center">Ya</th><<th class="text-center">Tidak</th></tr>
         
         <?php 
         $penyakit = [
@@ -113,7 +114,7 @@
     <div class="section">
       <h2>Riwayat Keluarga (Orang Tua/Saudara)</h2>
       <table class="table-custom" style="width:100%; text-align: left;">
-        <tr><th>Kondisi</th><th style="text-align:center;">Ya</th><th style="text-align:center;">Tidak</th></tr>
+        <tr><th>Kondisi</th><th class="text-center">Ya</th><th class="text-center">Tidak</th></tr>
         <?php 
         $keluarga = [
             'keluarga_dm' => 'Diabetes', 
@@ -145,15 +146,16 @@
         foreach($gejala as $name => $label) {
             echo "<tr>
                 <td>$label</td>
-                <td style='text-align:center; width:50px;'><input type='radio' name='$name' value='1'> Ya</td>
-                <td style='text-align:center; width:60px;'><input type='radio' name='$name' value='0' checked> Tidak</td>
+                <td class='text-center w-50'>
+<input type='radio' name='$name' value='1'> Ya</td>
+                <td class='text-center w-60'><input type='radio' name='$name' value='0' checked> Tidak</td>
             </tr>";
         }
         ?>
       </table>
     </div>
     
-    <button type="submit" class="btn-submit" style="width:100%; padding:15px; background:#3498db; color:white; border:none; border-radius:8px; font-size:16px; cursor:pointer; margin-top:20px;">
+    <button type="submit" class="btn-submit">
         🔍 Analisis Kesehatan Saya Sekarang
     </button>
   </form>

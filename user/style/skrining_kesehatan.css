@@ -27,6 +27,70 @@
         margin-bottom: 20px;
     }
 
+    /* ================= DESKRIPSI ================= */
+.form-description {
+    margin-bottom: 20px;
+    color: #666;
+}
+
+/* ================= FLEX LAYOUT ================= */
+.flex-row {
+    display: flex;
+    gap: 20px;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+/* ================= GRID CHECKBOX ================= */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* ================= TABLE ================= */
+.table-custom {
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+}
+
+.table-custom th,
+.table-custom td {
+    padding: 8px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.w-50 {
+    width: 50px;
+}
+
+.w-60 {
+    width: 60px;
+}
+
+/* ================= BUTTON ================= */
+.btn-submit {
+    width: 100%;
+    padding: 15px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.btn-submit:hover {
+    background: #2c80b4;
+}
+
     .loading-text {
         font-family: 'Segoe UI', sans-serif;
         color: #2c3e50;

@@ -50,6 +50,7 @@ $theme = get_color_schema($highest_risk_level);
     <link rel="icon" href="../assets/img/tittle.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../user/style/anjurankesehatan.css" />
     
 </head>
 <body>
@@ -70,11 +71,11 @@ $theme = get_color_schema($highest_risk_level);
     <div class="ai-section">
         <div class="ai-header">
             <span class="ai-badge"><i class="fas fa-user-md"></i> SAGA BOT AI</span>
-            <h2 style="margin:0; font-size: 1.4rem;">Rekomendasi Dokter</h2>
+            <h2 class="ai-title">Rekomendasi Dokter</h2>
         </div>
 
         <div id="ai-loading">
-            <i class="fas fa-spinner fa-spin fa-lg" style="color:var(--primary)"></i> 
+            <i class="fas fa-spinner fa-spin fa-lg spinner-primary"></i> 
             <span>Sedang menganalisis hasil medis Anda...</span>
         </div>
 
@@ -86,7 +87,7 @@ $theme = get_color_schema($highest_risk_level);
         </div>
     </div>
 
-    <h3 style="color: #555; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom:10px;">
+    <h3 class="rincian-penyakit">
         <i class="fas fa-chart-bar"></i> Rincian Risiko Penyakit
     </h3>
     
@@ -100,7 +101,7 @@ $theme = get_color_schema($highest_risk_level);
             ?>
             <div class="stat-card">
                 <div>
-                    <strong style="font-size: 1.1rem; color: #333;"><?php echo $label_name; ?></strong>
+                    <strong class="disease-title"><?php echo $label_name; ?></strong>
                     <div class="risk-tag" style="background: <?php echo $colors['bg']; ?> !important; color: <?php echo $colors['text']; ?> !important;">
                         <?php echo $risk_level; ?>
                     </div>
@@ -109,7 +110,7 @@ $theme = get_color_schema($highest_risk_level);
                     <div class="prog-bg">
                         <div class="prog-fill" style="width: <?php echo $prob; ?>%; background: <?php echo $colors['bar']; ?> !important;"></div>
                     </div>
-                    <div style="font-size: 0.85rem; color: #666; margin-top: 5px; display: flex; justify-content: space-between;">
+                    <div class="title-probabilitas">
                         <span>Probabilitas</span>
                         <strong><?php echo $prob; ?>%</strong>
                     </div>
@@ -129,7 +130,7 @@ $theme = get_color_schema($highest_risk_level);
         </button>
     </center>
 </div>
-
+</body>
 <script>
     const userRisks = <?php echo json_encode($multi_risiko); ?>;
     const userFeatures = <?php echo json_encode($_SESSION['fitur_user'] ?? []); ?>;
@@ -164,5 +165,4 @@ $theme = get_color_schema($highest_risk_level);
     });
 </script>
 
-</body>
 </html>

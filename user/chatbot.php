@@ -18,7 +18,7 @@
   <div class="app-container">
 
     <!-- Sidebar (Last 7 Days sudah dihapus + biru tua) -->
-    <div class="sidebar" style="background: #1e293b; color: #1e293b;">
+    <div class="sidebar">
       <div>
         <div class="sidebar-header">
           <h1>SAGABOT</h1>
@@ -27,7 +27,7 @@
         <button class="new-chat-btn" id="newChatBtn"><i class="fas fa-plus"></i> New chat</button>
 
         <div class="search-bar">
-          <i class="fas fa-search" style="color:#999;"></i>
+          <i class="fas fa-search"></i>
           <input type="text" placeholder="Search..." />
         </div>
 
@@ -42,9 +42,9 @@
 
       </div>
 
-     <div style="border-top:1px solid #565869; padding:15px; margin-top:auto;">
-      <div class="user-profile" onclick="window.location.href='profile.php'" style="display:flex; align-items:center; gap:12px; cursor:pointer; padding:10px; border-radius:8px; transition:0.2s;">
-        <img src="https://i.pravatar.cc/50" alt="user" style="width:40px; height:40px; border-radius:50%;">
+     <div class="sidebar-footer">
+      <div class="user-profile" onclick="window.location.href='profile.php'">
+        <img src="https://i.pravatar.cc/50" alt="user">
         <span>
     <?php echo htmlspecialchars(isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'); ?>
 </span>
@@ -172,7 +172,7 @@
       avatar.className = "avatar";
       const bubble = document.createElement("div");
       bubble.className = "message-bubble typing-indicator";
-      bubble.innerHTML = "<span></span><span></span><span></span> <small style='color:#888;'>SagaBot sedang berpikir...</small>";
+      bubble.innerHTML = "<span></span><span></span><span></span> <small>SagaBot sedang berpikir...</small>";
       typingDiv.appendChild(avatar);
       typingDiv.appendChild(bubble);
       messagesContainer.appendChild(typingDiv);

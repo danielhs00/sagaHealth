@@ -6,14 +6,14 @@
    <title>SagaHealth</title>
     <link rel="icon" href="../assets/img/tittle.png" type="image/png">
     <link rel="stylesheet" href="../assets/style/auth.css">
+    <link rel="stylesheet" href="../assets/style/plan.css">
     <link rel="stylesheet" 
  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 </head>
 <body>
 
-  <div id="page-loader" 
-     style="width:100%;height:100vh;display:flex;align-items:center;justify-content:center;">
+  <div id="page-loader" class="loader-page">
     <h3>Memuat halaman...</h3>
 </div>
 
@@ -185,7 +185,7 @@
                             <i class="fas fa-chevron-down"></i>
                         </button>
                     </div>
-                    <div class="comparison-table-wrapper" id="comparison-table" style="display: none;">
+                    <div class="comparison-table-wrapper comparison" id="comparison-table">
                         <table class="comparison-table">
                             <thead>
                                 <tr>

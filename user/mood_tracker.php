@@ -26,14 +26,7 @@
   <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
   <!-- Framer Motion UMD -->
   <script src="https://unpkg.com/framer-motion/dist/framer-motion.umd.js"></script>
-  <style>
-    html, body, #root { height: 100%; }
-    .card { @apply bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm; }
-    .btn { @apply inline-flex items-center justify-center h-10 px-4 rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition; }
-    .btn-primary { @apply bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 border-transparent; }
-    .badge { @apply text-xs px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800; }
-    .progress { height: 12px; }
-  </style>
+  <link rel="stylesheet" href="../assets/style/mood_tracker.css" />
 </head>
 <body class="h-full bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 text-slate-900 dark:text-slate-100">
   <div id="root"></div>
