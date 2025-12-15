@@ -1,0 +1,185 @@
+/* ==============================
+   PROFILE PAGE STYLES
+   =============================== */
+
+.profile-container {
+    padding: 40px 20px;
+    min-height: 80vh;
+}
+
+.profile-title {
+    text-align: center;
+    margin-bottom: 40px;
+    color: var(--text-primary);
+    font-size: 2rem;
+}
+
+/* Kartu Profil Utama */
+.profile-card.info-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+/* Avatar yang bisa diedit */
+.profile-avatar.editable {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    background: #f0f0f0;
+}
+
+.profile-avatar.editable img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.profile-avatar.editable .default-icon {
+    font-size: 140px;
+    color: #bbb;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.overlay-plus {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    color: white;
+    font-size: 40px;
+    border-radius: 50%;
+}
+
+.profile-avatar.editable:hover .overlay-plus {
+    opacity: 1;
+}
+
+/* Info Detail */
+.profile-info-details h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.8rem;
+    color: var(--text-primary);
+}
+
+.profile-info-details p {
+    margin: 4px 0;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.info-list p {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0;
+    font-size: 1.05rem;
+}
+
+.info-list i {
+    width: 20px;
+    color: var(--primary-color);
+}
+
+/* Tombol Kembali */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 30px;
+    padding: 10px 20px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.3s;
+}
+
+.btn-back:hover {
+    background: var(--primary-hover);
+}
+
+/* ==============================
+   HEADER STYLES (untuk foto profil di header)
+   =============================== */
+
+.btn-profile {
+    display: flex;
+    align-items: center;
+    color: inherit;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+
+.btn-profile:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.profile-avatar-header {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+#user-name-display {
+    font-weight: 500;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Responsif */
+@media (max-width: 768px) {
+    .profile-card.info-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .profile-avatar.editable {
+        width: 120px;
+        height: 120px;
+    }
+
+    .profile-avatar.editable .default-icon {
+        font-size: 120px;
+    }
+
+    .overlay-plus {
+        font-size: 36px;
+    }
+}
