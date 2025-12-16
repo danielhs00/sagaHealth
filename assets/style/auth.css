@@ -1577,6 +1577,8 @@ input:checked + .slider:before {
 
 /* Included in Every Plan Section */
 .included-section {
+    padding: 80px 20px;
+    background: #f8fafc;
     text-align: center;
     margin: 5rem auto 3rem auto;
     max-width: 1000px;
@@ -1593,23 +1595,32 @@ input:checked + .slider:before {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 3rem;
-    margin-bottom: 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
 }
 
 .included-item {
-    text-align: center;
-    padding: 1rem;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 35px 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.included-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
 }
 
 .included-icon {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 1.2rem auto;
-    /* background: ; */
-    border-radius: 20px;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 24px;
 }
 
 .included-icon i {
@@ -1618,17 +1629,16 @@ input:checked + .slider:before {
 }
 
 .included-item h3 {
-    margin-top: 0.5rem;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--text-dark);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #0f172a;
 }
 
 .included-item p {
     font-size: 0.95rem;
-    color: var(--text-medium);
-    margin-top: 0.3rem;
-    line-height: 1.5;
+    color: #475569;
+    line-height: 1.6;
 }
 
 .included-btn-wrapper {
@@ -1686,6 +1696,7 @@ input:checked + .slider:before {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 22px;
+    margin-bottom: 30px;
 }
 
 /* KARTU FITUR */
@@ -1741,4 +1752,58 @@ input:checked + .slider:before {
     .comparison-table-wrapper {
         max-width: 100%; /* mobile tetap full biar tidak kepotong */
     }
+}
+/* --- Tambahan untuk halaman Lupa Kata Sandi dan Alert --- */
+.auth-subtitle {
+    margin-bottom: 1.5rem;
+    color: #6c757d;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+/* Base style untuk alert */
+.alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Style untuk pesan sukses */
+.alert-success {
+    color: #0f5132;
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+}
+
+/* Style untuk pesan error/gagal */
+.alert-error {
+    color: #842029;
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+}
+
+/* Style untuk pesan info */
+.alert-info {
+    color: #055160;
+    background-color: #cff4fc;
+    border-color: #b6effb;
+}
+/* --- Tambahan untuk Login Google --- */
+.divider-or {
+    margin: 1.5rem 0;
+    text-align: center;
+    position: relative;
+    font-size: 0.8rem;
+    color: #999;
+}
+
+/* Memastikan div Google Sign-In memiliki lebar yang tepat dan tidak tersembunyi */
+.g_id_signin {
+    width: 100% !important; 
+    display: flex; 
+    justify-content: center; /* Tombol berada di tengah */
+    margin-bottom: 1rem;
+    /* PENTING: Pastikan tidak ada display: none; */
 }
