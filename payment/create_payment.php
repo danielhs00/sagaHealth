@@ -1,33 +1,75 @@
 <?php
-// ======== CONFIG (ISI API KEY MAYAR KAMU) ===========
-$API_KEY = "MASUKKAN_API_KEY_MAYAR_DI_SINI"; 
+header("Content-Type: application/json");
 
+// === CONFIG MIDTRANS ===
+$serverKey = "SB-Mid-server-ESGj19S0rXP3QyjZDmB108OE"; // GANTI DENGAN SERVER KEY SANDBOX
+$midtransUrl = "https://app.sandbox.midtrans.com/snap/v1/transactions";
+
+// Ambil input JSON
 $input = json_decode(file_get_contents("php://input"), true);
-$amount = $input["amount"];
-$title = $input["title"];
 
-// Redirect setelah pembayaran
-$success = "http://localhost/SagaHealth/payment/success.php";
-$failed  = "http://localhost/SagaHealth/payment/failed.php";
+$title = $input["title"] ?? null;
+$amount = $input["amount"] ?? null;
+$redirect = $input["redirect"] ?? null;
 
-// ======== REQUEST KE API MAYAR ======================
+// Validasi
+if (!$title || !$amount || !is_numeric($amount)) {
+    echo json_encode([
+        "status" => "error",
+        "message" => "nominal paket tidak valid"
+    ]);
+    exit;
+}
+
+// Data transaksi
 $payload = [
-    "amount" => $amount,
-    "title" => $title,
-    "redirect_url" => $success,
-    "cancel_url" => $failed
+    "transaction_details" => [
+        "order_id" => "ORDER-" . time(),
+        "gross_amount" => (int)$amount
+    ],
+    "item_details" => [
+        [
+            "id" => $redirect,
+            "price" => (int)$amount,
+            "quantity" => 1,
+            "name" => $title
+        ]
+    ],
+    "customer_details" => [
+        "first_name" => "User",
+        "email" => "user@example.com"
+    ]
 ];
 
-$ch = curl_init("https://mayar.id/api/v3/payment-link");
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "Authorization: Bearer $API_KEY",
-    "Content-Type: application/json"
-]);
+// Curl ke Midtrans
+$ch = curl_init($midtransUrl);
 curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    "Content-Type: application/json",
+    "Authorization: Basic " . base64_encode($serverKey . ":")
+]);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
 $response = curl_exec($ch);
 curl_close($ch);
 
-echo $response;
+$result = json_decode($response, true);
+
+// Jika gagal
+if (!isset($result["token"])) {
+    echo json_encode([
+        "status" => "error",
+        "message" => $response
+    ]);
+    exit;
+}
+
+// Jika sukses
+echo json_encode([
+    "status" => "success",
+    "token" => $result["token"],
+    "redirect" => $redirect
+]);
+exit;
+?>

@@ -10,20 +10,6 @@
   <link rel="stylesheet" href="../assets/style/auth.css" />
   <link rel="stylesheet" href="../user/style/chatbot.css" />
   <link rel="stylesheet" href="../assets/style/profile.css">
-
-  <!-- CSS kecil untuk avatar di sidebar -->
-  <style>
-    #sidebarUserAvatarContainer i {
-      font-size: 32px;
-      color: #014C63;
-    }
-    #sidebarUserAvatarContainer img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-  </style>
 </head>
 <body>
 
@@ -56,7 +42,7 @@
         </div>
       </div>
 
-      <!-- Sidebar Footer - Avatar & Nama sinkron otomatis dari header -->
+      <!-- Sidebar Footer -->
       <div class="sidebar-footer">
         <div class="user-profile" onclick="window.location.href='profile.php'">
           <div id="sidebarUserAvatarContainer">
@@ -97,6 +83,22 @@
     </div>
   </div>
 
+  <!-- Script: Guard + Force Clear Storage Jika Tidak Login -->
+  <script>
+    // PERBAIKAN UTAMA: Pastikan user benar-benar login
+    (function() {
+      const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true' || localStorage.getItem('isLoggedIn') === 'true';
+      const userId = sessionStorage.getItem('userId') || localStorage.getItem('userId');
+
+      if (!isLoggedIn || !userId) {
+        // Jika tidak login → bersihkan storage & redirect ke login
+        sessionStorage.clear();
+        localStorage.clear();
+        window.location.replace('../auth/login.php');
+      }
+    })();
+  </script>
+
   <!-- Script Utama Chat -->
   <script>
     const sendBtn = document.getElementById("sendBtn");
@@ -110,7 +112,7 @@
       if (sender === "bot") {
         const avatar = document.createElement("img");
         avatar.src = "img/MASKOT.png";
-        avatar.onerror = function() { this.src='https://placehold.co/40x40/FFD700/000000?text=S' };
+        avatar.onerror = () => { this.src = 'https://placehold.co/40x40/FFD700/000000?text=S'; };
         avatar.alt = "Bot Avatar";
         avatar.classList.add("avatar");
         messageDiv.appendChild(avatar);
@@ -124,10 +126,10 @@
       messagesContainer.appendChild(messageDiv);
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
-    
+
     input.addEventListener('input', () => {
-        input.style.height = 'auto';
-        input.style.height = (input.scrollHeight) + 'px';
+      input.style.height = 'auto';
+      input.style.height = (input.scrollHeight) + 'px';
     });
 
     function sendMessage() {
@@ -150,17 +152,11 @@
       .then(res => res.json())
       .then(data => {
         hideTypingIndicator();
-        
         let reply = "Maaf, aku bingung nih...";
-        if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
+        if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
           reply = data.candidates[0].content.parts[0].text;
         }
-        
-        reply = reply
-          .replace(/\*\*(.*?)\*\*/g, '$1')
-          .replace(/\*(.*?)\*/g, '$1')
-          .trim();
-
+        reply = reply.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1').trim();
         createMessage(reply, "bot");
         saveCurrentChat();
       })
@@ -173,17 +169,17 @@
 
     sendBtn.addEventListener("click", sendMessage);
     input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
     });
   </script>
 
-  <!-- Script Fitur Tambahan + Sinkronisasi Avatar & Nama -->
+  <!-- Script Fitur Tambahan + Sinkronisasi Profil -->
   <script>
     const typingId = "typing-indicator-unique";
-    
+
     function showTypingIndicator() {
       if (document.getElementById(typingId)) return;
       const typingDiv = document.createElement("div");
@@ -225,7 +221,6 @@
       let history = JSON.parse(localStorage.getItem("sagabot_history") || "[]");
       history = history.filter(c => c.title !== title);
       history.unshift({ title, messages, timestamp: Date.now() });
-
       localStorage.setItem("sagabot_history", JSON.stringify(history));
       loadHistoryList();
     }
@@ -237,7 +232,7 @@
         const item = document.createElement("div");
         item.className = "conversation-item";
         item.innerHTML = `<i class="fas fa-comment-dots"></i> ${chat.title}`;
-        
+
         const deleteBtn = document.createElement("i");
         deleteBtn.className = "fas fa-trash delete-btn";
         deleteBtn.onclick = (e) => {
@@ -309,26 +304,39 @@
       };
     }
 
-    // Sinkronisasi Nama & Avatar dari header ke sidebar
-    window.addEventListener('load', function() {
-      const headerUsername = document.getElementById('user-name-display');
+    // Sinkronisasi Avatar & Nama User
+    window.addEventListener('load', () => {
       const sidebarUsername = document.getElementById('sidebarUsername');
       const sidebarAvatarContainer = document.getElementById('sidebarUserAvatarContainer');
 
-      // Sinkron nama
+      // Nama dari header
+      const headerUsername = document.getElementById('user-name-display');
       if (headerUsername && sidebarUsername) {
-        const nameText = headerUsername.textContent.trim();
-        sidebarUsername.textContent = nameText || 'Guest';
+        const name = headerUsername.textContent.trim();
+        if (name) sidebarUsername.textContent = name;
       }
 
-      // Jika ada <img> foto profil di dalam .btn-profile (nanti saat upload foto)
+      // Foto dari localStorage (prioritas utama)
+      const savedProfilePic = localStorage.getItem('userProfilePicture');
+      if (savedProfilePic && sidebarAvatarContainer) {
+        const img = document.createElement('img');
+        img.src = savedProfilePic;
+        img.alt = "Foto Profil";
+        img.onerror = () => {
+          sidebarAvatarContainer.innerHTML = '<i class="fas fa-user-circle"></i>';
+        };
+        sidebarAvatarContainer.innerHTML = '';
+        sidebarAvatarContainer.appendChild(img);
+        return;
+      }
+
+      // Fallback ke header jika ada <img>
       const headerProfileLink = document.querySelector('.btn-profile');
       const headerImg = headerProfileLink ? headerProfileLink.querySelector('img') : null;
-
       if (headerImg && sidebarAvatarContainer) {
         const img = document.createElement('img');
         img.src = headerImg.src;
-        img.alt = "Profil User";
+        img.alt = "Foto Profil";
         img.onerror = () => {
           sidebarAvatarContainer.innerHTML = '<i class="fas fa-user-circle"></i>';
         };
@@ -338,6 +346,23 @@
     });
 
     window.onload = () => loadHistoryList();
+    // Dengarkan perubahan di localStorage (jika logout dari tab lain)
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'isLoggedIn' && e.newValue === null) {
+      // Jika isLoggedIn dihapus → langsung redirect ke login
+      window.location.replace('../auth/login.php');
+    }
+  });
+
+  // Periksa ulang setiap 2 detik (safety net)
+  setInterval(() => {
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true' || localStorage.getItem('isLoggedIn') === 'true';
+    const userId = sessionStorage.getItem('userId') || localStorage.getItem('userId');
+    
+    if (!isLoggedIn || !userId) {
+      window.location.replace('../auth/login.php');
+    }
+  }, 2000);
   </script>
 </body>
 </html>

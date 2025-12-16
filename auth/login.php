@@ -3,338 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SagaHealth</title>
+    <title>Masuk | SagaHealth</title>
+
     <link rel="icon" href="../assets/img/tittle.png" type="image/png">
     <link rel="stylesheet" href="../assets/style/auth.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Main JS -->
+    <script src="../assets/js/app.js"></script>
+
+    <!-- Google OAuth -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
+
 <body>
-    <div class="auth-container-split">
-        <!-- Sisi Kiri: Gambar/Info -->
-        <div class="auth-info-side login-side">
-            <div class="auth-info-content">
-                <img src="../assets/img/logo.png" alt="SagaHealth Logo" class="auth-logo" onerror="this.src='https://placehold.co/150x50/014C63/ffffff?text=SagaHealth'">
-                <h2>Selamat Datang Kembali!</h2>
-                <p>Masuk untuk melanjutkan perjalanan kesehatan Anda bersama SagaHealth.</p>
-                
-                <!-- Fitur tambahan di info side -->
-                <div class="auth-features">
-                    <div class="feature-item">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>Keamanan Terjamin</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-user-md"></i>
-                        <span>Konsultasi Dokter</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fas fa-calendar-check"></i>
-                        <span>Jadwal Fleksibel</span>
-                    </div>
+<div class="auth-container-split">
+
+    <!-- LEFT INFO SIDE -->
+    <div class="auth-info-side login-side">
+        <div class="auth-info-content">
+            <img src="../assets/img/logo.png" alt="SagaHealth Logo" class="auth-logo"
+                 onerror="this.src='https://placehold.co/200x70/014C63/ffffff?text=SagaHealth'">
+            <h2>Selamat Datang Kembali!</h2>
+            <p>Masuk untuk melanjutkan perjalanan kesehatan Anda bersama SagaHealth.</p>
+
+            <div class="auth-features">
+                <div class="feature-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Keamanan Terjamin</span>
                 </div>
-            </div>
-        </div>
-
-        <!-- Sisi Kanan: Form Login -->
-        <div class="auth-form-side">
-            <div class="auth-form-card">
-                <div class="auth-header">
-                    <h1>Masuk Akun</h1>
-                    <p>Belum punya akun? <a href="register.php">Daftar di sini</a></p>
+                <div class="feature-item">
+                    <i class="fas fa-user-md"></i>
+                    <span>Konsultasi Dokter</span>
                 </div>
-
-                <!-- Alert Message -->
-                <div id="auth-message" class="auth-message" style="display: none;">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span id="message-text"></span>
+                <div class="feature-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Jadwal Fleksibel</span>
                 </div>
-
-                <form id="login-form" novalidate>
-                    <!-- Email Input -->
-                    <div class="auth-input-group">
-                        <label for="login-email">Email</label>
-                        <div class="input-with-icon">
-                            <i class="fas fa-envelope"></i>
-                            <input 
-                                type="email" 
-                                id="login-email" 
-                                name="email"
-                                placeholder="contoh@email.com" 
-                                autocomplete="email"
-                                required>
-                        </div>
-                        <span class="input-error" id="email-error"></span>
-                    </div>
-
-                    <!-- Password Input -->
-                    <div class="auth-input-group">
-                        <div class="label-row">
-                            <label for="login-password">Kata Sandi</label>
-                            <a href="forgot-password.php" class="forgot-password">Lupa Kata Sandi?</a>
-                        </div>
-                        <div class="input-with-icon">
-                            <i class="fas fa-lock"></i>
-                            <input 
-                                type="password" 
-                                id="login-password" 
-                                name="password"
-                                placeholder="••••••••" 
-                                autocomplete="current-password"
-                                required>
-                            <i class="fas fa-eye toggle-password" onclick="togglePassword('login-password', this)" title="Tampilkan password"></i>
-                        </div>
-                        <span class="input-error" id="password-error"></span>
-                    </div>
-
-                    <!-- Remember Me -->
-                    <div class="auth-checkbox">
-                        <input type="checkbox" id="remember-me" name="remember">
-                        <label for="remember-me">Ingat saya</label>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <button type="submit" class="auth-button" id="login-btn">
-                        <span class="btn-text">Masuk Sekarang</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-
-                    <!-- Back to Home -->
-                    <div class="auth-footer">
-                        <p>Kembali <a href="../dashboard/index.php">ke Beranda</a></p>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
 
-    <script>
-        // Toggle Password Visibility
-        function togglePassword(inputId, icon) {
-            const input = document.getElementById(inputId);
-            if (input.type === "password") {
-                input.type = "text";
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-                icon.title = "Sembunyikan password";
-            } else {
-                input.type = "password";
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-                icon.title = "Tampilkan password";
-            }
-        }
+    <!-- RIGHT FORM SIDE -->
+    <div class="auth-form-side">
+        <div class="auth-form-card">
 
-        function computeDefaultRedirect() {
-            const userPlan = sessionStorage.getItem('userPlan') || localStorage.getItem('userPlan');
-            // Jika premium → redirect ke dashboard premium
-             if (userPlan === 'premium') {
-                return '../dashboard/plan.php';
-            }
+            <div class="auth-header">
+                <h1>Masuk Akun</h1>
+                <p>Belum punya akun? <a href="register.php">Daftar di sini</a></p>
+            </div>
 
-    // Jika tidak → dashboard biasa
-    return '../user/plan.php';
+            <div id="auth-message" class="auth-message" style="display: none;">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="message-text"></span>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="login-form" novalidate>
+
+                <div class="auth-input-group">
+                    <label for="login-email">Email</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="login-email" name="email" placeholder="contoh@email.com"
+                               autocomplete="email" required>
+                    </div>
+                    <span class="input-error" id="login-email-error"></span>
+                </div>
+
+                <div class="auth-input-group">
+                    <div class="label-row">
+                        <label for="login-password">Kata Sandi</label>
+                        <a href="lupa_sandi.php" class="forgot-password">Lupa Kata Sandi?</a>
+                    </div>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="login-password" name="password" placeholder="••••••••"
+                               autocomplete="current-password" required>
+                        <button type="button" class="password-toggle-btn">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <span class="input-error" id="login-password-error"></span>
+                </div>
+
+                <div class="auth-checkbox">
+                    <input type="checkbox" id="remember-me" name="remember">
+                    <label for="remember-me">Ingat saya</label>
+                </div>
+
+                <button type="submit" class="auth-button" id="login-btn">
+                    <span class="btn-text">Masuk Sekarang</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+
+                <div class="auth-footer">
+                    <p>Kembali <a href="../dashboard/index.php">ke Beranda</a></p>
+                </div>
+            </form>
+
+            <div class="divider-or" style="text-align:center; margin:1.5rem 0; color:#aaa;">ATAU</div>
+
+            <!-- GOOGLE LOGIN -->
+            <div id="g_id_onload"
+                 data-client_id="542615675120-ghv1c22amb2v5mnq9uesqsp122jq2nrc.apps.googleusercontent.com"
+                 data-context="signin"
+                 data-ux_mode="popup"
+                 data-callback="handleGoogleSignIn"
+                 data-auto_prompt="false">
+            </div>
+
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-shape="rectangular"
+                 data-theme="outline"
+                 data-text="signin_with"
+                 data-size="large"
+                 data-logo_alignment="left"
+                 style="width:100%;">
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+// ------------------------------------------------------------
+// HELPER: Redirect Default
+// ------------------------------------------------------------
+function computeDefaultRedirect() {
+    const userPlan = sessionStorage.getItem('userPlan') || localStorage.getItem('userPlan');
+    return (userPlan === 'premium')
+        ? '../dashboard/plan.php'
+        : '../user/plan.php';
 }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const loginForm = document.getElementById('login-form');
-            const authMessage = document.getElementById('auth-message');
-            const messageText = document.getElementById('message-text');
-            const loginBtn = document.getElementById('login-btn');
-            const emailInput = document.getElementById('login-email');
-            const passwordInput = document.getElementById('login-password');
+// ------------------------------------------------------------
+// DOM READY LOGIN LOGIC
+// ------------------------------------------------------------
+document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('login-form');
+    const loginBtn = document.getElementById('login-btn');
+    const authMessage = document.getElementById('auth-message');
+    const messageText = document.getElementById('message-text');
 
-            // Show message function
-            function showMessage(message, type = 'error') {
-                const icon = authMessage.querySelector('i');
-                messageText.textContent = message;
-                authMessage.className = 'auth-message ' + type;
-                
-                // Update icon based on type
-                if (type === 'success') {
-                    icon.className = 'fas fa-check-circle';
-                } else if (type === 'error') {
-                    icon.className = 'fas fa-exclamation-circle';
-                } else {
-                    icon.className = 'fas fa-info-circle';
-                }
-                
-                authMessage.style.display = 'flex';
-                
-                // Scroll to message
-                authMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
+    const emailInput = document.getElementById('login-email');
+    const passwordInput = document.getElementById('login-password');
 
-            // Hide message function
-            function hideMessage() {
-                authMessage.style.display = 'none';
-            }
+    //-------------------------
+    // Show Message
+    //-------------------------
+    function showMessage(msg, type = 'error') {
+        authMessage.className = `auth-message ${type}`;
+        authMessage.style.display = 'flex';
+        messageText.textContent = msg;
+    }
 
-            // Show field error
-            function showFieldError(fieldId, message) {
-                const errorElement = document.getElementById(fieldId + '-error');
-                const inputElement = document.getElementById(fieldId);
-                if (errorElement && inputElement) {
-                    errorElement.textContent = message;
-                    errorElement.style.display = 'block';
-                    inputElement.classList.add('input-error-state');
-                }
-            }
+    function hideMessage() {
+        authMessage.style.display = 'none';
+    }
 
-            // Clear field error
-            function clearFieldError(fieldId) {
-                const errorElement = document.getElementById(fieldId + '-error');
-                const inputElement = document.getElementById(fieldId);
-                if (errorElement && inputElement) {
-                    errorElement.textContent = '';
-                    errorElement.style.display = 'none';
-                    inputElement.classList.remove('input-error-state');
-                }
-            }
+    //-------------------------
+    // Field Error Helpers
+    //-------------------------
+    function showFieldError(field, msg) {
+        document.getElementById(`${field}-error`).textContent = msg;
+    }
 
-            // Clear all errors
-            function clearAllErrors() {
-                clearFieldError('login-email');
-                clearFieldError('login-password');
-                hideMessage();
-            }
+    function clearFieldError(field) {
+        document.getElementById(`${field}-error`).textContent = '';
+    }
 
-            // Validate email format
-            function isValidEmail(email) {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return emailRegex.test(email);
-            }
+    function clearAllErrors() {
+        clearFieldError('login-email');
+        clearFieldError('login-password');
+        hideMessage();
+    }
 
-            // Client-side validation
-            function validateForm() {
-                clearAllErrors();
-                let isValid = true;
+    //-------------------------
+    // Email validation
+    //-------------------------
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
 
-                const email = emailInput.value.trim();
-                const password = passwordInput.value;
+    //-------------------------
+    // Form Validation
+    //-------------------------
+    function validateForm() {
+        clearAllErrors();
+        let valid = true;
 
-                // Validate email
-                if (!email) {
-                    showFieldError('login-email', 'Email harus diisi');
-                    isValid = false;
-                } else if (!isValidEmail(email)) {
-                    showFieldError('login-email', 'Format email tidak valid');
-                    isValid = false;
-                }
+        const email = emailInput.value.trim();
+        const pass = passwordInput.value.trim();
 
-                // Validate password
-                if (!password) {
-                    showFieldError('login-password', 'Kata sandi harus diisi');
-                    isValid = false;
-                } else if (password.length < 6) {
-                    showFieldError('login-password', 'Kata sandi minimal 6 karakter');
-                    isValid = false;
-                }
+        if (!email) {
+            showFieldError('login-email', 'Email harus diisi');
+            valid = false;
+        } else if (!isValidEmail(email)) {
+            showFieldError('login-email', 'Format email tidak valid');
+            valid = false;
+        }
 
-                return isValid;
-            }
+        if (!pass) {
+            showFieldError('login-password', 'Kata sandi harus diisi');
+            valid = false;
+        } else if (pass.length < 6) {
+            showFieldError('login-password', 'Minimal 6 karakter');
+            valid = false;
+        }
 
-            // Real-time validation on input
-            emailInput.addEventListener('input', () => {
-                if (emailInput.value.trim()) {
-                    clearFieldError('login-email');
-                }
+        return valid;
+    }
+
+    //-------------------------
+    // Real-time validation
+    //-------------------------
+    emailInput.addEventListener('input', () => clearFieldError('login-email'));
+    passwordInput.addEventListener('input', () => clearFieldError('login-password'));
+
+    //-------------------------
+    // Submit Login Form
+    //-------------------------
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!validateForm()) return;
+
+        const originalBtn = loginBtn.innerHTML;
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span class="btn-text">Memproses...</span>';
+
+        try {
+            const res = await fetch('../includes/auth_functions.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    action: 'login',
+                    email: emailInput.value.trim(),
+                    password: passwordInput.value.trim(),
+                    remember: document.getElementById('remember-me').checked
+                })
             });
 
-            passwordInput.addEventListener('input', () => {
-                if (passwordInput.value) {
-                    clearFieldError('login-password');
-                }
-            });
+            if (!res.ok) throw new Error('Server error: ' + res.status);
+            const data = await res.json();
 
-            // Form submission
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
+            if (data.status === 'success') {
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('userId', data.user.id);
+                sessionStorage.setItem('userName', data.user.name);
+                sessionStorage.setItem('userEmail', data.user.email);
 
-                // Validate form
-                if (!validateForm()) {
-                    return;
+                if (data.user.plan) {
+                    sessionStorage.setItem('userPlan', data.user.plan);
                 }
 
-                // Disable button and show loading
-                const originalText = loginBtn.innerHTML;
-                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span class="btn-text">Memproses...</span>';
-                loginBtn.disabled = true;
-                clearAllErrors();
+                showMessage('Login berhasil! Mengalihkan...', 'success');
 
-                const email = emailInput.value.trim();
-                const password = passwordInput.value;
-                const remember = document.getElementById('remember-me').checked;
+                const redirectUrl = data.redirectUrl || computeDefaultRedirect();
+                setTimeout(() => window.location.href = redirectUrl, 1200);
 
-                try {
-                    const res = await fetch('../includes/auth_functions.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            action: 'login', 
-                            email, 
-                            password,
-                            remember 
-                        })
-                    });
-
-                    // Check if response is ok
-                    if (!res.ok) {
-                        throw new Error('Server error: ' + res.status);
-                    }
-
-                    const data = await res.json();
-
-                    if (data.status === 'success') {
-                        // Store session data
-                        sessionStorage.setItem('isLoggedIn', 'true');
-                        sessionStorage.setItem('userId', data.user.id);
-                        sessionStorage.setItem('userName', data.user.name);
-                        sessionStorage.setItem('userEmail', data.user.email);
-                        
-                        // If remember me is checked, store in localStorage
-                        if (remember) {
-                            localStorage.setItem('rememberUser', 'true');
-                            localStorage.setItem('userId', data.user.id);
-                        }
-
-                    showMessage('Login berhasil! Mengalihkan...', 'success');
-
-                    // Use server-provided redirect if available, otherwise fallback
-                    const redirectUrl = (data.redirectUrl && typeof data.redirectUrl === 'string')
-                        ? data.redirectUrl
-                        : computeDefaultRedirect();
-
-                    setTimeout(() => {
-                        window.location.href = redirectUrl;
-                    }, 1200);
-                } else {
-                    // Login failed: show server message if provided
-                    const msg = (data && data.message) ? data.message : 'Login gagal. Silakan coba lagi.';
-                    showMessage(msg, 'error');
-                    loginBtn.innerHTML = originalText;
-                    loginBtn.disabled = false;
-                }
-            } catch (err) {
-                console.error('Login error:', err);
-                const friendly = err && err.message ? err.message : 'Terjadi kesalahan koneksi. Silakan coba lagi.';
-                showMessage(friendly, 'error');
-                loginBtn.innerHTML = originalText;
+            } else {
+                showMessage(data.message || 'Login gagal.');
                 loginBtn.disabled = false;
+                loginBtn.innerHTML = originalBtn;
             }
-        });
 
-        // Auto-redirect if already logged in (session or remember)
-        const alreadyLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true' ||
-                                localStorage.getItem('rememberUser') === 'true';
-        if (alreadyLoggedIn) {
-            showMessage('Anda sudah login. Mengalihkan...', 'info');
-            // If localStorage has userId and a plan page exists, optionally redirect there.
-            const fallbackRedirect = computeDefaultRedirect();
-            setTimeout(() => {
-                window.location.href = fallbackRedirect;
-            }, 900);
+        } catch (err) {
+            showMessage('Terjadi kesalahan koneksi, coba lagi.');
+            loginBtn.disabled = false;
+            loginBtn.innerHTML = originalBtn;
         }
     });
+});
 </script>
 </body>
 </html>

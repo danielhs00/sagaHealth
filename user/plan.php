@@ -6,17 +6,16 @@
    <title>SagaHealth</title>
     <link rel="icon" href="../assets/img/tittle.png" type="image/png">
     <link rel="stylesheet" href="../assets/style/auth.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/style/plan.css">
+    <link rel="stylesheet" 
+ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 </head>
 <body>
 
-    <!-- Loading Screen -->
-    <div id="page-loader" class="page-loader">
-        <div class="loader-content">
-            <div class="spinner-large"></div>
-            <p>Memuat halaman...</p>
-        </div>
-    </div>
+  <div id="page-loader" class="loader-page">
+    <h3>Memuat halaman...</h3>
+</div>
 
     <?php include '../user/partials/header.php'; ?>
 
@@ -82,8 +81,7 @@
             <li><i class="fa fa-check"></i> Anjuran Kesahatan</li>
             <li><i class="fa fa-check"></i> Riwayat Kesehatan </li>
         </ul>
-
-       <button class="btn-plan" onclick="selectPlan('Basic Plan', '20000', 'basic')">
+<button class="btn-plan" onclick="selectPlan('basic')">
     Pilih Basic
 </button>
 
@@ -113,7 +111,7 @@
 
         </ul>
 
-        <button class="btn-plan premium" onclick="selectPlan('Premium Plan', '50000', 'premium')">
+<button class="btn-plan premium" onclick="selectPlan('premium')">
     Pilih Premium
 </button>
 
@@ -146,7 +144,7 @@
         <!-- Item 3 -->
         <div class="included-item">
             <div class="included-icon">
-                <i class="fas fa-tachometer-alt"></i>
+                <i class="fas fa-clock"></i>
             </div>
             <h3>Waktu Aktif 99,9%, Terjamin</h3>
             <p>Jaminan uptime sebesar 99,9% memastikan situs Anda selalu tersedia.</p>
@@ -155,7 +153,7 @@
         <!-- Item 4 -->
         <div class="included-item">
             <div class="included-icon">
-                <i class="fas fa-table"></i>
+                <i class="fas fa-chart-line"></i>
             </div>
             <h3>Dasbor Sederhana</h3>
             <p>Mudah digunakan untuk pemula maupun profesional. Pantau performa situs Anda secara instan.</p>
@@ -172,10 +170,11 @@
 
     </div>
 
-    <div class="included-btn-wrapper">
+</section>
+<div class="included-btn-wrapper">
         <a href="#" class="included-btn">Memulai</a>
     </div>
-</section>
+
 
                 <!-- Comparison Table -->
                 <div class="comparison-section">
@@ -186,7 +185,7 @@
                             <i class="fas fa-chevron-down"></i>
                         </button>
                     </div>
-                    <div class="comparison-table-wrapper" id="comparison-table" style="display: none;">
+                    <div class="comparison-table-wrapper comparison" id="comparison-table">
                         <table class="comparison-table">
                             <thead>
                                 <tr>
@@ -263,6 +262,37 @@
         </div>
     </footer>
 
-    <script src="../assets/js/plan.js"></script>
+    
+    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-nW3D8-QuLJC-1SVc"></script>
+<script src="../assets/js/plan.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const loader = document.getElementById("page-loader");
+    if (loader) {
+        loader.style.display = "none";
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const btn = document.getElementById("show-comparison");
+    const table = document.getElementById("comparison-table");
+
+    btn.addEventListener("click", function () {
+        if (table.style.display === "none" || table.style.display === "") {
+            table.style.display = "block";
+            btn.querySelector("span").textContent = "Sembunyikan Perbandingan";
+            btn.querySelector("i").classList.remove("fa-chevron-down");
+            btn.querySelector("i").classList.add("fa-chevron-up");
+        } else {
+            table.style.display = "none";
+            btn.querySelector("span").textContent = "Lihat Perbandingan Detail";
+            btn.querySelector("i").classList.remove("fa-chevron-up");
+            btn.querySelector("i").classList.add("fa-chevron-down");
+        }
+    });
+});
+
+</script>
+
 </body>
 </html>

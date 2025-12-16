@@ -24,47 +24,47 @@
 </header>
 
 <script>
-    // Fungsi update header (nama + foto profil)
+    // Fungsi untuk update nama dan foto profil di header
     function updateHeaderProfile() {
         const nameEl = document.getElementById('user-name-display');
         const profileLink = document.querySelector('.btn-profile');
 
-        if (!profileLink || !nameEl) return;
+        if (!nameEl || !profileLink) return;
 
-        // Ambil data terbaru dari storage
+        // Ambil data terbaru
         const savedName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || '';
         const savedPhoto = localStorage.getItem('userProfilePicture');
 
         // Update nama
         nameEl.textContent = savedName || 'Pengguna';
 
-        // Hapus elemen lama (ikon atau img sebelumnya)
+        // Hapus ikon atau foto lama
         const oldIcon = profileLink.querySelector('i');
         const oldImg = profileLink.querySelector('img.profile-avatar-header');
         if (oldIcon) oldIcon.remove();
         if (oldImg) oldImg.remove();
 
-        // Jika ada foto → tampilkan img
-        if (savedPhoto) {
+        // Jika ada foto, tampilkan sebagai img
+        if (savedPhoto && savedPhoto.startsWith('data:image/')) {
             const img = document.createElement('img');
             img.src = savedPhoto;
             img.className = 'profile-avatar-header';
             img.alt = 'Foto Profil';
             profileLink.insertBefore(img, nameEl);
         } else {
-            // Jika tidak ada foto → kembalikan ikon default
+            // Jika tidak ada foto, kembalikan ikon default
             const icon = document.createElement('i');
             icon.className = 'fas fa-user-circle';
             profileLink.insertBefore(icon, nameEl);
         }
     }
 
-    // Jalankan saat load
+    // Jalankan saat halaman load
     document.addEventListener('DOMContentLoaded', updateHeaderProfile);
 
-    // Update saat storage berubah (tab lain)
+    // Update jika storage berubah (dari tab lain)
     window.addEventListener('storage', updateHeaderProfile);
 
-    // Update saat event custom dari profile.php (tab sama)
-    window.addEventListener('profilePhotoChanged', updateHeaderProfile);
-</script>   
+    // Update langsung di tab yang sama saat foto/nama berubah
+    window.addEventListener('profileUpdated', updateHeaderProfile);
+</script>

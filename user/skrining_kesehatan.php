@@ -1,105 +1,202 @@
-  <?php include '../user/partials/header.php'; ?>
-  <div class="html">
-    <link rel="stylesheet" href="../assets/style/form_skrining.css">
-    <link rel="stylesheet" type="text/css" href="../assets/style/auth.css">
-  </div>
-  <div class="container">
-    <h1>🩺 Form Skrining Kesehatan SAGAHEALTH</h1>
+<?php include '../user/partials/header.php'; ?>
 
-    <form id="skrining-form" method="POST" action="../testing_svm/process_skrining.php">
+<link rel="stylesheet" href="../assets/style/form_skrining.css">
+<link rel="stylesheet" type="text/css" href="../assets/style/auth.css">
+<link rel="stylesheet" type="text/css" href="../user/style/skrining_kesehatan.css">
+
+<div id="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loading-main-text">Sedang Menghubungkan...</div>
+    <div class="loading-subtext" id="loading-sub-text">Mohon jangan tutup halaman ini.</div>
+</div>
+
+<div class="container">
+  <h1>🩺 Form Skrining Kesehatan SAGAHEALTH</h1>
+  <p class="form-description">Isi data berikut untuk mendapatkan analisis risiko 6 penyakit dan rekomendasi AI personal.</p>
+
+  <form id="skrining-form" method="POST" action="../testing_svm/process_skrining.php">
 
     <div class="section">
       <h2>Identitas Diri</h2>
-      <label>Nama Lengkap:</label>
-      <input type="text" name="nama" required>
+      <div class="form-group">
+          <label>Nama Lengkap:</label>
+          <input type="text" name="nama" class="form-control" required placeholder="Masukkan nama Anda">
       </div>
-
-    <div class="section">
-      <h2>Pengukuran Diri</h2>
-      <label>Berat Badan (Kg):</label>
-      <input type="number" name="bb" id="bb" required>
-      <label>Tinggi Badan (Cm):</label>
-      <input type="number" name="tb" id="tb" required>
     </div>
 
     <div class="section">
-      <h2>Skrining Mandiri Tekanan Darah (Hipertensi)</h2>
+      <h2>Pengukuran Fisik</h2>
+      <div class="flex-row">
+        <div class="flex-1">
+
+              <label>Berat Badan (Kg):</label>
+              <input type="number" name="bb" id="bb" required step="0.1" min="1" placeholder="Contoh: 65.5">
+          </div>
+          <div style="flex:1;">
+              <label>Tinggi Badan (Cm):</label>
+              <input type="number" name="tb" id="tb" required step="0.1" min="50" placeholder="Contoh: 170">
+          </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Skrining Tekanan Darah</h2>
       
       <div class="question">
-        1. Apakah dokter pernah memberi tahu Anda bahwa Anda memiliki tekanan darah tinggi?<br>
+        <p>1. Apakah dokter pernah menyatakan Anda memiliki tekanan darah tinggi?</p>
         <label><input type="radio" name="riwayat_hip" value="1"> Ya</label>
         <label><input type="radio" name="riwayat_hip" value="0" checked> Tidak</label>
       </div>
 
       <div class="question">
-        2. Apakah Anda memiliki kebiasaan begadang?<br>
+        <p>2. Apakah Anda sering begadang (tidur larut malam)?</p>
         <label><input type="radio" name="begadang" value="1"> Ya</label>
         <label><input type="radio" name="begadang" value="0" checked> Tidak</label>
       </div>
 
       <div class="question">
-        3. Apakah Anda sedang atau rutin mengonsumsi obat penurun tekanan darah?<br>
-        <label><input type="radio" name="konsumsi_obat" value="2"> Ya, rutin</label>
-        <label><input type="radio" name="konsumsi_obat" value="1"> Ya, tapi tidak rutin</label>
-        <label><input type="radio" name="konsumsi_obat" value="0" checked> Tidak</label>
+        <p>3. Status konsumsi obat hipertensi:</p>
+        <label><input type="radio" name="konsumsi_obat" value="2"> Rutin</label>
+        <label><input type="radio" name="konsumsi_obat" value="1"> Tidak Rutin</label>
+        <label><input type="radio" name="konsumsi_obat" value="0" checked> Tidak/Belum pernah</label>
       </div>
 
       <div class="question">
-        4. Apakah Anda mengukur tekanan darah dalam 1 bulan terakhir?<br>
-        <label><input type="radio" name="ukur_terakhir" value="1"> Ya</label>
-        <label><input type="radio" name="ukur_terakhir" value="0"> Tidak</label>
+        <p>4. Hasil pengukuran tensi terakhir (Jika tidak tahu, biarkan default):</p>
+        <div style="display: flex; gap: 20px;">
+            <div style="flex:1;">
+                <label>Sistolik (Atas):</label>
+                <input type="number" name="sistolik" value="120" required>
+            </div>
+            <div style="flex:1;">
+                <label>Diastolik (Bawah):</label>
+                <input type="number" name="diastolik" value="80" required>
+            </div>
+        </div>
       </div>
 
       <div class="question">
-        5. Jika YA (nomor 4), berapa hasil terakhir Anda? (Isi 0 jika TIDAK)<br>
-        <label>Sistolik (Angka Atas):</label><input type="number" name="sistolik" value="120" required>
-        <label>Diastolik (Angka Bawah):</label><input type="number" name="diastolik" value="80" required>
-      </div>
-
-      <div class="question">
-        6. Dalam 30 hari terakhir, apakah Anda sering mengalami keluhan berikut? (boleh lebih dari satu, maks 4)<br>
-        <label><input type="checkbox" name="keluhan_list[]" value="1"> Sakit kepala berat / pusing</label><br>
-        <label><input type="checkbox" name="keluhan_list[]" value="1"> Pegal / kaku di tengkuk</label><br>
-        <label><input type="checkbox" name="keluhan_list[]" value="1"> Pandangan kabur tiba-tiba</label><br>
-        <label><input type="checkbox" name="keluhan_list[]" value="1"> Mudah lelah / sesak napas ringan</label><br>
+        <p>5. Keluhan dalam 30 hari terakhir (Pilih yang sesuai):</p>
+        <div class="grid-2">
+            <label><input type="checkbox" name="keluhan_list[]" value="1"> Sakit kepala berat</label>
+            <label><input type="checkbox" name="keluhan_list[]" value="1"> Tengkuk kaku</label>
+            <label><input type="checkbox" name="keluhan_list[]" value="1"> Pandangan kabur</label>
+            <label><input type="checkbox" name="keluhan_list[]" value="1"> Nyeri dada / Sesak</label>
+        </div>
       </div>
     </div>
 
     <div class="section">
-      <h2>Riwayat Penyakit Pribadi</h2>
-      <table>
-        <tr><th>Penyakit</th><th>Ya</th><th>Tidak</th></tr>
-        <tr><td>Diabetes Melitus</td><td><input type="radio" name="pribadi_dm" value="1"></td><td><input type="radio" name="pribadi_dm" value="0" checked></td></tr>
-        <tr><td>Hipertensi</td><td><input type="radio" name="pribadi_hip" value="1"></td><td><input type="radio" name="pribadi_hip" value="0" checked></td></tr>
-        <tr><td>Penyakit Jantung</td><td><input type="radio" name="pribadi_jantung" value="1"></td><td><input type="radio" name="pribadi_jantung" value="0" checked></td></tr>
-        <tr><td>Stroke</td><td><input type="radio" name="pribadi_stroke" value="1"></td><td><input type="radio" name="pribadi_stroke" value="0" checked></td></tr>
-        <tr><td>Asma / PPOK</td><td><input type="radio" name="pribadi_asma" value="1"></td><td><input type="radio" name="pribadi_asma" value="0" checked></td></tr>
-        <tr><td>Kanker</td><td><input type="radio" name="pribadi_kanker" value="1"></td><td><input type="radio" name="pribadi_kanker" value="0" checked></td></tr>
+      <h2>Riwayat Medis Pribadi</h2>
+      <table class="table-custom">
+        <tr><th>Kondisi</th><<th class="text-center">Ya</th><<th class="text-center">Tidak</th></tr>
+        
+        <?php 
+        $penyakit = [
+            'pribadi_dm' => 'Diabetes', 
+            'pribadi_hip' => 'Hipertensi', 
+            'pribadi_jantung' => 'Jantung', 
+            'pribadi_stroke' => 'Stroke',
+            'pribadi_asma' => 'Asma/PPOK',
+            'pribadi_kanker' => 'Kanker'
+        ];
+        foreach($penyakit as $name => $label) {
+            echo "<tr>
+                <td>$label</td>
+                <td style='text-align:center;'><input type='radio' name='$name' value='1'></td>
+                <td style='text-align:center;'><input type='radio' name='$name' value='0' checked></td>
+            </tr>";
+        }
+        ?>
       </table>
     </div>
 
     <div class="section">
-      <h2>Riwayat Penyakit Keluarga</h2>
-      <table>
-        <tr><th>Penyakit</th><th>Ya</th><th>Tidak</th><th>Tidak Tahu</th></tr>
-        <tr><td>Diabetes Melitus</td><td><input type="radio" name="keluarga_dm" value="1"></td><td><input type="radio" name="keluarga_dm" value="0"></td><td><input type="radio" name="keluarga_dm" value="0" checked></td></tr>
-        <tr><td>Hipertensi</td><td><input type="radio" name="keluarga_hip" value="1"></td><td><input type="radio" name="keluarga_hip" value="0"></td><td><input type="radio" name="keluarga_hip" value="0" checked></td></tr>
-        <tr><td>Penyakit Jantung</td><td><input type="radio" name="keluarga_jantung" value="1"></td><td><input type="radio" name="keluarga_jantung" value="0"></td><td><input type="radio" name="keluarga_jantung" value="0" checked></td></tr>
+      <h2>Riwayat Keluarga (Orang Tua/Saudara)</h2>
+      <table class="table-custom" style="width:100%; text-align: left;">
+        <tr><th>Kondisi</th><th class="text-center">Ya</th><th class="text-center">Tidak</th></tr>
+        <?php 
+        $keluarga = [
+            'keluarga_dm' => 'Diabetes', 
+            'keluarga_hip' => 'Hipertensi', 
+            'keluarga_jantung' => 'Jantung'
+        ];
+        foreach($keluarga as $name => $label) {
+            echo "<tr>
+                <td>$label</td>
+                <td style='text-align:center;'><input type='radio' name='$name' value='1'></td>
+                <td style='text-align:center;'><input type='radio' name='$name' value='0' checked></td>
+            </tr>";
+        }
+        ?>
       </table>
     </div>
 
     <div class="section">
-      <h2>Keluhan dan Gejala Fisik</h2>
-      <table>
-        <tr><th>Gejala</th><th>Ya</th><th>Tidak</th></tr>
-        <tr><td>Batuk berdahak ≥ 2 minggu</td><td><input type="radio" name="gejala_batuk" value="1"></td><td><input type="radio" name="gejala_batuk" value="0" checked></td></tr>
-        <tr><td>Berat badan turun / nafsu makan turun</td><td><input type="radio" name="gejala_bbturun" value="1"></td><td><input type="radio" name="gejala_bbturun" value="0" checked></td></tr>
-        <tr><td>Demam tanpa sebab jelas</td><td><input type="radio" name="gejala_demam" value="1"></td><td><input type="radio" name="gejala_demam" value="0" checked></td></tr>
-        <tr><td>Sering lemas / lesu</td><td><input type="radio" name="gejala_lemas" value="1"></td><td><input type="radio" name="gejala_lemas" value="0" checked></td></tr>
-        <tr><td>Sesak napas</td><td><input type="radio" name="gejala_sesak" value="1"></td><td><input type="radio" name="gejala_sesak" value="0" checked></td></tr>
+      <h2>Gejala Lainnya</h2>
+      <table class="table-custom" style="width:100%; text-align: left;">
+        <?php 
+        $gejala = [
+            'gejala_batuk' => 'Batuk > 2 minggu', 
+            'gejala_bbturun' => 'BB turun drastis', 
+            'gejala_demam' => 'Demam tanpa sebab',
+            'gejala_lemas' => 'Sering lemas',
+            'gejala_sesak' => 'Sesak napas aktivitas ringan'
+        ];
+        foreach($gejala as $name => $label) {
+            echo "<tr>
+                <td>$label</td>
+                <td class='text-center w-50'>
+<input type='radio' name='$name' value='1'> Ya</td>
+                <td class='text-center w-60'><input type='radio' name='$name' value='0' checked> Tidak</td>
+            </tr>";
+        }
+        ?>
       </table>
     </div>
     
-    <button type="submit" class="btn-submit">Kirim Form Skrining</button>
-    </form>
-  </div>
+    <button type="submit" class="btn-submit">
+        🔍 Analisis Kesehatan Saya Sekarang
+    </button>
+  </form>
+</div>
+
+<script>
+document.getElementById('skrining-form').addEventListener('submit', function(e) {
+    // Validasi sederhana (opsional, karena required sudah ada di HTML)
+    const bb = document.getElementById('bb').value;
+    const tb = document.getElementById('tb').value;
+    
+    if(!bb || !tb) {
+        alert("Mohon lengkapi Berat Badan dan Tinggi Badan.");
+        e.preventDefault();
+        return;
+    }
+
+    // Tampilkan Overlay Loading
+    const overlay = document.getElementById('loading-overlay');
+    const mainText = document.getElementById('loading-main-text');
+    const subText = document.getElementById('loading-sub-text');
+    
+    overlay.style.display = 'flex';
+
+    // Simulasi Progress Bar Text agar user sabar menunggu LLM
+    // Karena PHP backend menjalankan 6 SVM + 1 LLM, butuh waktu ~10-20 detik.
+    
+    const messages = [
+        { t: 0, msg: "Mengumpulkan data kesehatan Anda..." },
+        { t: 2000, msg: "Menghitung Indeks Massa Tubuh (IMT)..." },
+        { t: 4000, msg: "Menjalankan 6 Model Machine Learning..." },
+        { t: 7000, msg: "Menganalisis risiko Hipertensi, Diabetes, & Jantung..." },
+        { t: 10000, msg: "Menghubungkan ke SagaBot AI..." },
+        { t: 12000, msg: "SagaBot sedang mengetik saran personal untuk Anda..." },
+        { t: 18000, msg: "Finalisasi laporan..." }
+    ];
+
+    messages.forEach(item => {
+        setTimeout(() => {
+            mainText.innerText = item.msg;
+        }, item.t);
+    });
+});
+</script>

@@ -16,8 +16,7 @@
   <link rel="stylesheet" href="../assets/style/mood.css" />
 
 
- <!-- LOGIN WALL (MODAL) -->
-<div id="login-wall">
+ <div id="login-wall">
   <div class="login-box">
     <!-- Ikon Gembok dari Font Awesome -->
     <i class="fas fa-lock login-icon"></i>
@@ -29,9 +28,9 @@
     <p>Silakan login atau register untuk menikmati fitur mood tracker ini.</p>
     
     <!-- Tombol Aksi (Link ke halaman login) -->
-      <a href="../auth/login.php" class="login-btn-link">Login atau Register</a>
-  
-      <a href="../dashboard/index.php" class="login-button">Kembali</a>
+    <a href="../auth/login.php" class="login-button-link">Login atau Register</a>
+    <br>
+    <a href="../dashboard/index.php" class="login-button">Kembali</a>
   </div>
 </div>
 

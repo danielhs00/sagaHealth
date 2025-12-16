@@ -26,14 +26,7 @@
   <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
   <!-- Framer Motion UMD -->
   <script src="https://unpkg.com/framer-motion/dist/framer-motion.umd.js"></script>
-  <style>
-    html, body, #root { height: 100%; }
-    .card { @apply bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm; }
-    .btn { @apply inline-flex items-center justify-center h-10 px-4 rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition; }
-    .btn-primary { @apply bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 border-transparent; }
-    .badge { @apply text-xs px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800; }
-    .progress { height: 12px; }
-  </style>
+  <link rel="stylesheet" href="../assets/style/mood_tracker.css" />
 </head>
 <body class="h-full bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 text-slate-900 dark:text-slate-100">
   <div id="root"></div>
@@ -131,6 +124,7 @@
       const progress = ((idxToday+1)/30)*100;
 
       const moodEntries = useMemo(()=> Object.entries(state.moods).map(([date, v])=>({date,...v})).sort((a,b)=>a.date.localeCompare(b.date)), [state.moods]);
+      const hasMoodEntries = moodEntries.length > 0;
 
       const last14 = useMemo(()=>{
         const days=[]; for(let i=13;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); const id=d.toISOString().slice(0,10); const e=state.moods[id]; days.push({ date:id, score:e?.score ?? 0 }); }
@@ -150,6 +144,15 @@
       const toggleTask = (i)=> setState(s=>{ const m = s.moods[todayKey] ?? { score:0, note:'', day: idxToday+1, tasksDone:[] }; const set = new Set(m.tasksDone); set.has(i)? set.delete(i): set.add(i); return { ...s, moods: { ...s.moods, [todayKey]: { ...m, tasksDone: [...set] } } }; });
 
       const resetProgram = ()=> { if(!confirm('Mulai ulang program 30 hari?')) return; setState(defaultState()); setTab('today'); };
+
+      const goBackToDashboard = (e)=> {
+        if (window.history.length > 1) {
+          e.preventDefault();
+          window.history.back();
+        } else {
+          window.location.href = 'dashboard_basic.php';
+        }
+      };
 
       const exportJSON = ()=>{
         const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
@@ -180,6 +183,9 @@
                 </div>
               </div>
               <div className="flex items-center gap-4 text-sm">
+                <a className="btn" href="dashboard_basic.php" onClick={goBackToDashboard}>
+                Dashboard
+                </a>
                 <div className="hidden md:flex items-center gap-2"><span>🔔</span><span>{state.reminders? 'Pengingat aktif':'Pengingat mati'}</span></div>
                 <button className="btn" onClick={()=> setState(s=>({...s, dark: !s.dark}))}>{state.dark? '☾ Gelap':'☀︎ Terang'}</button>
               </div>
@@ -188,12 +194,11 @@
 
           {/* Tabs */}
           <main className="max-w-6xl mx-auto px-4 py-6">
-            <div className="grid grid-cols-5 gap-2 text-sm">
-              {['today','program','journal','stats','settings'].map((t,i)=> (
+            <div className="grid grid-cols-4 gap-2 text-sm">
+              {['today','program','stats','settings'].map((t,i)=> (
                 <button key={t} className={`btn ${tab===t? 'btn-primary':''}`} onClick={()=> setTab(t)}>
                   {t==='today'&&'🏠 Hari ini'}
                   {t==='program'&&'📅 Program'}
-                  {t==='journal'&&'📔 Jurnal'}
                   {t==='stats'&&'📊 Statistik'}
                   {t==='settings'&&'⚙️ Pengaturan'}
                 </button>
@@ -231,7 +236,7 @@
 
                       <div>
                         <div className="text-sm text-slate-500 mb-2">Mood hari ini</div>
-                        <div className="grid grid-cols-5 gap-2">
+                        <div className="grid grid-cols-4 gap-2">
                           {moodScale.map(m => (
                             <button key={m.score} className={`btn ${todayMood.score===m.score? 'btn-primary':''}`} onClick={()=> setTodayScore(m.score)}>{m.icon} {m.label}</button>
                           ))}
@@ -302,47 +307,13 @@
               </div>
             )}
 
-            {/* JOURNAL */}
-            {tab==='journal' && (
-              <div className="grid lg:grid-cols-3 gap-6 mt-6">
-                <section className="card lg:col-span-2 p-6">
-                  <div className="font-semibold mb-4">Riwayat Mood</div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="text-left text-slate-500">
-                          <th className="py-2">Tanggal</th>
-                          <th>Mood</th>
-                          <th>Catatan</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {moodEntries.length===0 && <tr><td className="py-4 text-slate-500" colSpan="3">Belum ada entri.</td></tr>}
-                        {moodEntries.map(e=> (
-                          <tr key={e.date} className="border-t border-slate-200 dark:border-slate-800">
-                            <td className="py-2">{new Date(e.date).toLocaleDateString()}</td>
-                            <td className="py-2">{(moodScale.find(m=>m.score===e.score)?.icon)||'–'} {e.score||'-'}</td>
-                            <td className="py-2 text-slate-600 dark:text-slate-300">{e.note||''}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </section>
-                <section className="card p-6">
-                  <div className="font-semibold mb-2">Catatan Cepat</div>
-                  <textarea className="w-full h-40 p-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900" placeholder="Tuliskan refleksi singkat di sini…" defaultValue={todayMood.note} onBlur={(e)=> setTodayNote(e.target.value)}></textarea>
-                  <div className="text-xs text-slate-500 mt-2">Tips: catat pemicu, responsmu, dan 1 langkah kecil memperbaiki suasana hati.</div>
-                </section>
-              </div>
-            )}
-
             {/* STATS */}
             {tab==='stats' && (
               <div className="grid lg:grid-cols-2 gap-6 mt-6">
                 <section className="card p-4 h-[360px]">
                   <div className="font-semibold mb-2">Trend 14 Hari</div>
                   <div className="h-[300px]">
+                  {hasMoodEntries ? (
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={last14} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
                         <CartesianGrid strokeDasharray="3 3" />
@@ -352,13 +323,15 @@
                         <Line type="monotone" dataKey="score" strokeWidth={2} dot={{ r: 3 }} />
                       </LineChart>
                     </ResponsiveContainer>
+                  )}
                   </div>
                 </section>
 
                 <section className="card p-4 h-[360px]">
                   <div className="font-semibold mb-2">Distribusi Skor</div>
                   <div className="h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
+                  {hasMoodEntries ? (
+                                        <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={moodScale.map(m=>({ label:m.label, score:m.score, count:moodEntries.filter(e=>e.score===m.score).length }))}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="label" />
@@ -367,6 +340,7 @@
                         <Bar dataKey="count" />
                       </BarChart>
                     </ResponsiveContainer>
+                  )}
                   </div>
                 </section>
 
@@ -375,6 +349,7 @@
                   <p>Rata-rata 7 hari: <strong>{avg7? avg7.toFixed(2): '-'}</strong> · 14 hari: <strong>{avg14? avg14.toFixed(2): '-'}</strong></p>
                   <p>Streak pengisian: <strong>{streak} hari</strong></p>
                   <p className="text-sm text-slate-500">Kiat: isi di jam yang sama setiap hari untuk insight yang konsisten.</p>
+                  {!hasMoodEntries && <p className="text-xs text-slate-500 mt-2">Statistik akan muncul setelah ada minimal satu input mood.</p>}
                 </section>
               </div>
             )}

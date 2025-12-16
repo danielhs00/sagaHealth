@@ -11,7 +11,7 @@
     <!-- CSS Utama -->
     <link rel="stylesheet" href="../assets/style/auth.css">
 
-    <!-- CSS Khusus Profil (avatar editable + header styling) -->
+    <!-- CSS Khusus Profil -->
     <link rel="stylesheet" href="../assets/style/profile.css">
 
     <!-- Font Awesome -->
@@ -21,7 +21,7 @@
 </head>
 <body style="background-color: var(--bg-page);">
 
-    <!-- GUARD SCRIPT: Harus di paling atas -->
+    <!-- GUARD SCRIPT -->
     <script>
         const userId = sessionStorage.getItem('userId') || localStorage.getItem('userId');
         const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true' || localStorage.getItem('isLoggedIn') === 'true';
@@ -73,7 +73,7 @@
     <script>
         const currentUserId = sessionStorage.getItem('userId') || localStorage.getItem('userId');
 
-        // Fungsi Logout (digunakan juga di header)
+        // Fungsi logout (dipanggil dari header)
         function logoutUser() {
             sessionStorage.clear();
             localStorage.clear();
@@ -93,14 +93,14 @@
             return new Date(isoString).toLocaleString('id-ID', options).replace(/\./g, ':');
         }
 
-        // Load dan tampilkan foto profil dari localStorage
+        // Load foto dari localStorage
         function loadProfilePhoto() {
             const photoBase64 = localStorage.getItem('userProfilePicture');
             const wrapper = document.getElementById('profile-avatar-wrapper');
             const defaultIcon = wrapper.querySelector('.default-icon');
             let img = wrapper.querySelector('img');
 
-            if (photoBase64) {
+            if (photoBase64 && photoBase64.startsWith('data:image/')) {
                 if (!img) {
                     img = document.createElement('img');
                     wrapper.insertBefore(img, defaultIcon);
@@ -113,12 +113,12 @@
             }
         }
 
-        // Klik avatar → buka file picker
+        // Klik avatar buka file picker
         document.getElementById('profile-avatar-wrapper').addEventListener('click', () => {
             document.getElementById('photo-input').click();
         });
 
-        // Proses upload foto
+        // Proses ganti foto
         document.getElementById('photo-input').addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
@@ -131,23 +131,19 @@
             const reader = new FileReader();
             reader.onload = function(event) {
                 const base64 = event.target.result;
-
-                // Simpan ke localStorage
                 localStorage.setItem('userProfilePicture', base64);
-
-                // Update tampilan di profil
                 loadProfilePhoto();
 
-                // Beritahu header (tab sama & tab lain)
-                window.dispatchEvent(new Event('profilePhotoChanged'));
+                // Beritahu semua halaman (termasuk header di tab ini)
+                window.dispatchEvent(new Event('profileUpdated'));
                 window.dispatchEvent(new Event('storage'));
             };
             reader.readAsDataURL(file);
         });
 
-        // Load data saat halaman dimuat
+        // Load data profil saat halaman dimuat
         document.addEventListener('DOMContentLoaded', async () => {
-            loadProfilePhoto(); // load foto dulu
+            loadProfilePhoto();
 
             try {
                 const res = await fetch(`../includes/auth_functions.php?action=get_profile&userId=${currentUserId}`);
@@ -158,12 +154,11 @@
                 if (data.status === 'success') {
                     const user = data.user;
 
-                    // Simpan nama untuk header
+                    // Simpan nama ke storage
                     localStorage.setItem('userName', user.name);
                     sessionStorage.setItem('userName', user.name);
 
-                    // Update tampilan
-                    document.getElementById('user-name-display') && (document.getElementById('user-name-display').textContent = user.name);
+                    // Update tampilan profil
                     document.getElementById('profile-name').textContent = user.name;
                     document.getElementById('profile-email').textContent = user.email;
                     document.getElementById('profile-phone').textContent = user.phone || 'Belum diisi';
@@ -171,8 +166,12 @@
                     document.getElementById('profile-last-login').textContent = formatTanggal(user.last_login);
                     document.getElementById('profile-status').textContent = user.status;
 
-                    // Trigger update header
-                    window.dispatchEvent(new Event('profilePhotoChanged'));
+                    // Update header (jika ada element user-name-display di halaman ini)
+                    const headerNameEl = document.getElementById('user-name-display');
+                    if (headerNameEl) headerNameEl.textContent = user.name;
+
+                    // Trigger update header global
+                    window.dispatchEvent(new Event('profileUpdated'));
                 } else {
                     showMessage('profile-message', 'Gagal memuat data profil: ' + data.message, 'error');
                 }

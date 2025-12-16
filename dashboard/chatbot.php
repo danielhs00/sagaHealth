@@ -7,95 +7,26 @@
   <link rel="icon" href="../assets/img/tittle.png" type="image/png">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style/chatbot.css">
-  <style>
-    /* CSS Tambahan untuk Animasi dan Tombol Hapus (tanpa ganggu CSS asli) */
-    .conversation-item {
-      position: relative;
-      transition: opacity 0.5s ease; /* Animasi fade-out */
-    }
-    .delete-btn {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #ff4d4d;
-      font-size: 14px;
-      opacity: 0.7;
-    }
-    .delete-btn:hover {
-      opacity: 1;
-    }
-
-    
-
-    <style>
- .top-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 100;
-      height: 60px;
-      background: #1e293b;;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
-  .mobile-menu-btn:hover {
-    background: #ececf1;
-    transform: scale(1.05);
-  }
-  @media (max-width: 768px) {
-    .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
-  }
-
-  /* Warna ikon hapus: default abu-abu → merah saat hover/klik */
-  .delete-btn {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #ff6b6b !important;     /* merah muda */
-    font-size: 15px;
-    opacity: 0.7;
-    transition: all 0.2s ease;
-  }
-  .delete-btn:hover {
-    opacity: 1;
-    color: #ff4d4d !important;     /* merah terang saat hover */
-    transform: translateY(-50%) scale(1.2);
-  }
-
-  /* Animasi fade-out tetap */
-  .conversation-item {
-    position: relative;
-    padding-right: 40px;   /* beri ruang untuk tombol hapus */
-    transition: opacity 0.5s ease;
-  }
-</style>
-  </style>
 </head>
 <body>
 
-  <div class="top-bar">
-    <a href="index.php" class="logo">
-      <img src="../assets/img/logo.png" align ="left" alt="Logo" style="height:70px; vertical-align:middle; margin-right:60px;">
-      Home
-    </a>
-    <button class="home-btn" onclick="window.location.href='index.php'">
-      <i></i>
-    </button>
+  <!-- LOGIN WALL (MODAL) -->
+  <div id="login-wall">
+    <div class="login-box">
+      <i class="fas fa-lock login-icon"></i>
+      <h2>Fitur Ini Memerlukan Login</h2>
+      <p>Silakan login atau register untuk menikmati fitur SagaBot ini.</p>
+      <a href="../auth/login.php" class="login-button-link">Login atau Register</a>
+      <br>
+      <a href="../dashboard/index.php" class="login-button">Kembali</a>
+    </div>
   </div>
-<div class="overlay" id="overlay"></div>
 
+  <!-- Konten Chatbot -->
   <div class="app-container">
 
-    <!-- Sidebar (Last 7 Days sudah dihapus + biru tua) -->
-    <div class="sidebar" style="background: #1e293b; color: #1e293b;">
+    <!-- Sidebar -->
+    <div class="sidebar">
       <div>
         <div class="sidebar-header">
           <h1>SAGABOT</h1>
@@ -104,7 +35,7 @@
         <button class="new-chat-btn" id="newChatBtn"><i class="fas fa-plus"></i> New chat</button>
 
         <div class="search-bar">
-          <i class="fas fa-search" style="color:#999;"></i>
+          <i class="fas fa-search"></i>
           <input type="text" placeholder="Search..." />
         </div>
 
@@ -114,20 +45,22 @@
         </div>
 
         <div class="conversations" id="conversationList">
-          <!-- Riwayat otomatis dari localStorage -->
+          <!-- Riwayat akan diisi otomatis oleh JS -->
         </div>
-
       </div>
 
-     <div style="border-top:1px solid #565869; padding:15px; margin-top:auto;">
-      <div class="user-profile" onclick="window.location.href='profile.php'" style="display:flex; align-items:center; gap:12px; cursor:pointer; padding:10px; border-radius:8px; transition:0.2s;">
-        <img src="https://i.pravatar.cc/50" alt="user" style="width:40px; height:40px; border-radius:50%;">
-        <span>Andrew Neilson</span>
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <div class="user-profile" onclick="window.location.href='../user/profile.php'">
+          <div id="sidebarUserAvatarContainer">
+            <i class="fas fa-user-circle"></i>
+          </div>
+          <span id="sidebarUsername">Guest</span>
+        </div>
       </div>
     </div>
-  </div>
 
-    <!-- Area chat -->
+    <!-- Area Chat -->
     <div class="main-content">
       <div class="chat-header">
         <i class="fas fa-robot"></i>
@@ -142,7 +75,7 @@
           <div class="message bot-message">
             <img src="img/MASKOT.png" alt="Bot Avatar" class="avatar" onerror="this.src='https://placehold.co/40x40/FFD700/000000?text=S'">
             <div class="message-bubble">
-              <p>Hai! Aku SagaBot 🐥 versi lucu seperti SimSimi! Apa kabar hari ini? </p>
+              <p>Hai! Aku SagaBot 🐥 versi lucu seperti SimSimi! Apa kabar hari ini?</p>
             </div>
           </div>
         </div>
@@ -157,7 +90,25 @@
     </div>
   </div>
 
-  <!-- KODE ASLI KAMU (TIDAK DIUBAH SAMA SEKALI) -->
+  <!-- Script: Guard + Force Redirect Jika Tidak Login -->
+  <script>
+    (function() {
+      const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true' || localStorage.getItem('isLoggedIn') === 'true';
+      const userId = sessionStorage.getItem('userId') || localStorage.getItem('userId');
+
+      if (!isLoggedIn || !userId) {
+        sessionStorage.clear();
+        localStorage.clear();
+        window.location.replace('../auth/login.php');
+      } else {
+        // Jika sudah login → sembunyikan login wall
+        const loginWall = document.getElementById('login-wall');
+        if (loginWall) loginWall.classList.add('hidden');
+      }
+    })();
+  </script>
+
+  <!-- Script Utama Chat -->
   <script>
     const sendBtn = document.getElementById("sendBtn");
     const input = document.getElementById("messageInput");
@@ -170,7 +121,7 @@
       if (sender === "bot") {
         const avatar = document.createElement("img");
         avatar.src = "img/MASKOT.png";
-        avatar.onerror = function() { this.src='https://placehold.co/40x40/FFD700/000000?text=S' };
+        avatar.onerror = () => { this.src = 'https://placehold.co/40x40/FFD700/000000?text=S'; };
         avatar.alt = "Bot Avatar";
         avatar.classList.add("avatar");
         messageDiv.appendChild(avatar);
@@ -184,10 +135,10 @@
       messagesContainer.appendChild(messageDiv);
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
-    
+
     input.addEventListener('input', () => {
-        input.style.height = 'auto';
-        input.style.height = (input.scrollHeight) + 'px';
+      input.style.height = 'auto';
+      input.style.height = (input.scrollHeight) + 'px';
     });
 
     function sendMessage() {
@@ -200,8 +151,7 @@
 
       showTypingIndicator();
 
-      // === KONEKSI KE GOOGLE GEMINI ===
-      fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=YOUR_GEMINI_API_KEY`, {
+      fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyBJFckWFfRbA0GKAZ1bo8ZvDHUMd2MiDrM`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -211,7 +161,11 @@
       .then(res => res.json())
       .then(data => {
         hideTypingIndicator();
-        const reply = data.candidates[0].content.parts[0].text || "Maaf, aku bingung nih...";
+        let reply = "Maaf, aku bingung nih...";
+        if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+          reply = data.candidates[0].content.parts[0].text;
+        }
+        reply = reply.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1').trim();
         createMessage(reply, "bot");
         saveCurrentChat();
       })
@@ -224,17 +178,17 @@
 
     sendBtn.addEventListener("click", sendMessage);
     input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
     });
   </script>
 
-  <!-- FITUR TAMBAHAN (dengan modifikasi hapus manual + animasi) -->
+  <!-- Script Riwayat & Sinkronisasi Profil -->
   <script>
     const typingId = "typing-indicator-unique";
-    
+
     function showTypingIndicator() {
       if (document.getElementById(typingId)) return;
       const typingDiv = document.createElement("div");
@@ -246,7 +200,7 @@
       avatar.className = "avatar";
       const bubble = document.createElement("div");
       bubble.className = "message-bubble typing-indicator";
-      bubble.innerHTML = "<span></span><span></span><span></span> <small style='color:#888;'>SagaBot sedang berpikir...</small>";
+      bubble.innerHTML = "<span></span><span></span><span></span> <small>SagaBot sedang berpikir...</small>";
       typingDiv.appendChild(avatar);
       typingDiv.appendChild(bubble);
       messagesContainer.appendChild(typingDiv);
@@ -258,7 +212,6 @@
       if (el) el.remove();
     }
 
-    // === RIWAYAT CHAT (unlimited, hapus manual per item dengan animasi) ===
     const conversationList = document.getElementById("conversationList");
     const newChatBtn = document.getElementById("newChatBtn");
     const clearAllBtn = document.getElementById("clearAllBtn");
@@ -277,8 +230,6 @@
       let history = JSON.parse(localStorage.getItem("sagabot_history") || "[]");
       history = history.filter(c => c.title !== title);
       history.unshift({ title, messages, timestamp: Date.now() });
-      // Hapus baris batas max (sekarang unlimited)
-
       localStorage.setItem("sagabot_history", JSON.stringify(history));
       loadHistoryList();
     }
@@ -290,40 +241,37 @@
         const item = document.createElement("div");
         item.className = "conversation-item";
         item.innerHTML = `<i class="fas fa-comment-dots"></i> ${chat.title}`;
-        
-        // Tambah tombol hapus manual
+
         const deleteBtn = document.createElement("i");
         deleteBtn.className = "fas fa-trash delete-btn";
         deleteBtn.onclick = (e) => {
-          e.stopPropagation(); // Agar tidak trigger load chat
-          deleteChat(i, item); // Panggil fungsi hapus dengan animasi
+          e.stopPropagation();
+          deleteChat(i, item);
         };
         item.appendChild(deleteBtn);
 
-        // Klik item untuk load chat (selain tombol hapus)
         item.onclick = () => {
           messagesContainer.innerHTML = `<div class="message bot-message">
             <img src="img/MASKOT.png" alt="Bot Avatar" class="avatar" onerror="this.src='https://placehold.co/40x40/FFD700/000000?text=S'">
-            <div class="message-bubble"><p>Hai! Aku SagaBot sekarang pakai Google Gemini! Tanya apa saja, aku jawab pinter </p></div>
+            <div class="message-bubble">
+              <p>Hai! Aku SagaBot 🐥 versi lucu seperti SimSimi! Apa kabar hari ini?</p>
+            </div>
           </div>`;
           chat.messages.forEach(m => createMessage(m.text, m.sender));
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
         };
         conversationList.appendChild(item);
       });
     }
 
-    // Fungsi baru: Hapus chat manual dengan animasi fade-out
     function deleteChat(index, item) {
       if (confirm("Hapus chat ini?")) {
-        // Mulai animasi fade-out
         item.style.opacity = '0';
-        
-        // Tunggu animasi selesai (0.5s), lalu hapus
         setTimeout(() => {
           let history = JSON.parse(localStorage.getItem("sagabot_history") || "[]");
-          history.splice(index, 1); // Hapus item spesifik
+          history.splice(index, 1);
           localStorage.setItem("sagabot_history", JSON.stringify(history));
-          loadHistoryList(); // Refresh list
+          loadHistoryList();
         }, 500);
       }
     }
@@ -333,8 +281,11 @@
         saveCurrentChat();
         messagesContainer.innerHTML = `<div class="message bot-message">
           <img src="img/MASKOT.png" alt="Bot Avatar" class="avatar" onerror="this.src='https://placehold.co/40x40/FFD700/000000?text=S'">
-          <div class="message-bubble"><p>Hai! Aku SagaBot sekarang pakai Google Gemini! Tanya apa saja, aku jawab pinter </p></div>
+          <div class="message-bubble">
+            <p>Hai! Aku SagaBot 🐥 versi lucu seperti SimSimi! Apa kabar hari ini?</p>
+          </div>
         </div>`;
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
       }
     };
 
@@ -346,14 +297,34 @@
       }
     };
 
-    document.getElementById("mobileMenuBtn").onclick = () => {
-      document.querySelector(".sidebar").classList.toggle("active");
-      document.getElementById("overlay").classList.toggle("active");
-    };
-    document.getElementById("overlay").onclick = () => {
-      document.querySelector(".sidebar").classList.remove("active");
-      document.getElementById("overlay").classList.remove("active");
-    };
+    // Sinkronisasi Avatar & Nama User
+    window.addEventListener('load', () => {
+      const sidebarUsername = document.getElementById('sidebarUsername');
+      const sidebarAvatarContainer = document.getElementById('sidebarUserAvatarContainer');
+
+      // Nama dari header (jika header di-load dari halaman lain)
+      const headerUsername = document.getElementById('user-name-display');
+      if (headerUsername && sidebarUsername) {
+        const name = headerUsername.textContent.trim();
+        if (name) sidebarUsername.textContent = name;
+      }
+
+      // Foto dari localStorage (prioritas utama, disimpan oleh profile.php)
+      const savedProfilePic = localStorage.getItem('userProfilePicture');
+      if (savedProfilePic && sidebarAvatarContainer) {
+        const img = document.createElement('img');
+        img.src = savedProfilePic;
+        img.alt = "Foto Profil";
+        img.onerror = () => {
+          sidebarAvatarContainer.innerHTML = '<i class="fas fa-user-circle"></i>';
+        };
+        sidebarAvatarContainer.innerHTML = '';
+        sidebarAvatarContainer.appendChild(img);
+        return;
+      }
+
+      // Fallback ke ikon default
+    });
 
     window.onload = () => loadHistoryList();
   </script>
