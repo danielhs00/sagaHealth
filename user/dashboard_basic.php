@@ -44,7 +44,7 @@
 
             <!-- Carousel / Banner (dari incoming) -->
             <section class="wave-section">
-                <div class="container-wrapper">
+
                     <div class="banner-layout-single" id="poster-container">
                         <div class="poster-carousel card" id="main-poster-carousel" aria-roledescription="carousel">
                             <div class="carousel-track" id="carousel-track" aria-live="polite">
@@ -78,12 +78,13 @@
                     </div>
                 </div>
             </section>
-
+            <br>
             <!-- Welcome -->
             <section class="welcome-header">
                 <h1 id="welcome-title">Halo, Memuat...</h1>
                 <p id="welcome-sub">Selamat datang di dashboard kesehatan Anda. Pilih layanan di bawah ini untuk memulai.</p>
             </section>
+            <br>
 
             <!-- GRID FITUR (gabungan) -->
             <section class="feature-grid" id="feature-grid">

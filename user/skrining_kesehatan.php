@@ -1,8 +1,66 @@
 <?php include '../user/partials/header.php'; ?>
 
+<style>
+    /* Style dasar form (sesuai file asli) */
+    .html { display: none; } /* Hack kecil jika file css asli bentrok */
+    
+    /* Overlay Loading Full Screen */
+    #loading-overlay {
+        display: none; /* Hidden by default */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        z-index: 9999;
+        flex-direction: column;
+        justify_content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .spinner {
+        width: 60px;
+        height: 60px;
+        border: 6px solid #f3f3f3;
+        border-top: 6px solid #3498db; /* Warna SAGAHEALTH */
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+    }
+
+    .loading-text {
+        font-family: 'Segoe UI', sans-serif;
+        color: #2c3e50;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .loading-subtext {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin-top: 10px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Pastikan container form tetap rapi */
+    .container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 30px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+</style>
+
 <link rel="stylesheet" href="../assets/style/form_skrining.css">
 <link rel="stylesheet" type="text/css" href="../assets/style/auth.css">
-<link rel="stylesheet" type="text/css" href="../user/style/skrining_kesehatan.css">
 
 <div id="loading-overlay">
     <div class="spinner"></div>
@@ -12,7 +70,7 @@
 
 <div class="container">
   <h1>🩺 Form Skrining Kesehatan SAGAHEALTH</h1>
-  <p class="form-description">Isi data berikut untuk mendapatkan analisis risiko 6 penyakit dan rekomendasi AI personal.</p>
+  <p style="margin-bottom: 20px; color: #666;">Isi data berikut untuk mendapatkan analisis risiko 6 penyakit dan rekomendasi AI personal.</p>
 
   <form id="skrining-form" method="POST" action="../testing_svm/process_skrining.php">
 
@@ -26,9 +84,8 @@
 
     <div class="section">
       <h2>Pengukuran Fisik</h2>
-      <div class="flex-row">
-        <div class="flex-1">
-
+      <div style="display: flex; gap: 20px;">
+          <div style="flex:1;">
               <label>Berat Badan (Kg):</label>
               <input type="number" name="bb" id="bb" required step="0.1" min="1" placeholder="Contoh: 65.5">
           </div>
@@ -77,7 +134,7 @@
 
       <div class="question">
         <p>5. Keluhan dalam 30 hari terakhir (Pilih yang sesuai):</p>
-        <div class="grid-2">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
             <label><input type="checkbox" name="keluhan_list[]" value="1"> Sakit kepala berat</label>
             <label><input type="checkbox" name="keluhan_list[]" value="1"> Tengkuk kaku</label>
             <label><input type="checkbox" name="keluhan_list[]" value="1"> Pandangan kabur</label>
@@ -88,8 +145,8 @@
 
     <div class="section">
       <h2>Riwayat Medis Pribadi</h2>
-      <table class="table-custom">
-        <tr><th>Kondisi</th><<th class="text-center">Ya</th><<th class="text-center">Tidak</th></tr>
+      <table class="table-custom" style="width:100%; text-align: left;">
+        <tr><th>Kondisi</th><th style="text-align:center;">Ya</th><th style="text-align:center;">Tidak</th></tr>
         
         <?php 
         $penyakit = [
@@ -114,7 +171,7 @@
     <div class="section">
       <h2>Riwayat Keluarga (Orang Tua/Saudara)</h2>
       <table class="table-custom" style="width:100%; text-align: left;">
-        <tr><th>Kondisi</th><th class="text-center">Ya</th><th class="text-center">Tidak</th></tr>
+        <tr><th>Kondisi</th><th style="text-align:center;">Ya</th><th style="text-align:center;">Tidak</th></tr>
         <?php 
         $keluarga = [
             'keluarga_dm' => 'Diabetes', 
@@ -146,16 +203,15 @@
         foreach($gejala as $name => $label) {
             echo "<tr>
                 <td>$label</td>
-                <td class='text-center w-50'>
-<input type='radio' name='$name' value='1'> Ya</td>
-                <td class='text-center w-60'><input type='radio' name='$name' value='0' checked> Tidak</td>
+                <td style='text-align:center; width:50px;'><input type='radio' name='$name' value='1'> Ya</td>
+                <td style='text-align:center; width:60px;'><input type='radio' name='$name' value='0' checked> Tidak</td>
             </tr>";
         }
         ?>
       </table>
     </div>
     
-    <button type="submit" class="btn-submit">
+    <button type="submit" class="btn-submit" style="width:100%; padding:15px; background:#3498db; color:white; border:none; border-radius:8px; font-size:16px; cursor:pointer; margin-top:20px;">
         🔍 Analisis Kesehatan Saya Sekarang
     </button>
   </form>

@@ -185,8 +185,8 @@ body {
     width: 100%;
     height: 100px;
     background-color: #ddf4e7;
-    border-top-left-radius: 50% 100px;
-    border-top-right-radius: 50% 100px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
     transform: translateY(50%);
     z-index: -1;
 }
@@ -401,7 +401,13 @@ body {
     height: auto;
     display: block;
 }
-
+.welcome-header{
+    text-align: left;
+    margin-left: 60px;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
 /* MEDIA QUERIES UNTUK RESPONSIVITAS */
 
 /* Sembunyikan tombol panah di mobile */
