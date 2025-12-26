@@ -7,6 +7,7 @@
   <link rel="icon" href="../assets/img/tittle.png" type="image/png">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/style/chatbot.css">
+  <link rel="stylesheet" href="../assets/style/style.css">
 </head>
 <body>
 

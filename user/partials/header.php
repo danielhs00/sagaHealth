@@ -1,70 +1,84 @@
-<!-- Header Navigation -->
-<header class="plan-header-nav">
-    <div class="container-wrapper nav-content">
-        <div class="nav-left">
-            <img src="../assets/img/logo.png" alt="SagaHealth" class="logo" 
-                 onerror="this.src='https://placehold.co/120x40/014C63/ffffff?text=SagaHealth'">
-        </div>
-        <div class="nav-right">
-            <div class="user-info" id="user-display">
-                <a href="../user/profile.php" class="btn-profile" title="Profil Saya">
-                    <i class="fas fa-user-circle"></i>
-                    <span id="user-name-display"></span>
-                </a>
-            </div>
+<header class="modern-header">
+    <div class="nav-content">
+        
+        <a href="dashboard_basic.php" class="logo-container">
+            <img src="../assets/img/logo.png" 
+                 alt="SagaHealth" 
+                 onerror="this.src='https://placehold.co/140x45/014C63/ffffff?text=SagaHealth'">
+        </a>
 
-            <a href="javascript:void(0)" onclick="logoutUser()">
-                <button class="btn-logout" id="logout-btn" title="Keluar">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Keluar</span>
-                </button>
+        <div class="nav-right">
+            
+            <a href="../user/profile.php" class="profile-pill" id="profile-link-container">
+                <div id="avatar-placeholder" class="header-avatar-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span class="user-name" id="user-name-display">Memuat...</span>
             </a>
+
+            <button onclick="logoutUser()" class="btn-logout-modern" title="Keluar">
+                <i class="fas fa-power-off"></i>
+            </button>
+            
         </div>
     </div>
+    <link rel="stylesheet" href="../user/style/partials_user.css">
 </header>
 
 <script>
-    // Fungsi untuk update nama dan foto profil di header
+    // === LOGIC UPDATE PROFIL DI HEADER ===
     function updateHeaderProfile() {
         const nameEl = document.getElementById('user-name-display');
-        const profileLink = document.querySelector('.btn-profile');
+        const container = document.getElementById('profile-link-container');
+        const placeholder = document.getElementById('avatar-placeholder');
 
-        if (!nameEl || !profileLink) return;
+        if (!nameEl || !container) return;
 
-        // Ambil data terbaru
-        const savedName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || '';
-        const savedPhoto = localStorage.getItem('userProfilePicture');
+        // 1. Ambil data dari Storage
+        const savedName = localStorage.getItem('userName') || sessionStorage.getItem('userName') || 'Pengguna';
+        const savedPhoto = localStorage.getItem('userProfilePicture'); // Format Base64
 
-        // Update nama
-        nameEl.textContent = savedName || 'Pengguna';
+        // 2. Update Nama
+        // Ambil nama depan saja agar tidak kepanjangan di header
+        const firstName = savedName.split(' ')[0]; 
+        nameEl.textContent = firstName;
 
-        // Hapus ikon atau foto lama
-        const oldIcon = profileLink.querySelector('i');
-        const oldImg = profileLink.querySelector('img.profile-avatar-header');
-        if (oldIcon) oldIcon.remove();
+        // 3. Update Foto
+        // Hapus foto lama jika ada (agar tidak duplikat saat update)
+        const oldImg = container.querySelector('img.header-avatar');
         if (oldImg) oldImg.remove();
 
-        // Jika ada foto, tampilkan sebagai img
         if (savedPhoto && savedPhoto.startsWith('data:image/')) {
+            // Jika ada foto custom
+            if(placeholder) placeholder.style.display = 'none'; // Sembunyikan ikon default
+
             const img = document.createElement('img');
             img.src = savedPhoto;
-            img.className = 'profile-avatar-header';
-            img.alt = 'Foto Profil';
-            profileLink.insertBefore(img, nameEl);
+            img.className = 'header-avatar';
+            img.alt = 'Profil';
+            
+            // Masukkan gambar sebelum elemen nama
+            container.insertBefore(img, nameEl);
         } else {
-            // Jika tidak ada foto, kembalikan ikon default
-            const icon = document.createElement('i');
-            icon.className = 'fas fa-user-circle';
-            profileLink.insertBefore(icon, nameEl);
+            // Jika tidak ada foto, tampilkan ikon default
+            if(placeholder) placeholder.style.display = 'flex';
         }
     }
 
-    // Jalankan saat halaman load
+    // === LOGIC LOGOUT ===
+  function logoutUser() {
+        if (confirm('Apakah Anda yakin ingin keluar?')) {
+            // 1. Hapus data di browser (agar nama hilang)
+            sessionStorage.clear();
+            localStorage.clear();
+            
+            // 2. Arahkan ke script PHP logout untuk menghancurkan sesi server
+            window.location.href = '../auth/logout.php';
+        }
+    }
+
+    // Event Listeners
     document.addEventListener('DOMContentLoaded', updateHeaderProfile);
-
-    // Update jika storage berubah (dari tab lain)
-    window.addEventListener('storage', updateHeaderProfile);
-
-    // Update langsung di tab yang sama saat foto/nama berubah
-    window.addEventListener('profileUpdated', updateHeaderProfile);
+    window.addEventListener('storage', updateHeaderProfile); // Sinkron antar tab
+    window.addEventListener('profileUpdated', updateHeaderProfile); // Trigger custom event
 </script>

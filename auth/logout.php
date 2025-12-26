@@ -1,3 +1,10 @@
+<?php
+session_start();
+session_unset();
+session_destroy();
+header("location: login.php"); // Ini akan kembali ke auth/login.php
+exit;
+?>
 <!DOCTYPE html>
 <html>
 <head>

@@ -1,3 +1,13 @@
+<?php
+session_start();
+
+// Cek apakah user sudah login
+if (!isset($_SESSION['isLoggedIn']) || $_SESSION['isLoggedIn'] !== true) {
+    // Jika tidak login, arahkan ke halaman login
+    header("Location: ../auth/login.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -81,7 +91,7 @@
             <li><i class="fa fa-check"></i> Anjuran Kesahatan</li>
             <li><i class="fa fa-check"></i> Riwayat Kesehatan </li>
         </ul>
-<button class="btn-plan" onclick="selectPlan('basic')">
+<button class="btn-plan" onclick="selectPlan('Basic Plan', 50000, 'basic')">
     Pilih Basic
 </button>
 
@@ -111,7 +121,7 @@
 
         </ul>
 
-<button class="btn-plan premium" onclick="selectPlan('premium')">
+<button class="btn-plan premium" onclick="selectPlan('Premium Plan', 100000, 'premium')">
     Pilih Premium
 </button>
 

@@ -1,35 +1,150 @@
-.user-header {
-    background-color: var(--color-primary);
-    color: white;
-    padding: 10px 0;
+/* =========================================
+   MODERN HEADER STYLE (MATCHING DASHBOARD)
+   ========================================= */
+
+/* Pastikan variabel ini ada (biasanya dari styles.css) */
+:root {
+    --header-bg: rgba(255, 255, 255, 0.9);
+    --header-border: 1px solid rgba(229, 231, 235, 0.5);
+    --header-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
+    --primary: #014C63;
+    --text-dark: #1F2937;
+    --danger: #EF4444;
 }
-.user-header .logo {
-    height: 40px;
+
+/* Container Header Utama */
+.modern-header {
+    background-color: var(--header-bg);
+    backdrop-filter: blur(12px); /* Efek kaca buram */
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: var(--header-border);
+    position: sticky; /* Agar menempel saat di-scroll */
+    top: 0;
+    z-index: 1000;
+    box-shadow: var(--header-shadow);
+    padding: 0.8rem 0;
+    transition: all 0.3s ease;
 }
-.user-header .user-info {
+
+.nav-content {
+    max-width: 1200px; /* Sesuai lebar dashboard container */
+    margin: 0 auto;
+    padding: 0 2rem;
     display: flex;
     align-items: center;
-    gap: 15px;
+    justify-content: space-between;
 }
-.user-header .user-info-link {
-    color: white;
+
+/* Logo Area */
+.logo-container img {
+    height: 42px; /* Ukuran optimal */
+    width: auto;
+    transition: transform 0.2s;
+    display: block;
+}
+
+.logo-container:hover img {
+    transform: scale(1.02);
+}
+
+/* Area Kanan (User & Logout) */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* Profil User: Gaya "Pill" (Pil) */
+.profile-pill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 16px 6px 6px; /* Padding kanan lebih besar untuk nama */
+    background-color: #F3F4F6; /* Abu sangat muda */
+    border-radius: 50px;
     text-decoration: none;
+    color: var(--text-dark);
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.profile-pill:hover {
+    background-color: #fff;
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(1, 76, 99, 0.1);
+    color: var(--primary);
+}
+
+/* Avatar dalam Header */
+.header-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Placeholder Icon jika tidak ada foto */
+.header-avatar-icon {
+    width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-weight: 500;
-}
-.user-header .user-info-link i {
-    font-size: 20px;
-}
-.user-header .btn-logout {
-    background: none;
-    border: none;
+    justify-content: center;
+    background-color: var(--primary);
     color: white;
-    cursor: pointer;
-    font-size: 18px;
-    padding: 5px;
+    border-radius: 50%;
+    font-size: 1.2rem;
 }
-.user-header .btn-logout:hover {
-    color: #ffdddd;
+
+.user-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Tombol Logout Minimalis */
+.btn-logout-modern {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: none;
+    background-color: transparent;
+    color: #9CA3AF;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1.1rem;
+}
+
+.btn-logout-modern:hover {
+    background-color: #FEF2F2;
+    color: var(--danger);
+    transform: rotate(90deg); /* Efek putar kecil saat hover */
+}
+
+/* Responsif Mobile */
+@media (max-width: 768px) {
+    .nav-content {
+        padding: 0 1rem;
+    }
+    
+    .user-name {
+        display: none; /* Sembunyikan nama di HP agar ringkas */
+    }
+    
+    .profile-pill {
+        padding: 6px; /* Jadi bulat di HP */
+        background: transparent;
+    }
+    
+    .logo-container img {
+        height: 35px;
+    }
 }

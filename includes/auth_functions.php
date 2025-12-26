@@ -1,64 +1,44 @@
 <?php
 // includes/auth_functions.php
 
-// 1. Pengecekan status sesi sebelum memanggil session_start() (Perbaikan Notice)
+// 1. Mulai sesi jika belum aktif
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Gunakan ob_start() hanya sekali
+// Gunakan ob_start() untuk mencegah output tidak sengaja merusak JSON
 ob_start();
 
-// PERBAIKAN: Path ini diubah agar mencari di folder yang sama (includes)
+// Pastikan path ke koneksi benar
 require_once __DIR__ . '/koneksi.php'; 
 
-// Fungsi helper untuk merespons JSON dan keluar
+// Fungsi helper untuk kirim JSON
 function jsonResponse($status, $message, $data = []) {
-    ob_clean(); // Bersihkan buffer output sebelum mengirim JSON
+    ob_clean(); // Bersihkan buffer sebelum kirim JSON
     echo json_encode(array_merge(["status" => $status, "message" => $message], $data));
     exit;
 }
 
-// Fungsi DB/Logika yang dibutuhkan oleh file lain (misal lupa_sandi.php)
-// Fungsi untuk mendapatkan ID pengguna berdasarkan email
-function get_user_id_by_email($email) {
-    global $conn;
-    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
-    $stmt->close();
-    return $user['id'] ?? null;
-}
-
 // =================================================================
-// LOGIKA API UTAMA (Hanya berjalan jika file dipanggil langsung/sebagai endpoint)
+// LOGIKA API UTAMA
 // =================================================================
-// Cek jika file ini adalah file utama yang dieksekusi, BUKAN di-include
 if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
     
-    // Set header Content-Type HANYA untuk respons API
     header('Content-Type: application/json');
 
     try {
-        // Cek koneksi dari db_connect.php
-        global $db_error, $conn;
-        if (isset($db_error) || empty($conn)) {
+        global $conn;
+        if (empty($conn)) {
             throw new Exception("Koneksi database gagal.");
         }
 
-        // Ambil input JSON (Hanya untuk POST)
         $input = json_decode(file_get_contents('php://input'), true);
 
         // --- ACTION: GET PROFILE (Metode GET) ---
         if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'get_profile') {
             $userId = $_GET['userId'] ?? 0;
+            if (empty($userId)) throw new Exception("User ID tidak ada.");
 
-            if (empty($userId)) {
-                throw new Exception("User ID tidak ada.");
-            }
-            // Ambil data profil (tanpa password)
             $stmt = $conn->prepare("SELECT id, name, email, phone, created_at, last_login, status FROM users WHERE id = ?");
             $stmt->bind_param("i", $userId);
             $stmt->execute();
@@ -72,19 +52,17 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
             exit;
         }
 
-        // Lanjutkan untuk request POST (login, register, update)
+        // Validasi Request POST
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-             // Ini akan menangkap akses langsung ke file ini (GET) tanpa action 'get_profile'
             throw new Exception("Metode request tidak valid.");
         }
-
         if (!$input || !isset($input['action'])) {
             throw new Exception("Aksi tidak valid.");
         }
 
         $action = $input['action'];
 
-        // --- ACTION: REGISTER (Menyimpan User Baru) ---
+        // --- ACTION: REGISTER (Manual) ---
         if ($action === 'register') {
             $name = trim($input['name'] ?? '');
             $email = trim($input['email'] ?? '');
@@ -103,107 +81,117 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
             $stmt->bind_param("s", $email);
             $stmt->execute();
             $stmt->store_result();
-
             if ($stmt->num_rows > 0) {
                  jsonResponse("error", "Email sudah terdaftar.");
             }
             $stmt->close();
 
-            // Simpan user baru ke database
+            // Simpan user baru
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $conn->prepare("INSERT INTO users (name, email, password, phone) VALUES (?, ?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO users (name, email, password, phone, status) VALUES (?, ?, ?, ?, 'active')");
             $stmt->bind_param("ssss", $name, $email, $hashed_password, $phone);
             
             if ($stmt->execute()) {
-                 jsonResponse("success", "Registrasi berhasil! Data Anda telah disimpan.");
+                 jsonResponse("success", "Registrasi berhasil! Silakan login.");
             } else {
                  throw new Exception("Gagal menyimpan data: " . $stmt->error);
             }
         }
-        // ... di dalam blok LOGIKA API UTAMA ...
 
-    // ... Lanjutkan dari aksi update_password ...
-
-    // --- ACTION: GOOGLE LOGIN (Verifikasi ID Token) ---
-    elseif ($action === 'google_login') {
-        global $conn;
-        $id_token = $input['id_token'] ?? '';
-        if (empty($id_token)) {
-            jsonResponse("error", "ID Token tidak diterima.");
-        }
-
-        // 1. Verifikasi ID Token dengan Google
-        // Memanggil API Google untuk mendapatkan data user dari token
-        $google_response = @file_get_contents("https://oauth2.googleapis.com/tokeninfo?id_token=" . $id_token);
-        
-        if ($google_response === false) {
-             jsonResponse("error", "Gagal memverifikasi token dengan Google. Pastikan server Anda bisa mengakses URL eksternal.");
-        }
-
-        $user_data = json_decode($google_response, true);
-        
-        // 2. Lakukan validasi Client ID
-        // PENTING: Ganti nilai ini dengan Client ID Anda yang sebenarnya
-        $CLIENT_ID = "542615675120-ghv1c22amb2v5mnq9uesqsp122jq2nrc.apps.googleusercontent.com"; 
-        
-        if (!isset($user_data['email']) || $user_data['aud'] !== $CLIENT_ID || $user_data['iss'] !== 'https://accounts.google.com') {
-             // Ini adalah sumber error: Verifikasi token Google gagal atau Client ID tidak cocok.
-             jsonResponse("error", "Verifikasi token Google gagal atau Client ID tidak cocok.");
-        }
-        
-        $email = $user_data['email'];
-        // Ambil nama dari data Google, atau buat dari email jika nama tidak tersedia
-        $name = $user_data['name'] ?? explode('@', $email)[0];
-        
-        // 3. Cek user di DB
-        $stmt = $conn->prepare("SELECT id, name, email, status FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($user = $result->fetch_assoc()) {
-            // User ditemukan -> Lakukan Login
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['name'];
-            $_SESSION['user_email'] = $user['email'];
+        // --- ACTION: GOOGLE LOGIN (FIXED) ---
+        elseif ($action === 'google_login') {
+            $id_token = $input['id_token'] ?? '';
             
-            // Update last_login
-            $update_stmt = $conn->prepare("UPDATE users SET last_login = NOW() WHERE id = ?");
-            $update_stmt->bind_param("i", $user['id']);
-            $update_stmt->execute();
-            $update_stmt->close();
-
-            jsonResponse("success", "Login Google berhasil!", ["user" => $user]);
-
-        } else {
-            // User tidak ditemukan -> Daftarkan User Baru
-            // Buat password dummy acak (karena Google login tidak pakai password lokal)
-            $default_password = bin2hex(random_bytes(16)); 
-            $hashed_password = password_hash($default_password, PASSWORD_DEFAULT);
-            $stmt = $conn->prepare("INSERT INTO users (name, email, password, status) VALUES (?, ?, ?, 'active')");
-            $stmt->bind_param("sss", $name, $email, $hashed_password);
-            
-            if ($stmt->execute()) {
-                $new_user_id = $conn->insert_id;
-                
-                // Simpan Session Login untuk user baru
-                $_SESSION['user_id'] = $new_user_id;
-                $_SESSION['user_name'] = $name;
-                $_SESSION['user_email'] = $email;
-                
-                jsonResponse("success", "Pendaftaran via Google berhasil!", ["user" => [
-                    'id' => $new_user_id, 'name' => $name, 'email' => $email
-                ]]);
-            } else {
-                 throw new Exception("Gagal menyimpan data user baru dari Google: " . $stmt->error);
+            if (empty($id_token)) {
+                jsonResponse("error", "ID Token tidak diterima.");
             }
-        }
-    }
-    
-    // ... sisa kode error handling Anda
-    
 
-        // --- ACTION: LOGIN (Cek User & Simpan Waktu Login) ---
+            // 1. Verifikasi Token ke Google
+            $google_response = @file_get_contents("https://oauth2.googleapis.com/tokeninfo?id_token=" . $id_token);
+            if ($google_response === false) {
+                 jsonResponse("error", "Gagal verifikasi token ke Google. Cek koneksi server.");
+            }
+
+            $user_data = json_decode($google_response, true);
+            
+            // PENTING: Sesuaikan Client ID ini dengan yang ada di Google Cloud Console Anda
+            $CLIENT_ID = "542615675120-ghv1c22amb2v5mnq9uesqsp122jq2nrc.apps.googleusercontent.com"; 
+            
+            // Validasi Audience
+            if (!isset($user_data['email']) || $user_data['aud'] !== $CLIENT_ID) {
+                 jsonResponse("error", "Token Google tidak valid untuk Client ID ini.");
+            }
+            
+            $email = $user_data['email'];
+            // Gunakan nama dari Google, atau fallback ke bagian depan email
+            $name = $user_data['name'] ?? explode('@', $email)[0];
+            
+            // 2. Cek User di Database
+            $stmt = $conn->prepare("SELECT id, name, email, status FROM users WHERE email = ?");
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $user = $result->fetch_assoc();
+            $stmt->close();
+
+            if ($user) {
+                // User SUDAH ADA -> Update last_login
+                $user_id = $user['id'];
+                $conn->query("UPDATE users SET last_login = NOW() WHERE id = $user_id");
+            } else {
+                // User BARU -> Buat akun otomatis
+                $default_password = bin2hex(random_bytes(16)); 
+                $hashed_password = password_hash($default_password, PASSWORD_DEFAULT);
+                
+                $stmt_ins = $conn->prepare("INSERT INTO users (name, email, password, status) VALUES (?, ?, ?, 'active')");
+                $stmt_ins->bind_param("sss", $name, $email, $hashed_password);
+                
+                if ($stmt_ins->execute()) {
+                    $user_id = $conn->insert_id;
+                    $user = ['id' => $user_id, 'name' => $name, 'email' => $email, 'status' => 'active'];
+                } else {
+                     throw new Exception("Gagal membuat user Google: " . $stmt_ins->error);
+                }
+                $stmt_ins->close();
+            }
+
+            // 3. Cek Status Langganan (Subscriptions)
+            $stmt_sub = $conn->prepare("
+                SELECT plan_name 
+                FROM subscriptions 
+                WHERE user_id = ? AND status = 'active' AND end_date > NOW() 
+                ORDER BY end_date DESC LIMIT 1
+            ");
+            $stmt_sub->bind_param("i", $user_id);
+            $stmt_sub->execute();
+            $res_sub = $stmt_sub->get_result();
+            $active_sub = $res_sub->fetch_assoc();
+            $stmt_sub->close();
+
+            $plan_type = $active_sub ? strtolower($active_sub['plan_name']) : 'none';
+
+            // 4. Set Session PHP
+            $_SESSION['user_id'] = $user_id;
+            $_SESSION['user_name'] = $user['name'] ?? $name;
+            $_SESSION['user_email'] = $user['email'];
+            $_SESSION['plan_type'] = $plan_type;
+            $_SESSION['isLoggedIn'] = true;
+
+            // 5. Tentukan Redirect URL
+            $redirectUrl = '../user/plan.php'; // Default untuk user baru/tanpa paket
+            if ($plan_type === 'premium') {
+                $redirectUrl = '../user/dashboard_premium.php';
+            } elseif ($plan_type === 'basic') {
+                $redirectUrl = '../user/dashboard_basic.php';
+            }
+
+            jsonResponse("success", "Login Google berhasil!", [
+                "user" => array_merge($user, ['plan_type' => $plan_type]),
+                "redirectUrl" => $redirectUrl
+            ]);
+        }
+
+        // --- ACTION: LOGIN BIASA ---
         elseif ($action === 'login') {
             $email = trim($input['email'] ?? '');
             $password = $input['password'] ?? '';
@@ -218,23 +206,46 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
             $result = $stmt->get_result();
 
             if ($user = $result->fetch_assoc()) {
-                // Verifikasi password
                 if (password_verify($password, $user['password'])) {
+                    
+                    // Update last_login
+                    $conn->query("UPDATE users SET last_login = NOW() WHERE id = {$user['id']}");
 
-                    // Simpan Session Login
+                    // Cek Subscription
+                    $stmt_sub = $conn->prepare("
+                        SELECT plan_name 
+                        FROM subscriptions 
+                        WHERE user_id = ? AND status = 'active' AND end_date > NOW() 
+                        ORDER BY end_date DESC LIMIT 1
+                    ");
+                    $stmt_sub->bind_param("i", $user['id']);
+                    $stmt_sub->execute();
+                    $res_sub = $stmt_sub->get_result();
+                    $active_sub = $res_sub->fetch_assoc();
+                    $stmt_sub->close();
+
+                    $plan_type = $active_sub ? strtolower($active_sub['plan_name']) : 'none';
+
+                    // Set Session
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['user_name'] = $user['name'];
                     $_SESSION['user_email'] = $user['email'];
-                    
-                    // Update last_login
-                    $update_stmt = $conn->prepare("UPDATE users SET last_login = NOW() WHERE id = ?");
-                    $update_stmt->bind_param("i", $user['id']);
-                    $update_stmt->execute();
-                    $update_stmt->close();
+                    $_SESSION['plan_type'] = $plan_type;
+                    $_SESSION['isLoggedIn'] = true;
 
-                    // Hapus password dari data yang dikirim kembali
+                    // Tentukan Redirect URL
+                    $redirectUrl = '../user/plan.php';
+                    if ($plan_type === 'premium') {
+                        $redirectUrl = '../user/dashboard_premium.php';
+                    } elseif ($plan_type === 'basic') {
+                        $redirectUrl = '../user/dashboard_basic.php';
+                    }
+
                     unset($user['password']);
-                    jsonResponse("success", "Login berhasil!", ["user" => $user]);
+                    jsonResponse("success", "Login berhasil!", [
+                        "user" => array_merge($user, ['plan_type' => $plan_type]),
+                        "redirectUrl" => $redirectUrl
+                    ]);
                 } else {
                     jsonResponse("error", "Kata sandi salah.");
                 }
@@ -276,7 +287,6 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
                 jsonResponse("error", "Password baru minimal harus 8 karakter.");
            }
 
-            // 1. Verifikasi password lama
             $stmt = $conn->prepare("SELECT password FROM users WHERE id = ?");
             $stmt->bind_param("i", $userId);
             $stmt->execute();
@@ -284,7 +294,6 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
             
             if ($user = $result->fetch_assoc()) {
                 if (password_verify($oldPass, $user['password'])) {
-                    // 2. Jika benar, update ke password baru
                     $new_hashed_password = password_hash($newPass, PASSWORD_DEFAULT);
                     $update_stmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
                     $update_stmt->bind_param("si", $new_hashed_password, $userId);
@@ -301,13 +310,11 @@ if (basename(__FILE__) === basename($_SERVER['SCRIPT_FILENAME'])) {
                  jsonResponse("error", "User tidak ditemukan.");
             }
         }
-        
         else {
             throw new Exception("Aksi tidak dikenal.");
         }
 
     } catch (Exception $e) {
-        // Tangkap error umum (koneksi, query, dll)
         jsonResponse("error", "Error Server: " . $e->getMessage());
     }
 }
