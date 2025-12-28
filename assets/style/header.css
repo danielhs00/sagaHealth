@@ -1,0 +1,35 @@
+.navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.2rem 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        }
+
+        .logo {
+            font-size: 1.5rem; font-weight: 700; color: var(--primary);
+            text-decoration: none; display: flex; align-items: center; gap: 10px;
+        }
+
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a {
+            text-decoration: none; color: var(--dark); font-weight: 500;
+            transition: 0.3s;
+        }
+        .nav-links a:hover { color: var(--secondary); }
+
+        .auth-buttons { display: flex; gap: 15px; }
+        .btn {
+            padding: 10px 25px; border-radius: 50px; text-decoration: none;
+            font-weight: 600; transition: 0.3s; cursor: pointer;
+        }
+        .btn-outline {
+            border: 2px solid var(--primary); color: var(--primary);
+        }
+        .btn-outline:hover { background: var(--primary); color: var(--white); }
+        
+        .btn-fill {
+            background: var(--primary); color: var(--white); border: 2px solid var(--primary);
+        }
+        .btn-fill:hover { background: var(--secondary); border-color: var(--secondary); transform: translateY(-2px); }

@@ -1,185 +1,126 @@
 <?php
-// File ini tidak lagi menggunakan Sesi PHP, 
-// semua autentikasi ditangani oleh JavaScript di sisi klien.
-?><!DOCTYPE html>
+session_start();
+require_once '../includes/koneksi.php'; 
+
+// --- 1. SECURITY CHECK ---
+if (!isset($_SESSION['isLoggedIn']) || $_SESSION['isLoggedIn'] !== true) {
+    header("Location: ../auth/login.php");
+    exit();
+}
+
+$userId = $_SESSION['user_id'];
+$planType = $_SESSION['plan_type'] ?? 'none';
+
+// --- 2. AMBIL DATA USER ---
+$stmt = $conn->prepare("SELECT name, email, phone, created_at FROM users WHERE id = ?");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+
+if (!$user) {
+    echo "User tidak ditemukan.";
+    exit();
+}
+
+// Format Tanggal
+$joinDate = date("d F Y", strtotime($user['created_at']));
+// Inisial Avatar
+$initial = strtoupper(substr($user['name'], 0, 1));
+?>
+
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil Saya - SagaHealth</title>
-
-    <!-- CSS Utama -->
-    <link rel="stylesheet" href="../assets/style/auth.css">
-
-    <!-- CSS Khusus Profil -->
-    <link rel="stylesheet" href="../assets/style/profile.css">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <title>SagaHealth - Sehat Fisik & Mental</title>
     <link rel="icon" href="../assets/img/tittle.png" type="image/png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/style/styles.css">
+    <link rel="stylesheet" href="../user/style/partials_user.css">
+
 </head>
-<body style="background-color: var(--bg-page);">
+<body>
 
-    <!-- GUARD SCRIPT -->
-    <script>
-        const userId = sessionStorage.getItem('userId') || localStorage.getItem('userId');
-        const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true' || localStorage.getItem('isLoggedIn') === 'true';
-
-        if (!isLoggedIn || !userId) {
-            sessionStorage.clear();
-            localStorage.clear();
-            window.location.replace('login.php');
-        }
-    </script>
-
-    <?php include '../user/partials/header.php'; ?>
+    <?php include 'partials/header.php'; ?>
 
     <main class="profile-container">
-        <div class="container-wrapper" style="max-width: 900px;">
-            <h1 class="profile-title">Profil Saya</h1>
-
-            <!-- Kartu Profil -->
-            <div class="profile-card info-card">
-                <div class="profile-avatar editable" id="profile-avatar-wrapper">
-                    <i class="fas fa-user-circle default-icon"></i>
-                    <div class="overlay-plus">
-                        <i class="fas fa-plus"></i>
+        
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <?php echo $initial; ?>
+            </div>
+            <div class="profile-info">
+                <h1><?php echo htmlspecialchars($user['name']); ?></h1>
+                <p><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($user['email']); ?></p>
+                
+                <?php if ($planType === 'premium'): ?>
+                    <div class="plan-badge" style="background: rgba(255, 215, 0, 0.2); color: #FFF; border-color: gold;">
+                        <i class="fas fa-crown"></i> PREMIUM MEMBER
                     </div>
-                    <input type="file" id="photo-input" accept="image/*" style="display:none;">
+                <?php elseif ($planType === 'basic'): ?>
+                    <div class="plan-badge">
+                        <i class="fas fa-leaf"></i> BASIC MEMBER
+                    </div>
+                <?php else: ?>
+                    <div class="plan-badge" style="background: rgba(255,0,0,0.2);">
+                        <i class="fas fa-exclamation-circle"></i> BELUM BERLANGGANAN
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div class="profile-content">
+            
+            <h3 class="section-title">Informasi Pribadi</h3>
+
+            <form style="display: contents;">
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" value="<?php echo htmlspecialchars($user['name']); ?>" readonly>
                 </div>
 
-                <div class="profile-info-details">
-                    <h2 id="profile-name">Memuat nama...</h2>
-                    <p id="profile-email">email@memuat...</p>
-                    
-                    <div class="info-list">
-                        <p><i class="fas fa-phone"></i> Nomor Telepon: <strong id="profile-phone">...</strong></p>
-                        <p><i class="fas fa-calendar-alt"></i> Bergabung: <strong id="profile-joined">...</strong></p>
-                        <p><i class="fas fa-clock"></i> Login Terakhir: <strong id="profile-last-login">...</strong></p>
-                        <p><i class="fas fa-shield-alt"></i> Status: <strong id="profile-status" class="status-badge">...</strong></p>
-                    </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" value="<?php echo htmlspecialchars($user['email']); ?>" readonly>
                 </div>
+
+                <div class="form-group">
+                    <label>Nomor Telepon</label>
+                    <input type="text" value="<?php echo htmlspecialchars($user['phone'] ?? '-'); ?>" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Bergabung Sejak</label>
+                    <input type="text" value="<?php echo $joinDate; ?>" readonly>
+                </div>
+            </form>
+
+            <h3 class="section-title">Pengaturan Akun</h3>
+            
+            <div style="grid-column: 1 / -1; display: flex; gap: 15px; flex-wrap: wrap;">
+                
+                <?php if ($planType === 'premium'): ?>
+                    <button class="btn-action btn-disabled" disabled>
+                        <i class="fas fa-check-circle"></i> Paket Premium Aktif
+                    </button>
+                <?php else: ?>
+                    <a href="plan.php" class="btn-action" style="background: #F59E0B;">
+                        <i class="fas fa-arrow-up"></i> Upgrade Paket
+                    </a>
+                <?php endif; ?>
+
+                <button onclick="logoutUser()" class="btn-action" style="background: #EF4444;">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </button>
             </div>
 
-            <a href="javascript:history.back()" class="btn-back">
-                <i class="fas fa-arrow-left"></i> Kembali
-            </a>
-
-            <div id="profile-message" class="auth-message" style="display: none;"></div>
         </div>
     </main>
 
-    <script>
-        const currentUserId = sessionStorage.getItem('userId') || localStorage.getItem('userId');
+    <?php include '../partials/footer.php'; ?>
 
-        // Fungsi logout (dipanggil dari header)
-        function logoutUser() {
-            sessionStorage.clear();
-            localStorage.clear();
-            window.location.href = 'login.php';
-        }
-
-        function showMessage(elementId, message, type = 'error') {
-            const el = document.getElementById(elementId);
-            el.textContent = message;
-            el.className = 'auth-message ' + type;
-            el.style.display = 'flex';
-        }
-
-        function formatTanggal(isoString) {
-            if (!isoString) return 'N/A';
-            const options = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
-            return new Date(isoString).toLocaleString('id-ID', options).replace(/\./g, ':');
-        }
-
-        // Load foto dari localStorage
-        function loadProfilePhoto() {
-            const photoBase64 = localStorage.getItem('userProfilePicture');
-            const wrapper = document.getElementById('profile-avatar-wrapper');
-            const defaultIcon = wrapper.querySelector('.default-icon');
-            let img = wrapper.querySelector('img');
-
-            if (photoBase64 && photoBase64.startsWith('data:image/')) {
-                if (!img) {
-                    img = document.createElement('img');
-                    wrapper.insertBefore(img, defaultIcon);
-                }
-                img.src = photoBase64;
-                defaultIcon.style.display = 'none';
-            } else {
-                if (img) img.remove();
-                defaultIcon.style.display = 'flex';
-            }
-        }
-
-        // Klik avatar buka file picker
-        document.getElementById('profile-avatar-wrapper').addEventListener('click', () => {
-            document.getElementById('photo-input').click();
-        });
-
-        // Proses ganti foto
-        document.getElementById('photo-input').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            if (!file.type.startsWith('image/')) {
-                showMessage('profile-message', 'File harus berupa gambar!', 'error');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const base64 = event.target.result;
-                localStorage.setItem('userProfilePicture', base64);
-                loadProfilePhoto();
-
-                // Beritahu semua halaman (termasuk header di tab ini)
-                window.dispatchEvent(new Event('profileUpdated'));
-                window.dispatchEvent(new Event('storage'));
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // Load data profil saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', async () => {
-            loadProfilePhoto();
-
-            try {
-                const res = await fetch(`../includes/auth_functions.php?action=get_profile&userId=${currentUserId}`);
-                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-
-                const data = await res.json();
-
-                if (data.status === 'success') {
-                    const user = data.user;
-
-                    // Simpan nama ke storage
-                    localStorage.setItem('userName', user.name);
-                    sessionStorage.setItem('userName', user.name);
-
-                    // Update tampilan profil
-                    document.getElementById('profile-name').textContent = user.name;
-                    document.getElementById('profile-email').textContent = user.email;
-                    document.getElementById('profile-phone').textContent = user.phone || 'Belum diisi';
-                    document.getElementById('profile-joined').textContent = formatTanggal(user.created_at);
-                    document.getElementById('profile-last-login').textContent = formatTanggal(user.last_login);
-                    document.getElementById('profile-status').textContent = user.status;
-
-                    // Update header (jika ada element user-name-display di halaman ini)
-                    const headerNameEl = document.getElementById('user-name-display');
-                    if (headerNameEl) headerNameEl.textContent = user.name;
-
-                    // Trigger update header global
-                    window.dispatchEvent(new Event('profileUpdated'));
-                } else {
-                    showMessage('profile-message', 'Gagal memuat data profil: ' + data.message, 'error');
-                }
-            } catch (err) {
-                console.error("Fetch error:", err);
-                showMessage('profile-message', 'Terjadi kesalahan koneksi.', 'error');
-            }
-        });
-    </script>
 </body>
 </html>

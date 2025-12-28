@@ -1,109 +1,110 @@
 import joblib
-import pandas as pd
 import numpy as np
-from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
-import matplotlib.pyplot as plt
-import seaborn as sns
+import pandas as pd
+import time
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
-# ==========================================
+# ============================================================
 # KONFIGURASI
-# ==========================================
-MODEL_PATH = 'multi_disease_svm_bundle_v2.pkl'
-N_TEST = 1000 # Jumlah data uji
-np.random.seed(123) # Seed tetap agar hasil konsisten
+# ============================================================
+MODEL_PATH = 'multi_disease_svm_bundle_v2.pkl' # Pastikan path sesuai
+N_TEST_SAMPLES = 2000 # Jumlah data untuk pengujian
 
 print("="*60)
 print("📊 EVALUASI MODEL HYBRID AI - SAGAHEALTH (SVM MULTI-CLASS)")
 print("="*60)
 
 # 1. LOAD MODEL
+print(f"📂 Memuat model dari '{MODEL_PATH}'...")
 try:
-    BUNDLE = joblib.load(MODEL_PATH)
-    models = BUNDLE['models']
-    # Ambil nama fitur asli dari file model agar tidak error
-    feature_names = BUNDLE.get('features', [
-        'imt', 'riwayat_hipertensi', 'konsumsi_obat', 'sistolik', 
-        'diastolik', 'begadang', 'keluhan', 'riwayat_pribadi', 
-        'riwayat_keluarga', 'gejala'
-    ])
-    print("✅ Model Bundle berhasil dimuat.")
-except FileNotFoundError:
-    print(f"❌ File {MODEL_PATH} tidak ditemukan. Lakukan training dulu.")
+    # PERBAIKAN DI SINI: Load langsung ke variabel models
+    models = joblib.load(MODEL_PATH) 
+    print("✅ Model berhasil dimuat!")
+except Exception as e:
+    print(f"❌ Gagal memuat model: {e}")
     exit()
 
-# 2. GENERATE DATA UJI (SINTETIK)
-# Data ini dibuat mirip dengan training tapi baru (Unseen Data)
-print(f"⏳ Membuat {N_TEST} data pasien simulasi untuk pengujian...")
+# 2. GENERATE DATA TEST (Harus sama logikanya dengan Training Engine)
+print(f"⏳ Men-generate {N_TEST_SAMPLES} data pengujian (13 Fitur)...")
+np.random.seed(999) # Seed beda agar data beda dengan training
+
+# Generate Fitur (Logic disamakan dengan Engine v2 agar valid)
+usia = np.random.randint(20, 90, N_TEST_SAMPLES)
+imt = np.random.normal(24, 4, N_TEST_SAMPLES) + (usia * 0.05)
+sistolik = np.random.normal(120, 15, N_TEST_SAMPLES) + (usia * 0.3)
+diastolik = np.random.normal(80, 10, N_TEST_SAMPLES) + (usia * 0.1)
+
+merokok = np.random.choice([0, 1, 2, 3], N_TEST_SAMPLES, p=[0.55, 0.25, 0.1, 0.1])
+olahraga = np.random.choice([0, 1, 2, 3], N_TEST_SAMPLES, p=[0.4, 0.35, 0.2, 0.05])
+mental_score = np.random.randint(0, 7, N_TEST_SAMPLES)
+
+# Probabilitas sakit
+prob_sakit = (merokok * 0.1) + ((3-olahraga) * 0.1) + (usia/200)
+prob_sakit = np.clip(prob_sakit, 0.1, 0.9)
 
 X_test = pd.DataFrame({
-    'imt': np.random.normal(24, 5, N_TEST),
-    'sistolik': np.random.normal(125, 20, N_TEST),
-    'diastolik': np.random.normal(80, 12, N_TEST),
-    'riwayat_hipertensi': np.random.choice([0, 1], N_TEST, p=[0.7, 0.3]),
-    'konsumsi_obat': np.random.choice([0, 1, 2], N_TEST),
-    'begadang': np.random.choice([0, 1], N_TEST),
-    'keluhan': np.random.randint(0, 5, N_TEST),
-    'riwayat_pribadi': np.random.randint(0, 6, N_TEST),
-    'riwayat_keluarga': np.random.randint(0, 4, N_TEST),
-    'gejala': np.random.randint(0, 5, N_TEST)
+    'imt': imt,
+    'riwayat_hipertensi': np.random.binomial(1, np.clip(prob_sakit, 0, 1), N_TEST_SAMPLES),
+    'konsumsi_obat': np.random.choice([0, 1, 2], N_TEST_SAMPLES, p=[0.6, 0.3, 0.1]),
+    'sistolik': sistolik,
+    'diastolik': diastolik,
+    'begadang': np.random.choice([0, 1], N_TEST_SAMPLES),
+    'keluhan': np.random.choice([0, 1, 2, 3, 4], N_TEST_SAMPLES),
+    'riwayat_pribadi': np.random.choice([0, 1, 2, 3], N_TEST_SAMPLES),
+    'riwayat_keluarga': np.random.choice([0, 1, 2], N_TEST_SAMPLES),
+    'gejala': np.random.choice([0, 1, 2, 3, 4], N_TEST_SAMPLES),
+    'merokok': merokok,
+    'olahraga': olahraga,
+    'mental_score': mental_score
 })
 
-# Pastikan urutan kolom sesuai dengan training
-X_test = X_test[feature_names]
+# Re-create Labels (Ground Truth) untuk perbandingan
+def sigmoid(x): return 1 / (1 + np.exp(-x))
 
-# 3. BUAT KUNCI JAWABAN (GROUND TRUTH)
-# Kita gunakan logika medis dasar untuk menentukan siapa yang 'seharusnya' sakit
-# agar kita bisa menilai apakah AI menebak dengan benar.
+# Logika Target (Harus persis sama dengan training engine)
+score_hip = (sistolik - 140)/10 + (X_test['riwayat_hipertensi']*2) - (olahraga*0.5) + (usia/50)
+y_hip = (sigmoid(score_hip) > 0.65).astype(int)
 
-y_true = {}
+score_dm = (imt - 27)/3 + (X_test['riwayat_keluarga']*1.5) - (olahraga*0.8) + (usia/60)
+y_dm = (sigmoid(score_dm) > 0.7).astype(int)
 
-# Logika Hipertensi (Tensi tinggi / Riwayat)
-y_true['risiko_hipertensi'] = ((X_test['sistolik'] > 140) | (X_test['diastolik'] > 90) | (X_test['riwayat_hipertensi'] == 1)).astype(int)
+score_jantung = (merokok*1.2) + (y_hip*2) + (X_test['keluhan']*0.5) + (X_test['begadang']*0.5) + (usia/40) - 4
+y_jantung = (sigmoid(score_jantung) > 0.6).astype(int)
 
-# Logika Diabetes (IMT tinggi + Keluarga)
-y_true['risiko_dm'] = ((X_test['imt'] > 27) & (X_test['riwayat_keluarga'] >= 1)).astype(int)
+score_stroke = (sistolik - 160)/10 + (merokok*0.8) + (X_test['riwayat_pribadi']*0.5) + (y_hip*3)
+y_stroke = (sigmoid(score_stroke) > 0.75).astype(int)
 
-# Logika Jantung (Komorbiditas Hipertensi + Begadang)
-y_true['risiko_jantung'] = ((y_true['risiko_hipertensi'] == 1) & (X_test['begadang'] == 1)).astype(int)
+y_asma = ((X_test['gejala'] >= 3) | ((merokok >= 1) & (X_test['gejala'] >= 2))).astype(int)
 
-# Logika Stroke (Tensi Ekstrem)
-y_true['risiko_stroke'] = (X_test['sistolik'] > 160).astype(int)
+score_kanker = (merokok*1.5) + (X_test['riwayat_pribadi']*1.0) + (X_test['riwayat_keluarga']*0.8) + (usia/100) - 3
+y_kanker = (sigmoid(score_kanker) > 0.7).astype(int)
 
-# Logika Asma (Banyak Gejala)
-y_true['risiko_asma'] = (X_test['gejala'] >= 3).astype(int)
+Y_true = pd.DataFrame({
+    'risiko_hipertensi': y_hip, 'risiko_dm': y_dm, 'risiko_jantung': y_jantung,
+    'risiko_stroke': y_stroke, 'risiko_asma': y_asma, 'risiko_kanker': y_kanker
+})
 
-# Logika Kanker (Riwayat Genetik Kuat)
-y_true['risiko_kanker'] = (X_test['riwayat_keluarga'] >= 2).astype(int)
-
-
-# 4. LOOP EVALUASI SEMUA PENYAKIT
-summary_acc = {}
+# 3. PROSES PENGUJIAN
+print("\n🚀 Memulai Prediksi...")
+avg_acc = 0
 
 for disease_name, model in models.items():
-    print(f"\n🔬 ANALISIS: {disease_name.upper().replace('_', ' ')}")
+    print(f"\n🔬 PENGUJIAN: {disease_name.upper().replace('RISIKO_', '')}")
     print("-" * 40)
     
-    # Prediksi AI
+    start_time = time.time()
     y_pred = model.predict(X_test)
-    y_target = y_true[disease_name]
+    duration = time.time() - start_time
     
-    # Hitung Metrik
-    acc = accuracy_score(y_target, y_pred)
-    summary_acc[disease_name] = acc
+    acc = accuracy_score(Y_true[disease_name], y_pred)
+    avg_acc += acc
     
-    print(f"   Akurasi: {acc*100:.2f}%")
-    print("\n   Laporan Klasifikasi:")
-    print(classification_report(y_target, y_pred, target_names=['Sehat', 'Berisiko']))
-    
-    # Tampilkan Confusion Matrix Angka
-    cm = confusion_matrix(y_target, y_pred)
-    print(f"   Confusion Matrix: TP={cm[1][1]}, TN={cm[0][0]}, FP={cm[0][1]}, FN={cm[1][0]}")
+    print(f"   Akurasi Test: {acc:.2%} (Waktu: {duration:.4f}s)")
+    print("   Confusion Matrix:")
+    print(confusion_matrix(Y_true[disease_name], y_pred))
+    print("\n   Detailed Report:")
+    print(classification_report(Y_true[disease_name], y_pred, target_names=['Sehat', 'Berisiko']))
 
-print("\n" + "="*60)
-print("🏆 REKAPITULASI AKURASI MODEL")
 print("="*60)
-rata_rata = np.mean(list(summary_acc.values()))
-for k, v in summary_acc.items():
-    print(f"📌 {k:<20} : {v*100:.2f}%")
-print("-" * 30)
-print(f"🌟 RATA-RATA SISTEM   : {rata_rata*100:.2f}%")
+print(f"🏆 RATA-RATA AKURASI SYSTEM: {(avg_acc/6):.2%}")
+print("="*60)

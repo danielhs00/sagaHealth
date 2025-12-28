@@ -8,14 +8,18 @@
     
     <link rel="stylesheet" href="../assets/style/partials.css">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/style/index.css">
 </head>
 <body class="font-sans bg-white">
 
 <?php include '../partials/header.php'; ?>
 
     <main>
-
         <section class="bantuan-hero">
             <div class="container-wrapper text-center">
                 <h1>Ada yang bisa kami bantu?</h1>
@@ -130,6 +134,7 @@
         </section>
 
     </main>
+    <br>
 
  <?php include '../partials/footer.php'; ?>
 

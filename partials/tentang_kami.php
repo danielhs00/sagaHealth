@@ -7,7 +7,12 @@
   <link rel="icon" href="../assets/img/tittle.png" type="image/png">
     <link rel="stylesheet" href="../assets/style/partials.css">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/style/index.css">
 </head>
 <body class="font-sans bg-white">
 
@@ -89,7 +94,7 @@
                         <img src="../assets/img/Zein.png" alt="Foto Founder 5">
                         <div class="founder-card-info">
                             <h4>Zein Naufal Jasyr</h4>
-                            <span>Backend</span>
+                            <span>ChatBot Pakai API Gemini</span>
                         </div>
                     </div>
 
@@ -97,7 +102,7 @@
                         <img src="../assets/img/Jilan.png" alt="Foto Founder 6">
                         <div class="founder-card-info">
                             <h4>Muhammad Jilan Satria</h4>
-                            <span>Quality Assurance Specialist</span>
+                            <span>Quality Assurance</span>
                         </div>
                     </div>
                     

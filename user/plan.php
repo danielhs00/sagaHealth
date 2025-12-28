@@ -13,7 +13,7 @@ if (!isset($_SESSION['isLoggedIn']) || $_SESSION['isLoggedIn'] !== true) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>SagaHealth</title>
+  <title>SagaHealth - Sehat Fisik & Mental</title>
     <link rel="icon" href="../assets/img/tittle.png" type="image/png">
     <link rel="stylesheet" href="../assets/style/auth.css">
     <link rel="stylesheet" href="../assets/style/plan.css">

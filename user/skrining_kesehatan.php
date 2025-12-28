@@ -1,66 +1,9 @@
 <?php include '../user/partials/header.php'; ?>
 
-<style>
-    /* Style dasar form (sesuai file asli) */
-    .html { display: none; } /* Hack kecil jika file css asli bentrok */
-    
-    /* Overlay Loading Full Screen */
-    #loading-overlay {
-        display: none; /* Hidden by default */
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.95);
-        z-index: 9999;
-        flex-direction: column;
-        justify_content: center;
-        align-items: center;
-        text-align: center;
-    }
-
-    .spinner {
-        width: 60px;
-        height: 60px;
-        border: 6px solid #f3f3f3;
-        border-top: 6px solid #3498db; /* Warna SAGAHEALTH */
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-bottom: 20px;
-    }
-
-    .loading-text {
-        font-family: 'Segoe UI', sans-serif;
-        color: #2c3e50;
-        font-size: 1.2rem;
-        font-weight: 600;
-    }
-
-    .loading-subtext {
-        color: #7f8c8d;
-        font-size: 0.9rem;
-        margin-top: 10px;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    /* Pastikan container form tetap rapi */
-    .container {
-        max-width: 800px;
-        margin: 40px auto;
-        padding: 30px;
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    }
-</style>
 
 <link rel="stylesheet" href="../assets/style/form_skrining.css">
-<link rel="stylesheet" type="text/css" href="../assets/style/auth.css">
+<link rel="stylesheet" type="text/css" href="../assets/style/skrining_kesehatan.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div id="loading-overlay">
     <div class="spinner"></div>

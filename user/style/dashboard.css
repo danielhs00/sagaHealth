@@ -226,7 +226,16 @@ body {
     font-size: 0.8rem;
     letter-spacing: 1px;
 }
-
+        /* Override Khusus Premium */
+        .welcome-section {
+            background: linear-gradient(135deg, #1F2937 0%, #111827 100%); /* Hitam Elegan */
+        }
+        .plan-badge {
+            background: linear-gradient(90deg, #F59E0B, #D97706); /* Warna Emas */
+            border: none;
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
 /* Responsive */
 @media (max-width: 768px) {
     .welcome-section {

@@ -28,24 +28,13 @@ $userName = $_SESSION['user_name'] ?? 'Premium Member';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Premium - SagaHealth</title>
+    <title>SagaHealth - Sehat Fisik & Mental</title>
+    <link rel="icon" href="../assets/img/tittle.png" type="image/png">
     
     <link rel="stylesheet" href="../assets/style/styles.css">
     <link rel="stylesheet" href="style/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        /* Override Khusus Premium */
-        .welcome-section {
-            background: linear-gradient(135deg, #1F2937 0%, #111827 100%); /* Hitam Elegan */
-        }
-        .plan-badge {
-            background: linear-gradient(90deg, #F59E0B, #D97706); /* Warna Emas */
-            border: none;
-            color: white;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
-        }
-    </style>
+
 </head>
 <body>
 
@@ -87,7 +76,7 @@ $userName = $_SESSION['user_name'] ?? 'Premium Member';
                 </div>
             </a>
 
-            <a href="indexmood.php" class="feature-card">
+            <a href="mood_tracker.php" class="feature-card">
                 <div class="icon-wrapper bg-pink">
                     <i class="fas fa-smile-beam"></i>
                 </div>
@@ -98,7 +87,7 @@ $userName = $_SESSION['user_name'] ?? 'Premium Member';
                 </div>
             </a>
 
-            <a href="#" class="feature-card">
+            <a style="margin-top: 4rem; max-height: 300px;" href="#" class="feature-card">
                 <div class="icon-wrapper bg-orange">
                     <i class="fas fa-file-medical-alt"></i>
                 </div>
@@ -120,5 +109,6 @@ $userName = $_SESSION['user_name'] ?? 'Premium Member';
             }
         })();
     </script>
+    <br>
 </body>
 </html>

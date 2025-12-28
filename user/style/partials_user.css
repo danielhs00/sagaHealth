@@ -148,3 +148,64 @@
         height: 35px;
     }
 }
+
+/* =========================================
+   STYLING KHUSUS PROFILE
+   ========================================= */
+
+  /* Style Profil yang sama seperti sebelumnya */
+        .profile-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .profile-header {
+            background: linear-gradient(135deg, #014C63 0%, #028C8B 100%);
+            border-radius: 20px 20px 0 0; padding: 40px; color: white;
+            display: flex; align-items: center; gap: 25px;
+        }
+        .profile-avatar {
+            width: 100px; height: 100px; background: white; color: #014C63;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; font-weight: bold; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .profile-info h1 { margin: 0; font-size: 2rem; }
+        .profile-info p { margin: 5px 0 0; opacity: 0.9; }
+        .plan-badge {
+            background: rgba(255, 255, 255, 0.2); padding: 5px 15px; border-radius: 20px;
+            font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center;
+            gap: 8px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.4);
+        }
+        .profile-content {
+            background: white; border-radius: 0 0 20px 20px; padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+        }
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; font-weight: 600; color: #374151; margin-bottom: 8px; }
+        .form-group input {
+            width: 100%; padding: 12px 15px; border: 1px solid #E5E7EB; border-radius: 10px;
+            font-size: 1rem; background-color: #F9FAFB; color: #1F2937;
+        }
+        .form-group input:read-only { background-color: #F3F4F6; cursor: not-allowed; color: #6B7280; }
+        
+        .btn-action {
+            display: inline-block; padding: 12px 25px; background: #014C63; color: white;
+            border: none; border-radius: 10px; cursor: pointer; font-weight: 600;
+            text-decoration: none; transition: 0.3s; font-size: 1rem;
+        }
+        .btn-action:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        
+        /* Style Khusus Tombol Disabled */
+        .btn-disabled {
+            background: #D1D5DB !important;
+            color: #6B7280 !important;
+            cursor: not-allowed;
+            pointer-events: none;
+            box-shadow: none;
+            transform: none !important;
+        }
+
+        .section-title {
+            grid-column: 1 / -1; font-size: 1.25rem; color: #111827;
+            border-bottom: 2px solid #F3F4F6; padding-bottom: 10px; margin-bottom: 20px;
+        }
+        @media (max-width: 768px) {
+            .profile-content { grid-template-columns: 1fr; }
+            .profile-header { flex-direction: column; text-align: center; }
+        }

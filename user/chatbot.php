@@ -1,368 +1,184 @@
+<?php
+session_start();
+
+// 1. CEK KEAMANAN: Pastikan User sudah Login
+if (!isset($_SESSION['isLoggedIn']) || $_SESSION['isLoggedIn'] !== true) {
+    header("Location: ../auth/login.php");
+    exit();
+}
+
+// 2. CEK PAKET (Opsional: Jika Chatbot hanya untuk Premium/Basic)
+// if (!isset($_SESSION['plan_type']) || $_SESSION['plan_type'] === 'none') {
+//     header("Location: plan.php");
+//     exit();
+// }
+
+// 3. AMBIL DATA USER DARI SESI
+$userName = $_SESSION['user_name'] ?? 'Pengguna'; // Default 'Pengguna' jika error session
+$userPlan = $_SESSION['plan_type'] ?? 'basic';
+$userInitial = strtoupper(substr($userName, 0, 1)); // Ambil huruf depan nama
+?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SagaHealth</title>
-  <link rel="icon" href="../assets/img/tittle.png" type="image/png">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/style/chatbot.css">
-  <link rel="stylesheet" href="../assets/style/auth.css" />
-  <link rel="stylesheet" href="../user/style/chatbot.css" />
-  <link rel="stylesheet" href="../assets/style/profile.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SagaHealth - Sehat Fisik & Mental</title>
+    <link rel="icon" href="../assets/img/tittle.png" type="image/png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../user/style/chatbot.css">
 </head>
 <body>
 
-  <?php include '../user/partials/header.php'; ?>
-  <div class="overlay" id="overlay"></div>
+    <?php include 'partials/header.php'; ?>
 
-  <div class="app-container">
-
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <div>
-        <div class="sidebar-header">
-          <h1>SAGABOT</h1>
-        </div>
-
-        <button class="new-chat-btn" id="newChatBtn"><i class="fas fa-plus"></i> New chat</button>
-
-        <div class="search-bar">
-          <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search..." />
-        </div>
-
-        <div class="section-header">
-          <span>Your conversations</span>
-          <a href="#" id="clearAllBtn">Clear All</a>
-        </div>
-
-        <div class="conversations" id="conversationList">
-          <!-- Riwayat otomatis dari localStorage -->
-        </div>
-      </div>
-
-      <!-- Sidebar Footer -->
-      <div class="sidebar-footer">
-        <div class="user-profile" onclick="window.location.href='profile.php'">
-          <div id="sidebarUserAvatarContainer">
-            <i class="fas fa-user-circle"></i>
-          </div>
-          <span id="sidebarUsername">Guest</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Area chat -->
-    <div class="main-content">
-      <div class="chat-header">
-        <i class="fas fa-robot"></i>
-        <div class="chat-info">
-          <h2>Welcome to SagaBot Chat</h2>
-          <p>Chat with your AI companion</p>
-        </div>
-      </div>
-
-      <div class="chat-container">
-        <div class="messages-container" id="messagesContainer">
-          <div class="message bot-message">
-            <img src="img/MASKOT.png" alt="Bot Avatar" class="avatar" onerror="this.src='https://placehold.co/40x40/FFD700/000000?text=S'">
-            <div class="message-bubble">
-              <p>Hai! Aku SagaBot 🐥 versi lucu seperti SimSimi! Apa kabar hari ini?</p>
+    <div class="chat-container">
+        
+        <div class="chat-sidebar">
+            <div class="new-chat-btn" onclick="startNewChat()">
+                <i class="fas fa-plus"></i> Chat Baru
             </div>
-          </div>
+            
+            <div class="chat-history">
+                <p style="color:#6B7280; font-size:0.9rem; margin-top:10px;">Riwayat Percakapan:</p>
+                </div>
+
+            <div style="margin-top: auto; padding-top: 15px; border-top: 1px solid #E5E7EB; display: flex; align-items: center; gap: 10px;">
+                <div style="width: 35px; height: 35px; background: #014C63; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                    <?php echo $userInitial; ?>
+                </div>
+                <div>
+                    <div style="font-size: 0.9rem; font-weight: 600; color: #1F2937;">
+                        <?php echo htmlspecialchars($userName); ?>
+                    </div>
+                    <div style="font-size: 0.75rem; color: #6B7280;">
+                        <?php echo ucfirst($userPlan); ?> Plan
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="input-container">
-          <div class="input-wrapper">
-            <textarea id="messageInput" placeholder="Tulis pesanmu di sini..." rows="1"></textarea>
-            <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
-          </div>
+        <div class="chat-main">
+            <div class="chat-header">
+                <div class="bot-info">
+                    <div class="bot-avatar"><i class="fas fa-robot"></i></div>
+                    <div>
+                        <h3 style="margin:0; font-size:1rem;">SagaHealth AI</h3>
+                        <span style="font-size:0.8rem; color:#059669;">● Online</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    <div class="message-sender">SagaBot</div>
+                    Halo <strong><?php echo htmlspecialchars($userName); ?></strong>! 👋<br>
+                    Saya asisten kesehatan AI Anda. Ada yang bisa saya bantu hari ini?
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <textarea class="chat-input" id="messageInput" placeholder="Ketik pertanyaan kesehatan Anda..." onkeypress="handleEnter(event)"></textarea>
+                <button class="send-btn" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Script: Guard + Force Clear Storage Jika Tidak Login -->
-  <script>
-    // PERBAIKAN UTAMA: Pastikan user benar-benar login
-    (function() {
-      const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true' || localStorage.getItem('isLoggedIn') === 'true';
-      const userId = sessionStorage.getItem('userId') || localStorage.getItem('userId');
+   <script>
+        const currentUserName = "<?php echo htmlspecialchars($userName); ?>";
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.querySelector('.send-btn');
 
-      if (!isLoggedIn || !userId) {
-        // Jika tidak login → bersihkan storage & redirect ke login
-        sessionStorage.clear();
-        localStorage.clear();
-        window.location.replace('../auth/login.php');
-      }
-    })();
-  </script>
-
-  <!-- Script Utama Chat -->
-  <script>
-    const sendBtn = document.getElementById("sendBtn");
-    const input = document.getElementById("messageInput");
-    const messagesContainer = document.getElementById("messagesContainer");
-
-    function createMessage(text, sender = "user") {
-      const messageDiv = document.createElement("div");
-      messageDiv.classList.add("message", `${sender}-message`);
-
-      if (sender === "bot") {
-        const avatar = document.createElement("img");
-        avatar.src = "img/MASKOT.png";
-        avatar.onerror = () => { this.src = 'https://placehold.co/40x40/FFD700/000000?text=S'; };
-        avatar.alt = "Bot Avatar";
-        avatar.classList.add("avatar");
-        messageDiv.appendChild(avatar);
-      }
-
-      const bubble = document.createElement("div");
-      bubble.classList.add("message-bubble");
-      bubble.innerText = text;
-      messageDiv.appendChild(bubble);
-
-      messagesContainer.appendChild(messageDiv);
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-
-    input.addEventListener('input', () => {
-      input.style.height = 'auto';
-      input.style.height = (input.scrollHeight) + 'px';
-    });
-
-    function sendMessage() {
-      const text = input.value.trim();
-      if (!text) return;
-
-      createMessage(text, "user");
-      input.value = "";
-      input.style.height = 'auto';
-
-      showTypingIndicator();
-
-      fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyBJFckWFfRbA0GKAZ1bo8ZvDHUMd2MiDrM`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: text }] }]
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        hideTypingIndicator();
-        let reply = "Maaf, aku bingung nih...";
-        if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
-          reply = data.candidates[0].content.parts[0].text;
+        function handleEnter(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
         }
-        reply = reply.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1').trim();
-        createMessage(reply, "bot");
-        saveCurrentChat();
-      })
-      .catch(err => {
-        hideTypingIndicator();
-        createMessage("Ups, ada masalah koneksi. Coba lagi ya!", "bot");
-        console.error(err);
-      });
-    }
 
-    sendBtn.addEventListener("click", sendMessage);
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    });
-  </script>
+        async function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text) return;
 
-  <!-- Script Fitur Tambahan + Sinkronisasi Profil -->
-  <script>
-    const typingId = "typing-indicator-unique";
+            // 1. Tampilkan Pesan User
+            addMessage(text, 'user', currentUserName);
+            messageInput.value = '';
+            messageInput.disabled = true; // Kunci input saat loading
+            sendBtn.disabled = true;
 
-    function showTypingIndicator() {
-      if (document.getElementById(typingId)) return;
-      const typingDiv = document.createElement("div");
-      typingDiv.id = typingId;
-      typingDiv.className = "message bot-message";
-      const avatar = document.createElement("img");
-      avatar.src = "img/MASKOT.png";
-      avatar.onerror = () => avatar.src = 'https://placehold.co/40x40/FFD700/000000?text=S';
-      avatar.className = "avatar";
-      const bubble = document.createElement("div");
-      bubble.className = "message-bubble typing-indicator";
-      bubble.innerHTML = "<span></span><span></span><span></span> <small>SagaBot sedang berpikir...</small>";
-      typingDiv.appendChild(avatar);
-      typingDiv.appendChild(bubble);
-      messagesContainer.appendChild(typingDiv);
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
+            // 2. Tampilkan Loading Bubble
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message bot';
+            loadingDiv.id = 'loadingBubble';
+            loadingDiv.innerHTML = '<div class="message-sender">SagaBot</div><i class="fas fa-circle-notch fa-spin"></i> <em>Sedang berpikir...</em>';
+            chatMessages.appendChild(loadingDiv);
+            scrollToBottom();
 
-    function hideTypingIndicator() {
-      const el = document.getElementById(typingId);
-      if (el) el.remove();
-    }
+            try {
+                // 3. KIRIM KE BACKEND (Gemini API)
+                const response = await fetch('../user/partials/chat_gemini.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
 
-    const conversationList = document.getElementById("conversationList");
-    const newChatBtn = document.getElementById("newChatBtn");
-    const clearAllBtn = document.getElementById("clearAllBtn");
+                const data = await response.json();
 
-    function saveCurrentChat() {
-      const messages = Array.from(messagesContainer.querySelectorAll(".message:not(#typing-indicator-unique)"))
-        .map(m => ({
-          text: m.querySelector(".message-bubble").innerText,
-          sender: m.classList.contains("user-message") ? "user" : "bot"
-        }));
+                // Hapus Loading
+                chatMessages.removeChild(loadingDiv);
 
-      if (messages.length <= 1) return;
+                if (data.status === 'success') {
+                    addMessage(data.reply, 'bot', 'SagaBot');
+                } else {
+                    addMessage("Maaf, terjadi kesalahan koneksi. Silakan coba lagi.", 'bot', 'System');
+                    console.error(data);
+                }
 
-      const title = messages.find(m => m.sender === "user")?.text.slice(0, 35) + "..." || "New Chat";
+            } catch (error) {
+                chatMessages.removeChild(loadingDiv);
+                addMessage("Gagal terhubung ke server.", 'bot', 'System');
+                console.error(error);
+            } finally {
+                // Buka kunci input
+                messageInput.disabled = false;
+                sendBtn.disabled = false;
+                messageInput.focus();
+            }
+        }
 
-      let history = JSON.parse(localStorage.getItem("sagabot_history") || "[]");
-      history = history.filter(c => c.title !== title);
-      history.unshift({ title, messages, timestamp: Date.now() });
-      localStorage.setItem("sagabot_history", JSON.stringify(history));
-      loadHistoryList();
-    }
+        function addMessage(text, sender, senderName) {
+            const div = document.createElement('div');
+            div.className = `message ${sender}`;
+            
+            // Render HTML (karena kita sudah memformat di PHP)
+            div.innerHTML = `
+                <div class="message-sender">${senderName}</div>
+                ${text}
+            `;
+            
+            chatMessages.appendChild(div);
+            scrollToBottom();
+        }
 
-    function loadHistoryList() {
-      const history = JSON.parse(localStorage.getItem("sagabot_history") || "[]");
-      conversationList.innerHTML = "";
-      history.forEach((chat, i) => {
-        const item = document.createElement("div");
-        item.className = "conversation-item";
-        item.innerHTML = `<i class="fas fa-comment-dots"></i> ${chat.title}`;
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
 
-        const deleteBtn = document.createElement("i");
-        deleteBtn.className = "fas fa-trash delete-btn";
-        deleteBtn.onclick = (e) => {
-          e.stopPropagation();
-          deleteChat(i, item);
-        };
-        item.appendChild(deleteBtn);
-
-        item.onclick = () => {
-          messagesContainer.innerHTML = `<div class="message bot-message">
-            <img src="img/MASKOT.png" alt="Bot Avatar" class="avatar" onerror="this.src='https://placehold.co/40x40/FFD700/000000?text=S'">
-            <div class="message-bubble">
-              <p>Hai! Aku SagaBot 🐥 versi lucu seperti SimSimi! Apa kabar hari ini?</p>
-            </div>
-          </div>`;
-          chat.messages.forEach(m => createMessage(m.text, m.sender));
-          messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        };
-        conversationList.appendChild(item);
-      });
-    }
-
-    function deleteChat(index, item) {
-      if (confirm("Hapus chat ini?")) {
-        item.style.opacity = '0';
-        setTimeout(() => {
-          let history = JSON.parse(localStorage.getItem("sagabot_history") || "[]");
-          history.splice(index, 1);
-          localStorage.setItem("sagabot_history", JSON.stringify(history));
-          loadHistoryList();
-        }, 500);
-      }
-    }
-
-    newChatBtn.onclick = () => {
-      if (confirm("Mulai chat baru? Riwayat saat ini akan disimpan.")) {
-        saveCurrentChat();
-        messagesContainer.innerHTML = `<div class="message bot-message">
-          <img src="img/MASKOT.png" alt="Bot Avatar" class="avatar" onerror="this.src='https://placehold.co/40x40/FFD700/000000?text=S'">
-          <div class="message-bubble">
-            <p>Hai! Aku SagaBot 🐥 versi lucu seperti SimSimi! Apa kabar hari ini?</p>
-          </div>
-        </div>`;
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-      }
-    };
-
-    clearAllBtn.onclick = (e) => {
-      e.preventDefault();
-      if (confirm("Hapus semua riwayat?")) {
-        localStorage.removeItem("sagabot_history");
-        loadHistoryList();
-      }
-    };
-
-    // Mobile menu toggle
-    const mobileMenuBtn = document.getElementById("mobileMenuBtn");
-    const overlay = document.getElementById("overlay");
-    if (mobileMenuBtn) {
-      mobileMenuBtn.onclick = () => {
-        document.querySelector(".sidebar").classList.toggle("active");
-        overlay.classList.toggle("active");
-      };
-    }
-    if (overlay) {
-      overlay.onclick = () => {
-        document.querySelector(".sidebar").classList.remove("active");
-        overlay.classList.remove("active");
-      };
-    }
-
-    // Sinkronisasi Avatar & Nama User
-    window.addEventListener('load', () => {
-      const sidebarUsername = document.getElementById('sidebarUsername');
-      const sidebarAvatarContainer = document.getElementById('sidebarUserAvatarContainer');
-
-      // Nama dari header
-      const headerUsername = document.getElementById('user-name-display');
-      if (headerUsername && sidebarUsername) {
-        const name = headerUsername.textContent.trim();
-        if (name) sidebarUsername.textContent = name;
-      }
-
-      // Foto dari localStorage (prioritas utama)
-      const savedProfilePic = localStorage.getItem('userProfilePicture');
-      if (savedProfilePic && sidebarAvatarContainer) {
-        const img = document.createElement('img');
-        img.src = savedProfilePic;
-        img.alt = "Foto Profil";
-        img.onerror = () => {
-          sidebarAvatarContainer.innerHTML = '<i class="fas fa-user-circle"></i>';
-        };
-        sidebarAvatarContainer.innerHTML = '';
-        sidebarAvatarContainer.appendChild(img);
-        return;
-      }
-
-      // Fallback ke header jika ada <img>
-      const headerProfileLink = document.querySelector('.btn-profile');
-      const headerImg = headerProfileLink ? headerProfileLink.querySelector('img') : null;
-      if (headerImg && sidebarAvatarContainer) {
-        const img = document.createElement('img');
-        img.src = headerImg.src;
-        img.alt = "Foto Profil";
-        img.onerror = () => {
-          sidebarAvatarContainer.innerHTML = '<i class="fas fa-user-circle"></i>';
-        };
-        sidebarAvatarContainer.innerHTML = '';
-        sidebarAvatarContainer.appendChild(img);
-      }
-    });
-
-    window.onload = () => loadHistoryList();
-    // Dengarkan perubahan di localStorage (jika logout dari tab lain)
-  window.addEventListener('storage', (e) => {
-    if (e.key === 'isLoggedIn' && e.newValue === null) {
-      // Jika isLoggedIn dihapus → langsung redirect ke login
-      window.location.replace('../auth/login.php');
-    }
-  });
-
-  // Periksa ulang setiap 2 detik (safety net)
-  setInterval(() => {
-    const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true' || localStorage.getItem('isLoggedIn') === 'true';
-    const userId = sessionStorage.getItem('userId') || localStorage.getItem('userId');
-    
-    if (!isLoggedIn || !userId) {
-      window.location.replace('../auth/login.php');
-    }
-  }, 2000);
-  </script>
+        function startNewChat() {
+            if(confirm("Mulai sesi chat baru?")) {
+                chatMessages.innerHTML = `
+                    <div class="message bot">
+                        <div class="message-sender">SagaBot</div>
+                        Halo <strong>${currentUserName}</strong>! Saya siap membantu menjawab pertanyaan kesehatanmu.
+                    </div>
+                `;
+            }
+        }
+    </script>
 </body>
 </html>

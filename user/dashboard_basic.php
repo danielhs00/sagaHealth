@@ -28,7 +28,8 @@ $userName = $_SESSION['user_name'] ?? 'Sahabat Sehat';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Basic - SagaHealth</title>
+    <title>SagaHealth - Sehat Fisik & Mental</title>
+    <link rel="icon" href="../assets/img/tittle.png" type="image/png">
     
     <link rel="stylesheet" href="../assets/style/styles.css"> <link rel="stylesheet" href="style/dashboard.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -86,7 +87,7 @@ $userName = $_SESSION['user_name'] ?? 'Sahabat Sehat';
                 </div>
             </div>
 
-            <div class="feature-card locked" onclick="window.location.href='plan.php'">
+            <div style="margin-top: 4rem;" class="feature-card locked" onclick="window.location.href='plan.php'">
                 <div class="icon-wrapper bg-orange">
                     <i class="fas fa-file-medical-alt"></i>
                 </div>
